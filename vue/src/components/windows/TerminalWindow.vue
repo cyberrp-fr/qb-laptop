@@ -4,7 +4,8 @@ import { useStateStore } from '@/stores/state';
 import Linux from '@/utils/linux/LinuxOS'
 
 // props passed from parent
-const props = defineProps(['id'])
+const props = defineProps(['id', 'focus'])
+const windowFocus = ref(props.focus)
 
 // possible values (bash|nano)
 const currentProcess = ref('bash')
@@ -19,7 +20,7 @@ const containerPos = ref({
 })
 
 // terminal contents
-const user = ref('root@kali')
+const user = ref('root@kali$')
 const output = ref("")
 const prompt = ref("")
 const promptField = ref()
@@ -33,9 +34,23 @@ const emitter = app?.appContext.config.globalProperties.$emitter
 // when component is mounted meaning rendered
 onMounted(() => {
     if (stateStore.state.user != null) {
-        user.value = stateStore.state.user.name + '@kali'
+        user.value = stateStore.state.user.name + '@kali$'
+        initBus()
+        emitter.emit('window/focus', props.id)
     }
 })
+
+function focusWindow(id: string) {
+    if (id === props.id) {
+        windowFocus.value = true
+    } else {
+        windowFocus.value = false
+    }
+}
+
+function initBus() {
+    emitter.on('window/focus', focusWindow)
+}
 
 function selfDestruct() {
     emitter.emit('desktop/closeWindow', props.id)
@@ -55,17 +70,23 @@ function lastCommand(e: any) {
 async function executeCommand(e: any) {
     e.preventDefault()
 
+    prompt.value = prompt.value.trim()
     // exit terminal
-    if (prompt.value.trim() === 'exit') {
+    if (prompt.value === 'exit') {
         selfDestruct()
         return
     }
 
     // clear output
-    if (['clear', 'cls'].includes(prompt.value.trim())) {
+    if (['clear', 'cls'].includes(prompt.value)) {
         output.value = ''
         prompt.value = ''
         return
+    }
+
+    output.value += `<span style="color: rgb(78, 122, 255);">${user.value}</span> ${prompt.value}`
+    if (prompt.value != '') {
+        output.value += '<br>'
     }
 
     let res = await Linux.execute(output.value, prompt.value)
@@ -77,14 +98,20 @@ async function executeCommand(e: any) {
 
     prompt.value = ''
 
-    let outputContainer: any = document.querySelector('.content');
-    outputContainer.scrollTop = outputContainer.scrollHeight - outputContainer.clientHeight;
+    setTimeout(() => {
+        let outputContainer: any = document.querySelector('.content')
+        outputContainer.scrollTop = outputContainer.scrollHeight - outputContainer.clientHeight
+    }, 10)
 }
 
 // focus on input when clicked anywhere on the terminal window
 function focusPrompt(): void {
     if (promptField.value != null) {
         promptField.value.focus()
+    }
+
+    if (!windowFocus.value) {
+        emitter.emit('window/focus', props.id)
     }
 }
 
@@ -124,7 +151,7 @@ function getKey(e) {
 </script>
 
 <template>
-    <div v-if="currentProcess == 'bash'" ref="containerElem" class="window terminal-window resizable" @click="focusPrompt">
+    <div v-if="currentProcess == 'bash'" ref="containerElem" class="window terminal-window resizable" :class="{'window-focused': windowFocus}" @click="focusPrompt">
         <div class="window-header" @mousedown="onWindowMove">
             <div class="logo">
                 <img src="@/assets/img/kali-terminal-vector.png" class="window-logo">
@@ -171,6 +198,10 @@ function getKey(e) {
 </template>
 
 <style scoped lang="scss">
+textarea {
+    white-space: pre-line;
+}
+
 .window {
     position: absolute;
     width: 900px;
@@ -276,7 +307,7 @@ function getKey(e) {
             top: 0;
             left: 0;
             background-color: transparent;
-            padding: 10px;
+            padding: 10px 10px 0 10px;
             font-family: 'Ubuntu Mono', sans-serif;
             font-weight: 400;
             font-size: 16px;

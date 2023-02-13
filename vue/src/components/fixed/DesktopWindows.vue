@@ -12,6 +12,7 @@ const settingsStore = useSettingsStore()
 const stateStore = useStateStore()
 // const windows: any = ref({})
 const windows: any = reactive({})
+const focusedWindowId = ref()
 
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
@@ -61,10 +62,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <component :is="window.component()" :id="window.id" v-for="(window, id, i) in windows" />
+  <component :is="window.component()" :id="window.id" :focus="true" v-for="(window, id, i) in windows" />
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 
 .open-windows {
     position: absolute;
@@ -72,6 +73,10 @@ onMounted(() => {
     height: 100%;
     top: 0;
     left: 0;
+}
+
+.window-focused {
+  z-index: 2 !important;
 }
 
 </style>
