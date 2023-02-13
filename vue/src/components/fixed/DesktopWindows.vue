@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCurrentInstance, onMounted, ref } from 'vue'
+import { getCurrentInstance, onMounted, ref, reactive } from 'vue'
 
 // Window Components
 import TerminalWindow from '@/components/windows/TerminalWindow.vue'
@@ -10,7 +10,8 @@ import { useStateStore } from '@/stores/state'
 
 const settingsStore = useSettingsStore()
 const stateStore = useStateStore()
-const windows: any = ref({})
+// const windows: any = ref({})
+const windows: any = reactive({})
 
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
@@ -30,18 +31,18 @@ function getComponentOfType(type: string) {
 function openWindow(program: string) {
   let window = {
     type: program,
-    component: getComponentOfType(program),
+    component: () => getComponentOfType(program),
     id: 'window-' + uid()
   }
 
-  windows.value[window.id] = window
+  windows[window.id] = window
 
   let app = getCurrentInstance()
   app?.proxy?.$forceUpdate()
 }
 
 function closeWindow(id: string) {
-  delete windows.value[id]
+  delete windows[id]
 
   let app = getCurrentInstance()
   app?.proxy?.$forceUpdate()
@@ -60,7 +61,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <component :is="window.component" :id="window.id" v-for="(window, id, i) in windows" />
+  <component :is="window.component()" :id="window.id" v-for="(window, id, i) in windows" />
 </template>
 
 <style scoped lang="scss">

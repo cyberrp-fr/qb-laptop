@@ -1,19 +1,34 @@
 import FileSystem from '@/utils/linux/Filesystem'
 
-class Linux {
-    public static readonly COMMANDS = {
-        'cd': true,
-        'ls': true,
+class Linux extends FileSystem {
+    public static readonly REGEX = {
+        'ls': /^(\w+)\s*(-\w+)*\s*(\/\w+(\/\w+)*\/?(\w+(\.\w+)?)?)?$/gi
     }
 
-    private _fs: FileSystem
+    private _history: Array<string>
 
-    constructor() {
-        this._fs = new FileSystem()
+    constructor () {
+        super()
+        this._history = []
     }
 
     execute(output: any, command: string) {
+        this._updateHistory(command)
         return this.handleCommand(output, command);
+    }
+
+    private _updateHistory(command: string) {
+
+        if (!this._history.includes(command)) {
+            this._history.push(command)
+        }
+        if (this._history.length > 20) {
+            this._history.shift()
+        }
+    }
+
+    getLastCommand() {
+        return this._history[this._history.length - 1]
     }
 
     async handleCommand(output: string, command: string) {
@@ -24,13 +39,11 @@ class Linux {
             return output += ' '
         }
 
-        if (['ls', 'cd', 'nano'].includes(cmd)) {
-            let result = this._fs.handleCommand(command)
+        if (cmd === 'ls') {
+            let pattern = new RegExp(Linux.REGEX['ls'])
+            let matches: any = pattern.exec(command.trim())
+            let result = this.list(matches[3])
             return output += result
-        }
-
-        if (['clear', 'cls'].includes(cmd)) {
-            return ''
         }
 
         return output += `command not found: ${cmd}`

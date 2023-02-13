@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { ref, getCurrentInstance, onMounted, onBeforeUnmount, defineProps } from 'vue'
+import { ref, getCurrentInstance, onMounted } from 'vue'
 import { useStateStore } from '@/stores/state';
 import Linux from '@/utils/linux/LinuxOS'
 
+// props passed from parent
 const props = defineProps(['id'])
+
+// possible values (bash|nano)
+const currentProcess = ref('bash')
 
 // window position coords
 const containerElem = ref()
@@ -37,6 +41,16 @@ function selfDestruct() {
     emitter.emit('desktop/closeWindow', props.id)
 }
 
+// last command
+function lastCommand(e: any) {
+    e.preventDefault()
+
+    let last = Linux.getLastCommand()
+    if (last != null) {
+        prompt.value = last
+    }
+}
+
 // execute linux command
 async function executeCommand(e: any) {
     e.preventDefault()
@@ -44,6 +58,13 @@ async function executeCommand(e: any) {
     // exit terminal
     if (prompt.value.trim() === 'exit') {
         selfDestruct()
+        return
+    }
+
+    // clear output
+    if (['clear', 'cls'].includes(prompt.value.trim())) {
+        output.value = ''
+        prompt.value = ''
         return
     }
 
@@ -86,7 +107,6 @@ function closeElemDrag() {
     document.onmouseup = null
     document.onmousemove = null
 }
-
 function onWindowMove(e: any) {
     containerPos.value.x = e.clientX
     containerPos.value.y = e.clientY
@@ -95,10 +115,16 @@ function onWindowMove(e: any) {
     document.onmouseup = closeElemDrag
 }
 
+function getKey(e) {
+    e.preventDefault()
+
+    console.log(e)
+}
+
 </script>
 
 <template>
-    <div ref="containerElem" class="window terminal-window resizable" @click="focusPrompt">
+    <div v-if="currentProcess == 'bash'" ref="containerElem" class="window terminal-window resizable" @click="focusPrompt">
         <div class="window-header" @mousedown="onWindowMove">
             <div class="logo">
                 <img src="@/assets/img/kali-terminal-vector.png" class="window-logo">
@@ -115,10 +141,33 @@ function onWindowMove(e: any) {
 
             <div class="prompt-zone">
                 <div class="prompt-user">{{ user }}</div>
-                <textarea ref="promptField" v-model="prompt" v-on:keydown.enter="executeCommand" class="prompt" rows="3"></textarea>
+                <textarea ref="promptField" v-model="prompt" v-on:keydown.enter="executeCommand" v-on:keydown.up="lastCommand" class="prompt" rows="3"></textarea>
             </div>
         </div>
     </div>
+
+
+    <!-- <div v-if="currentProcess == 'nano'" ref="containerElem" class="window terminal-window resizable" @click="focusPrompt">
+        <div class="window-header" @mousedown="onWindowMove">
+            <div class="logo">
+                <img src="@/assets/img/kali-terminal-vector.png" class="window-logo">
+            </div>
+
+            <div class="header-action-buttons">
+                <div class="window-action window-action-minimize"></div>
+                <div class="window-action window-action-close" @click="selfDestruct"></div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="output" v-html="output"></div>
+
+            <div class="prompt-zone">
+                <div class="prompt-user">{{ user }}</div>
+                <textarea ref="promptField" v-model="prompt" v-on:keydown.s="executeCommand" class="prompt" rows="6"></textarea>
+            </div>
+        </div>
+    </div> -->
 </template>
 
 <style scoped lang="scss">

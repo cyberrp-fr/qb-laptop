@@ -2,7 +2,7 @@ class FileSystem {
 
     private _cwd = '/'
 
-    private _files: any = {
+    private _fs: any = {
         'bin': false,
         'boot': false,
         'dev': false,
@@ -17,58 +17,44 @@ class FileSystem {
 
         'etc': {},
         'home': {},
-        'var': {},
+        'var': {
+            'log': {
+                'syslog': {
+                    type: 'file',
+                    content: '1\n2\n3'
+                }
+            }
+        },
         'tmp': {},
         'opt': {},
     }
 
-    handleCommand(command: string) {
-        let split = command.split(' ')
-        let cmd = split[0].trim()
+    public create() {}
 
-        // ls
-        if (cmd === 'ls') {
-            let opts: any = {
-                cmd,
-                mode: null,
-                path: null,
-            }
+    public list(path: any) {
+        let val = this._fs
+        if (path != null && path != '') {
+            let dims: any = path.split('/')
+            for (let i = 0; i < dims.length; i++) {
+                let dim: string = dims[i];
+                dim = dim.trim()
+                if (dim === '') {
+                    continue
+                }
 
-            let arg = split[1]
-            if (typeof arg === 'string') {
-                arg = arg.trim()
-                if (arg.startsWith('-')) {
-                    opts.mode = arg
+                if (val != null && val[dim] != null) {
+                    val = val[dim]
+                } else {
+                    val = null
                 }
             }
-
-            arg = split[2]
-            if (typeof arg === 'string') {
-                arg = arg.trim()
-                opts.path = arg
-            }
-
-            let res: any = this.ls(opts)
-            console.log("type: ", res, typeof res)
-            if (Array.isArray(res)) {
-                return res.join('<br>')
-            } else {
-                return ''
-            }
-        }
-    } 
-
-    ls(opts: any) {
-        console.log('opts: ', opts)
-        if (opts.path != '' && opts.path != '.' && opts.path != '..') {
-            if (opts.path != null && opts.path in this._files) {
-                return Object.values(this._files[opts.path])
-            } else {
-                return `dir not found: ${opts.path}`
-            }
         }
 
-        return Object.keys(this._files)
+        if (val == null) {
+            return `dir not found: ${path}`
+        }
+
+        return Object.keys(val).join('<br>')
     }
 }
 
