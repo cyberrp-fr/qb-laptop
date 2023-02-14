@@ -6,12 +6,15 @@ const emitter = app?.appContext.config.globalProperties.$emitter
 
 const windowsTabs: any = reactive({})
 const focusWindowId = ref()
+const linuxMenuOpen = ref(false)
 
-function handleWindowEvent(event: any): void {
-    console.log("toolbar/windowEv: ", event)
+function toggleLinuxMenu() {
+    linuxMenuOpen.value = !linuxMenuOpen.value
 }
 
 function windowClick(e: any) {
+    linuxMenuOpen.value = false
+
     let clickedProgram = e.target.getAttribute("data-action")
     if (clickedProgram == null) {
         return
@@ -21,6 +24,7 @@ function windowClick(e: any) {
 }
 
 function setWindowFocus(windowId: string) {
+    linuxMenuOpen.value = false
     focusWindowId.value = windowId
 }
 
@@ -34,13 +38,15 @@ function closeWindowTab(windowId: any) {
 }
 
 function initEvents(): void {
-    emitter.on('toolbar/windowClick', handleWindowEvent)
+    // emitter.on('toolbar/windowClick', handleWindowEvent)
     emitter.on('window/focus', setWindowFocus)
     emitter.on('toolbar/openwindow', newWindowTab)
     emitter.on('toolbar/closewindow', closeWindowTab)
 }
 
 function windowTabClick(windowId: any) {
+    linuxMenuOpen.value = false
+
     emitter.emit('window/focus', windowId)
 }
 
@@ -52,7 +58,7 @@ onMounted(() => {
 
 <template>
     <div id="toolbar">
-        <div class="toolbar-item" @click="windowClick" :data-action="'linuxmenu'">
+        <div class="toolbar-item" @click="toggleLinuxMenu" :data-action="'linuxmenu'">
             <div class="linuxmenu item explorer">
                 <img src="@/assets/img/kali-vector.png">
             </div>
@@ -73,6 +79,20 @@ onMounted(() => {
         <div id="openWindows">
             <div @click="windowTabClick(windowTab['id'])" v-bind:key="windowTab['id']" v-for="windowTab in windowsTabs" class="toolbar-window-tab" :class="{'active': windowTab['id'] == focusWindowId}" >{{windowTab['type']}}</div>
         </div>
+
+        <!-- <div id="time">20:25</div> -->
+    </div>
+
+    <div class="linuxmenu" :class="{'active': linuxMenuOpen}" id="linuxmenu">
+        <div class="linuxmenu-item" @click="windowClick" :data-action="'terminal'">
+            <img src="@/assets/img/kali-terminal-vector.png" class="item-logo">
+            <span class="item-label">Terminal</span>
+        </div>
+
+        <div class="linuxmenu-item" @click="windowClick" :data-action="'explorer'">
+            <img src="@/assets/img/kali-folder-vector.png" class="item-logo">
+            <span class="item-label">Explorer</span>
+        </div>
     </div>
 </template>
 
@@ -85,6 +105,7 @@ onMounted(() => {
     position: absolute;
     top: 0;
     align-items: center;
+    font-family: 'Ubuntu Mono', sans-serif;
 }
 
 .dividor {
@@ -146,6 +167,54 @@ onMounted(() => {
 
         &:hover, &.active {
             background-color: rgba(204, 202, 202, 0.3);
+        }
+    }
+}
+
+#time {
+    color: rgb(209, 209, 209);
+    position: absolute;
+    top: 7px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+#linuxmenu {
+    display: none;
+    background-color: rgba(25, 25, 25, 0.7);
+    min-height: 300px;
+    width: 300px;
+    position: absolute;
+    top: 30px;
+    border-bottom-right-radius: 5px;
+    font-family: 'Ubuntu Mono', sans-serif;
+    transition: ease-in .3s;
+
+    &.active {
+        display: block !important;
+    }
+
+    .linuxmenu-item {
+        display: flex;
+        color: rgb(209, 209, 209);
+        cursor: pointer;
+        padding: 10px 15px;
+
+        &:hover {
+            background-color: rgba(25, 25, 25, 0.4);
+        }
+
+        .item-logo {
+            width: 25px;
+            pointer-events: none;
+        }
+
+        .item-label {
+            line-height: 1.5;
+            margin-left: 10px;
+            pointer-events: none;
+
         }
     }
 }
