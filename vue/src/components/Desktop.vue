@@ -1,37 +1,41 @@
 <script setup lang="ts">
 // VUE
-import { onMounted, onBeforeUnmount, getCurrentInstance } from 'vue';
+import { onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
 
 // Views
-import Toolbar from '@/components/fixed/Toolbar.vue';
-import DesktopWindows from '@/components/fixed/DesktopWindows.vue';
+import Toolbar from '@/components/fixed/Toolbar.vue'
+import DesktopWindows from '@/components/fixed/DesktopWindows.vue'
 
 // Utils
-import { useSettingsStore } from '@/stores/settings';
-import { useStateStore } from '@/stores/state';
-import { handleEvent } from '@/utils/BackendEventHandler';
+import { useSettingsStore } from '@/stores/settings'
+import { useStateStore } from '@/stores/state'
+import { handleEvent } from '@/utils/BackendEventHandler'
 
-const settingsStore = useSettingsStore();
-const stateStore = useStateStore();
+const app = getCurrentInstance()
+const fs = app?.appContext.config.globalProperties.$fs
+const settingsStore = useSettingsStore()
+const stateStore = useStateStore()
 
 onMounted(() => {
-  window.addEventListener("message", handleEvent);
+  window.addEventListener("message", handleEvent)
   document.addEventListener("keydown", function(e) {
     if (e.keyCode === 27) {
-      turnoffLaptop();
+      turnoffLaptop()
     }
   })
-});
+
+  fs.init()
+})
 onBeforeUnmount(() => {
-  window.removeEventListener("message", handleEvent);
-  // window.removeEventListener("keyup", );
-});
+  window.removeEventListener("message", handleEvent)
+  // window.removeEventListener("keyup", )
+})
 
 function turnoffLaptop() {
   if (stateStore.state.open) {
     fetch("https://qb-laptop/TurnOffLaptop", {method: "POST"})
       .then(res => {
-        stateStore.state.open = false;
+        stateStore.state.open = false
       })
   }
 }

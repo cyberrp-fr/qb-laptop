@@ -1,16 +1,23 @@
-import FileSystem from '@/utils/linux/Filesystem'
+import { getCurrentInstance } from 'vue'
+import type LinuxFileSystem from './fs'
 
-class Linux extends FileSystem {
+class Linux {
     public static readonly REGEX = {
-        'ls': /^(\w+)\s*(-\w+)*\s*(\/?\w+(\/\w+)*\/?(\w+(\.\w+)?)?)?$/gi,
-        'cd': /^(\w+)\s*(\/?\w+(\/\w+)*\/?)?$/gi
+        'ls': /^(\w+)\s*(-\w+)*\s*(\/?(\w+(\/\w+)*\/?)|\/|(\w+(\.\w+)?)?)?$/gi,
+        'cd': /^(cd)\s*(\/?(\w+(\/\w+)*\/?)|(\.\.)+(\/)?)$/gi
     }
 
+    private _fs: LinuxFileSystem
     private _history: Array<string>
 
     constructor () {
-        super()
         this._history = []
+        const app = getCurrentInstance()
+        this._fs = app?.appContext.config.globalProperties.$fs
+    }
+
+    setFs(fs: any) {
+        this._fs = fs
     }
 
     execute(output: any, command: string) {
@@ -54,9 +61,48 @@ class Linux extends FileSystem {
                 this.cd(matches[2])
                 return output
             }
+        } else if (cmd === 'whereami') {
+            return output += this._fs.getCurrentDirectory()
         }
 
         return output += `command not found: ${cmd}`
+    }
+
+
+    // =================
+    // == FS Commands ==
+    // =================
+
+
+    public whereami() {
+        return this._fs.getCurrentDirectory()
+    }
+
+    public list(path: string) {
+        path = this._fs.emptyPath(path)
+
+        if (path != null && !this._fs.isDir(path)) {
+            return 'directory does not exist: ' + path
+        }
+
+        let dirs = this._fs.list(path)
+        let result = ''
+        if (dirs.length > 0) {
+            result = dirs.join('<br>')
+        }
+
+        return result
+    }
+
+    public cd(path: string) {
+        if (path == null) {
+            path = '/'
+        }
+        if (!this._fs.isDir(path)) {
+            return 'directory does not exist: ' + path
+        }
+
+        this._fs.cd(path)
     }
 }
 

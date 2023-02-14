@@ -11,6 +11,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "dependencies": {
+    "browserfs": "^1.4.3",
     "mitt": "^3.0.0",
     "pinia": "^2.0.28",
     "vue": "^3.2.45"

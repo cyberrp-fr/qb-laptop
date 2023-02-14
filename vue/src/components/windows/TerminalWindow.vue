@@ -20,7 +20,8 @@ const containerPos = ref({
 })
 
 // terminal contents
-const user = ref('root@kali$')
+const user = ref('root@kali')
+const userDir = ref('/')
 const output = ref("")
 const prompt = ref("")
 const promptField = ref()
@@ -38,6 +39,9 @@ onMounted(() => {
         initBus()
         emitter.emit('window/focus', props.id)
     }
+
+    Linux.setFs(app?.appContext.config.globalProperties.$fs)
+    userDir.value = Linux.whereami()
 })
 
 function focusWindow(id: string) {
@@ -84,7 +88,7 @@ async function executeCommand(e: any) {
         return
     }
 
-    output.value += `<span style="color: rgb(78, 122, 255);">${user.value}</span> ${prompt.value}`
+    output.value += `<span style="color: rgb(78, 122, 255);">${user.value}:${userDir.value}</span> ${prompt.value}`
     if (prompt.value != '') {
         output.value += '<br>'
     }
@@ -97,6 +101,7 @@ async function executeCommand(e: any) {
     }
 
     prompt.value = ''
+    userDir.value = Linux.whereami()
 
     setTimeout(() => {
         let outputContainer: any = document.querySelector('.content')
@@ -167,7 +172,7 @@ function getKey(e) {
             <div class="output" v-html="output"></div>
 
             <div class="prompt-zone">
-                <div class="prompt-user">{{ user }}</div>
+                <div class="prompt-user">{{ user }}:{{ userDir }}</div>
                 <textarea ref="promptField" v-model="prompt" v-on:keydown.enter="executeCommand" v-on:keydown.up="lastCommand" class="prompt" rows="3"></textarea>
             </div>
         </div>
