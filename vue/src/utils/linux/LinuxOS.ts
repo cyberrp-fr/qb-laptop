@@ -3,8 +3,7 @@ import type LinuxFileSystem from './fs'
 
 class Linux {
     public static readonly REGEX = {
-        'ls': /^(\w+)\s*(-\w+)*\s*(\/?(\w+(\/\w+)*\/?)|\/|(\w+(\.\w+)?)?)?$/gi,
-        'cd': /^(cd)\s*(\/?(\w+(\/\w+)*\/?)|(\.\.)+(\/)?)$/gi
+        'ls': /^(\w+)\s*(-\w+)*\s*(\/?(\w+(\/\w+)*\/?)|\/|(\w+(\.\w+)?)?)?$/gi
     }
 
     private _fs: LinuxFileSystem
@@ -55,12 +54,15 @@ class Linux {
                 return output += result
             }
         } else if (cmd === 'cd') {
-            let pattern = new RegExp(Linux.REGEX['cd'])
-            let matches: any = pattern.exec(command.trim())
-            if (matches != null) {
-                this.cd(matches[2])
-                return output
+            let split = command.trim().split(' ')
+            let path = split[1]
+
+            let result = this.cd(path)
+            if (result != null) {
+                output += result
             }
+
+            return output
         } else if (cmd === 'whereami') {
             return output += this._fs.getCurrentDirectory()
         }
@@ -99,10 +101,14 @@ class Linux {
             path = '/'
         }
         if (!this._fs.isDir(path)) {
-            return 'directory does not exist: ' + path
+            return 'directory does not exist: ' + this._fs.joinPath(this._fs.getCurrentDirectory(), path)
         }
 
-        this._fs.cd(path)
+        try {
+            this._fs.cd(path)
+        } catch (e: any) {
+            return e.toString()
+        }
     }
 }
 

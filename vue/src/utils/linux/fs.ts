@@ -1,24 +1,5 @@
 import type FS from 'browserfs/dist/node/core/FS'
 
-function joinPath(...paths: any) {
-    let result = '';
-    for (let i = 0; i < paths.length; i++) {
-      let path = paths[i];
-      if (path.endsWith('/')) {
-        path = path.slice(0, -1);
-      }
-      if (path.startsWith('/')) {
-        path = path.slice(1);
-      }
-      result += path;
-      if (i < paths.length - 1) {
-        result += '/';
-      }
-    }
-    return result;
-  }
-  
-
 export default class LinuxFileSystem {
     private _fs: FS
 
@@ -58,6 +39,26 @@ export default class LinuxFileSystem {
         }
     }
 
+    public joinPath(...parts: any) {
+        const [first, last, slash] = [0, parts.length - 1, "/"];
+
+        const matchLeadingSlash = new RegExp("^" + slash);
+        const matchTrailingSlash = new RegExp(slash + "$");
+    
+        parts = parts.map(function(part: any, index: any) {
+    
+            if (index === first && part === "file://") return part;
+    
+            if (index > first) part = part.replace(matchLeadingSlash, "");
+    
+            if (index < last) part = part.replace(matchTrailingSlash, "");
+    
+            return part;
+        });
+    
+        return parts.join(slash);
+    }
+
     getClient() {
         return this._fs
     }
@@ -68,7 +69,7 @@ export default class LinuxFileSystem {
 
     isDir(path: string) {
         if (!path.startsWith('/')) {
-            path = joinPath(this._cwd, path)
+            path = this.joinPath(this._cwd, path)
         }
 
         return (this._fs.existsSync(path) && this._fs.lstatSync(path).isDirectory() === true)
@@ -96,16 +97,21 @@ export default class LinuxFileSystem {
             }
 
             return
+        } else if (dir === '..' && this._cwd === '/') {
+            return
         }
 
-        if (!dir.startsWith(dir)) {
-            dir = joinPath(this._cwd, dir)
+        if (!dir.startsWith('/')) {
+            dir = this.joinPath(this._cwd, dir)
         }
 
         if (this.isDir(dir)) {
             this._cwd = dir
+            if (!this._cwd.startsWith('/')) {
+                this._cwd = '/' + this._cwd
+            }
         } else {
-            throw new Error('directory does not exist: ' + dir)
+            throw new Error('directory does not exist: ' + this.joinPath(this._cwd, dir))
         }
     }
 
