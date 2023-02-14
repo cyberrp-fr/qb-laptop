@@ -3,7 +3,8 @@ import type LinuxFileSystem from './fs'
 
 class Linux {
     public static readonly REGEX = {
-        'ls': /^(\w+)\s*(-\w+)*\s*(\/?(\w+(\/\w+)*\/?)|\/|(\w+(\.\w+)?)?)?$/gi
+        'ls': /^(\w+)\s*(-\w+)*\s*(\/?(\w+(\/\w+)*\/?)|\/|(\w+(\.\w+)?)?)?$/gi,
+        'mkdir': /^(mkdir)\s+(-p\s+)?([\.\/a-z1-9]+)/gi
     }
 
     private _fs: LinuxFileSystem
@@ -65,6 +66,39 @@ class Linux {
             return output
         } else if (cmd === 'whereami') {
             return output += this._fs.getCurrentDirectory()
+        } else if (cmd === 'mkdir') {
+            let pattern = new RegExp(Linux.REGEX['mkdir'])
+            let matches: any = pattern.exec(command.trim())
+            if (matches != null) {
+                let path = matches[3]
+                let mode = matches[2]
+                let result = this.mkdir(path, mode)
+                if (result != null) {
+                    output += result
+                }
+
+                return output
+            }
+        } else if (cmd === 'rm') {
+            let split = command.trim().split(' ')
+            let path
+
+            if (split.length == 2) {
+                path = split[1]
+            } else {
+                path = split[2]
+            }
+
+            if (path == null || path == '') {
+                return output += 'rm: missing operand'
+            }
+
+            let result = this.rm(path)
+            if (result != null) {
+                output += result
+            }
+
+            return output
         }
 
         return output += `command not found: ${cmd}`
@@ -106,6 +140,33 @@ class Linux {
 
         try {
             this._fs.cd(path)
+        } catch (e: any) {
+            return e.toString()
+        }
+    }
+
+    mkdir(path: string, mode: any) {
+        path = path.trim()
+        if (path == '/' || path == '') {
+            return
+        }
+
+        if (this._fs.isDir(path)) {
+            return "mkdir: cannot create directory ‘"+ path +"’: File exists"
+        }
+
+        this._fs.mkdir(path, mode)
+    }
+
+    rm(path: string) {
+        path = path.trim()
+        if (path == '/' || path == '') {
+            return 
+        }
+
+        try {
+            this._fs.rm(path)
+            return
         } catch (e: any) {
             return e.toString()
         }

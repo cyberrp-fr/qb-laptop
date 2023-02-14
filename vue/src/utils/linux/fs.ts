@@ -115,5 +115,29 @@ export default class LinuxFileSystem {
         }
     }
 
+    mkdir(path: string, mode: any) {
+        if (!path.startsWith('/') && !path.startsWith('./')) {
+            path = '/' + path
+        } else if (path.startsWith('./')) {
+            path = this._cwd + path.substring(1)
+        }
 
+        this._fs.mkdirSync(path)
+    }
+
+    rm(path: string) {
+        if (!path.startsWith('/') && !path.startsWith('./')) {
+            path = this.joinPath(this._cwd, path)
+        } else if (path.startsWith('./')) {
+            path = this._cwd + path.substring(1)
+        }
+
+        if (this.isDir(path)) {
+            this._fs.rmdirSync(path)
+        } else if (this._fs.existsSync(path)) {
+            this._fs.unlinkSync(path)
+        } else {
+            throw new Error('no file or directory found: ' + path)
+        }
+    }
 }
