@@ -63,7 +63,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <component :is="window.component()" :id="window.id" :focus="true" v-for="(window, id) in windows" />
+  <component :is="window.component()" v-bind:key="id" :id="window.id" :focus="true" v-for="(window, id) in windows" />
 </template>
 
 <style lang="scss">
