@@ -125,7 +125,7 @@ export default class LinuxFileSystem {
         if (!path.startsWith('/') && !path.startsWith('./')) {
             path = '/' + path
         } else if (path.startsWith('./')) {
-            path = this._cwd + path.substring(1)
+            path = this.joinPath(this._cwd, path.substring(1))
         }
 
         this._fs.mkdirSync(path)
@@ -135,7 +135,7 @@ export default class LinuxFileSystem {
         if (!path.startsWith('/') && !path.startsWith('./')) {
             path = this.joinPath(this._cwd, path)
         } else if (path.startsWith('./')) {
-            path = this._cwd + path.substring(1)
+            path = this.joinPath(this._cwd, path.substring(1))
         }
 
         if (this.isDir(path)) {
@@ -145,5 +145,42 @@ export default class LinuxFileSystem {
         } else {
             throw new Error('no file or directory found: ' + path)
         }
+    }
+
+    writeFile(path: string, data: string) {
+        if (!path.startsWith('/')) {
+            path = this.joinPath(this._cwd, path)
+        }
+        if (path.startsWith('./')) {
+            path = this.joinPath(this._cwd, path.substring(1))
+        }
+
+        console.log('write data: ', data)
+        this._fs.writeFileSync(path, data)
+    }
+
+    exists(path: string) {
+        if (!path.startsWith('/')) {
+            this.joinPath(this._cwd, path)
+        }
+        if (path.startsWith('./')) {
+            path = this.joinPath(this._cwd, path.substring(1))
+        }
+
+        return this._fs.existsSync(path)
+    }
+
+    read(path: string) {
+        if (!path.startsWith('/')) {
+            path = this.joinPath(this._cwd, path)
+        }
+        if (path.startsWith('./')) {
+            path = this.joinPath(this._cwd, path.substring(1))
+        }
+
+        let res = this._fs.readFileSync(path).toString()
+        console.log('data: res', res)
+
+        return res
     }
 }

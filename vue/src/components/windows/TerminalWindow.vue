@@ -28,6 +28,12 @@ const output = ref("")
 const prompt = ref("")
 const promptField = ref()
 
+// nano contents
+const nanoField = ref()
+const nanoContent = ref('')
+const nanoFilepath = ref('')
+const nanoMessage = ref('')
+
 const stateStore: any = useStateStore()
 
 const app = getCurrentInstance()
@@ -95,6 +101,11 @@ async function executeCommand(e: any) {
         output.value += '<br>'
     }
 
+    if (prompt.value.includes('nano ')) {
+        handleNanoCommand()
+        return
+    }
+
     let res = await Linux.execute(output.value, prompt.value)
     if (res != '') {
         output.value = res + ' <br>'
@@ -108,7 +119,32 @@ async function executeCommand(e: any) {
     setTimeout(() => {
         let outputContainer: any = document.querySelector('.content')
         outputContainer.scrollTop = outputContainer.scrollHeight - outputContainer.clientHeight
-    }, 10)
+    }, 15)
+}
+
+function handleNanoCommand() {
+    let split = prompt.value.split(' ')
+    let path = split[1].trim()
+    nanoFilepath.value = path
+
+    try {
+        if (!Linux.exists(path)) {
+            Linux.writeFile(path, '')
+        }
+
+        if (Linux.exists(path)) {
+            nanoContent.value = Linux.read(path)
+        }
+    } catch (e: any) {
+        output.value += e.toString() + ' <br>'
+        return
+    }
+
+    prompt.value = ''
+    userDir.value = Linux.whereami()
+
+    currentProcess.value = 'nano'
+    setTimeout(updateHeight, 200)
 }
 
 // focus on input when clicked anywhere on the terminal window
@@ -149,7 +185,32 @@ function onWindowMove(e: any) {
     document.onmouseup = closeElemDrag
 }
 
-function getKey(e) {
+// -----------------
+// --- nano file ---
+// -----------------
+
+function saveNanoFile(e: any) {
+    e.preventDefault()
+    Linux.writeFile(nanoFilepath.value, nanoContent.value)
+}
+
+function exitNanoFile() {
+    nanoFilepath.value = ''
+    nanoContent.value = ''
+
+    currentProcess.value = 'bash'
+    focusPrompt()
+}
+
+function updateHeight() {
+    let elem: any = document.querySelector('.prompt.nano')
+    let height = document.querySelector('.content')?.clientHeight
+    if (height) {
+        elem.style.height = height + 'px'
+    }
+}
+
+function getKey(e: any) {
     e.preventDefault()
 
     console.log(e)
@@ -158,7 +219,7 @@ function getKey(e) {
 </script>
 
 <template>
-    <div v-if="currentProcess == 'bash'" ref="containerElem" class="window terminal-window resizable" :class="{'window-focused': windowFocus}" @click="focusPrompt">
+    <div ref="containerElem" class="window terminal-window resizable" :class="{'window-focused': windowFocus}" @click="focusPrompt">
         <div class="window-header" @mousedown="onWindowMove">
             <div class="logo">
                 <img src="@/assets/img/kali-terminal-vector.png" class="window-logo">
@@ -170,7 +231,7 @@ function getKey(e) {
             </div>
         </div>
 
-        <div class="content">
+        <div v-if="currentProcess == 'bash'" class="content">
             <div class="output" v-html="output"></div>
 
             <div class="prompt-zone">
@@ -178,30 +239,14 @@ function getKey(e) {
                 <textarea ref="promptField" v-model="prompt" v-on:keydown.enter="executeCommand" v-on:keydown.up="lastCommand" class="prompt" rows="3"></textarea>
             </div>
         </div>
-    </div>
 
-
-    <!-- <div v-if="currentProcess == 'nano'" ref="containerElem" class="window terminal-window resizable" @click="focusPrompt">
-        <div class="window-header" @mousedown="onWindowMove">
-            <div class="logo">
-                <img src="@/assets/img/kali-terminal-vector.png" class="window-logo">
-            </div>
-
-            <div class="header-action-buttons">
-                <div class="window-action window-action-minimize"></div>
-                <div class="window-action window-action-close" @click="selfDestruct"></div>
-            </div>
-        </div>
-
-        <div class="content">
-            <div class="output" v-html="output"></div>
-
+        <div v-if="currentProcess == 'nano'" class="content">
             <div class="prompt-zone">
-                <div class="prompt-user">{{ user }}</div>
-                <textarea ref="promptField" v-model="prompt" v-on:keydown.s="executeCommand" class="prompt" rows="6"></textarea>
+                <textarea v-on:keydown.ctrl.s="saveNanoFile" v-on:keydown.ctrl.x="exitNanoFile" ref="nanoField" v-model="nanoContent" class="prompt nano" @input="updateHeight" rows="3"></textarea>
             </div>
+            <div v-if="nanoMessage != ''" class="nano-message">{{ nanoMessage }}</div>
         </div>
-    </div> -->
+    </div>
 </template>
 
 <style scoped lang="scss">
@@ -319,6 +364,7 @@ textarea {
             font-weight: 400;
             font-size: 16px;
             overflow-wrap: break-word;
+            white-space: pre;
         }
 
         .prompt-zone {
@@ -350,6 +396,17 @@ textarea {
                 font-size: 16px;
                 resize: none;
                 overflow-y: hidden;
+                
+                &::selection {
+                    background-color: #d7d7d7;
+                    color: #2f333a;
+                }
+
+                &.nano {
+                    position: relative;
+                    height: 100%;
+                    caret-color: #d7d7d7 !important;
+                }
             }
         }
     }

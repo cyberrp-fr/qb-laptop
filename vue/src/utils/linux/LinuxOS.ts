@@ -97,6 +97,15 @@ class Linux {
             }
 
             return output
+        } else if (cmd === 'cat') {
+            let split = command.trim().split(' ')
+            let path = split[1]
+            if (path == null) {
+                return output + 'command incorrect, path argument required.'
+            }
+
+            let result = this.read(path)
+            return output + result
         }
 
         return output += `command not found: ${cmd}`
@@ -168,6 +177,26 @@ class Linux {
         } catch (e: any) {
             return e.toString()
         }
+    }
+
+    cat(path: string) {
+        if (this.exists(path) && !this._fs.isDir(path)) {
+            return this.read(path)
+        }
+
+        return 'file not found: ' + path
+    }
+
+    writeFile(path: string, data: string) {
+        this._fs.writeFile(path, data)
+    }
+
+    exists(path: string) {
+        return this._fs.exists(path)
+    }
+
+    read(path: string) {
+        return this._fs.read(path)
     }
 }
 
