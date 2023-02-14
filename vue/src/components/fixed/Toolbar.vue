@@ -1,30 +1,51 @@
 <script setup lang="ts">
-import { getCurrentInstance,  onMounted } from 'vue';
+import { getCurrentInstance, onMounted, reactive, ref } from 'vue'
 
-const app = getCurrentInstance();
-const emitter = app?.appContext.config.globalProperties.$emitter;
+const app = getCurrentInstance()
+const emitter = app?.appContext.config.globalProperties.$emitter
+
+const windowsTabs: any = reactive({})
+const focusWindowId = ref()
 
 function handleWindowEvent(event: any): void {
-    console.log("toolbar/windowEv: ", event);
-}
-
-function init(): void {
-
+    console.log("toolbar/windowEv: ", event)
 }
 
 function windowClick(e: any) {
-    let clickedProgram = e.target.getAttribute("data-action");
+    let clickedProgram = e.target.getAttribute("data-action")
     if (clickedProgram == null) {
-        return;
+        return
     }
 
-    emitter.emit("desktop/openwindow", clickedProgram);
+    emitter.emit("desktop/openwindow", clickedProgram)
+}
+
+function setWindowFocus(windowId: string) {
+    focusWindowId.value = windowId
+}
+
+function newWindowTab(window: any) {
+    windowsTabs[window.id] = window
+    focusWindowId.value = window.id
+}
+
+function closeWindowTab(windowId: any) {
+    delete windowsTabs[windowId]
+}
+
+function initEvents(): void {
+    emitter.on('toolbar/windowClick', handleWindowEvent)
+    emitter.on('window/focus', setWindowFocus)
+    emitter.on('toolbar/openwindow', newWindowTab)
+    emitter.on('toolbar/closewindow', closeWindowTab)
+}
+
+function windowTabClick(windowId: any) {
+    emitter.emit('window/focus', windowId)
 }
 
 onMounted(() => {
-    emitter.on("toolbar/windowClick", handleWindowEvent)
-
-    init();
+    initEvents()
 });
 
 </script>
@@ -50,12 +71,12 @@ onMounted(() => {
         <div class="dividor"></div>
 
         <div id="openWindows">
-
+            <div @click="windowTabClick(windowTab['id'])" v-bind:key="windowTab['id']" v-for="windowTab in windowsTabs" class="toolbar-window-tab" :class="{'active': windowTab['id'] == focusWindowId}" >{{windowTab['type']}}</div>
         </div>
     </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 #toolbar {
     display: flex;
     width: 100%;
@@ -107,4 +128,26 @@ onMounted(() => {
 .item img {
     width: 100%;
 }
+
+#openWindows {
+    display: flex;
+    max-width: 495px;
+    overflow: hidden;
+
+    .toolbar-window-tab {
+        margin-left: 5px;
+        color: rgb(228, 228, 228);
+        // border: 1px solid rgba(20, 20, 20, 0.5);
+        padding: 2px 5px;
+        border-radius: 4px;
+        background-color: rgba(204, 202, 202, 0.1);
+        font-size: 14px;
+        cursor: pointer;
+
+        &:hover, &.active {
+            background-color: rgba(204, 202, 202, 0.3);
+        }
+    }
+}
+
 </style>

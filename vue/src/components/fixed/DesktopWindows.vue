@@ -39,6 +39,8 @@ function openWindow(program: string) {
 
   windows[window.id] = window
 
+  emitter.emit('toolbar/openwindow', {id: window.id, type: window.type})
+
   let app = getCurrentInstance()
   app?.proxy?.$forceUpdate()
 }
@@ -46,9 +48,10 @@ function openWindow(program: string) {
 function closeWindow(id: string) {
   delete windows[id]
 
+  emitter.emit('toolbar/closewindow', id)
+
   let app = getCurrentInstance()
   app?.proxy?.$forceUpdate()
-
 }
 
 function initBus() {
