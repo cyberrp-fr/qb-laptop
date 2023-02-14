@@ -1,3 +1,4 @@
+import { getCurrentInstance } from 'vue'
 import type FS from 'browserfs/dist/node/core/FS'
 
 export default class LinuxFileSystem {
@@ -5,7 +6,12 @@ export default class LinuxFileSystem {
 
     private _cwd = '/'
 
-    constructor(fs: FS) {
+    constructor() {
+        const app = getCurrentInstance()
+        this._fs = app?.appContext.config.globalProperties.$fs
+    }
+
+    public setFs(fs: FS) {
         this._fs = fs
     }
 

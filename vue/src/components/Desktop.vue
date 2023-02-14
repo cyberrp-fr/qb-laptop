@@ -23,8 +23,6 @@ onMounted(() => {
       turnoffLaptop()
     }
   })
-
-  fs.init()
 })
 onBeforeUnmount(() => {
   window.removeEventListener("message", handleEvent)

@@ -1,5 +1,4 @@
-import { getCurrentInstance } from 'vue'
-import type LinuxFileSystem from './fs'
+import LinuxFileSystem from './fs'
 
 class Linux {
     public static readonly REGEX = {
@@ -12,12 +11,11 @@ class Linux {
 
     constructor () {
         this._history = []
-        const app = getCurrentInstance()
-        this._fs = app?.appContext.config.globalProperties.$fs
+        this._fs = new LinuxFileSystem()
     }
 
     setFs(fs: any) {
-        this._fs = fs
+        this._fs.setFs(fs)
     }
 
     execute(output: any, command: string) {
@@ -173,6 +171,7 @@ class Linux {
     }
 }
 
-const linuxInstance = new Linux()
+// const linuxInstance = new Linux()
+// export default linuxInstance
 
-export default linuxInstance
+export default Linux

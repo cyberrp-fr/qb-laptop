@@ -20,7 +20,8 @@ configure({
 })
 
 const fs = BFSRequire('fs')
-const lfs = new LinuxFileSystem(fs)
+const lfs = new LinuxFileSystem()
+lfs.setFs(fs)
 lfs.init()
 
 const emitter = mitt()
@@ -29,6 +30,6 @@ const app = createApp(App)
 app.use(createPinia())
 
 app.config.globalProperties.$emitter = emitter
-app.config.globalProperties.$fs = lfs
+app.config.globalProperties.$fs = fs
 
 app.mount('#app')

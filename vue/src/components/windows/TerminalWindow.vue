@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, getCurrentInstance, onMounted } from 'vue'
 import { useStateStore } from '@/stores/state';
-import Linux from '@/utils/linux/LinuxOS'
+import LinuxOS from '@/utils/linux/LinuxOS'
+
+const Linux = new LinuxOS()
 
 // props passed from parent
 const props = defineProps(['id', 'focus'])

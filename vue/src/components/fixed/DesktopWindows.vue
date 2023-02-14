@@ -33,7 +33,8 @@ function openWindow(program: string) {
   let window = {
     type: program,
     component: () => getComponentOfType(program),
-    id: 'window-' + uid()
+    id: 'window-' + uid(),
+    render: true
   }
 
   windows[window.id] = window
@@ -62,7 +63,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <component :is="window.component()" :id="window.id" :focus="true" v-for="(window, id, i) in windows" />
+  <component :is="window.component()" :id="window.id" :focus="true" v-for="(window, id) in windows" />
 </template>
 
 <style lang="scss">
