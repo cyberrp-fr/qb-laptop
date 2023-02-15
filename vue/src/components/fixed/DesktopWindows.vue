@@ -3,6 +3,7 @@ import { getCurrentInstance, onMounted, ref, reactive } from 'vue'
 
 // Window Components
 import TerminalWindow from '@/components/windows/TerminalWindow.vue'
+import ExplorerWindow from '../windows/ExplorerWindow.vue'
 
 // Utils
 import { useSettingsStore } from '@/stores/settings'
@@ -24,6 +25,8 @@ const uid = function(){
 function getComponentOfType(type: string) {
   if (type == 'terminal') {
     return TerminalWindow
+  } else if (type == 'explorer') {
+    return ExplorerWindow
   }
 
   return null

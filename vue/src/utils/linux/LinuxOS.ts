@@ -198,6 +198,34 @@ class Linux {
     read(path: string) {
         return this._fs.read(path)
     }
+
+    explorer () {
+        let result = []
+        let cwd = this._fs.getCurrentDirectory()
+        let cwdList = this._fs.list(cwd)
+
+        for (let i = 0; i < cwdList.length; i++) {
+            const file = cwdList[i];
+            let item = {
+                filename: file,
+                path: cwd,
+                fullPath: this._fs.joinPath(cwd, file),
+                type: 'dir'
+            }
+
+            if (!this.exists(item.fullPath)) {
+                continue
+            }
+
+            if (!this._fs.isDir(item.fullPath)) {
+                item.type = 'file'
+            }
+
+            result.push(item)
+        }
+
+        return result
+    }
 }
 
 // const linuxInstance = new Linux()
