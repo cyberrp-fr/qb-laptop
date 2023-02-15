@@ -27,7 +27,7 @@ function openProgram() {
     font-family: 'Ubuntu Mono', sans-serif;
     color: rgb(241, 241, 241);
     padding: 10px 10px;
-    max-width: 50px;
+    max-width: 60px;
     cursor: pointer;
     border-radius: 5px;
     user-select: none;
@@ -46,6 +46,8 @@ function openProgram() {
     .program-name {
         user-select: none;
         font-size: 15px;
+        text-align: center;
+        width: 100%;
     }
 
     &:hover {
