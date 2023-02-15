@@ -11,6 +11,11 @@ export const useSettingsStore = defineStore('settings', () => {
             'src/assets/img/wallpapers/kali-green.jpg',
             'src/assets/img/wallpapers/kosmos.jpg',
             'src/assets/img/wallpapers/0xibra-mysterious-individual.png'
+        ],
+
+        programs: [
+            { id: 'terminal', name: 'Terminal', program: 'terminal', installed: true },
+            // { id: 'firefox', name: 'Firefox', program: 'firefox', installed: true }
         ]
     });
 
