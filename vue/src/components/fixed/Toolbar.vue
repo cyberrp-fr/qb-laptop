@@ -93,6 +93,11 @@ onMounted(() => {
             <img src="@/assets/img/kali-folder-vector.png" class="item-logo">
             <span class="item-label">Explorer</span>
         </div>
+
+        <div class="linuxmenu-item" @click="windowClick" :data-action="'settings'">
+            <img src="@/assets/img/gear.png" class="item-logo">
+            <span class="item-label">Paramètres</span>
+        </div>
     </div>
 </template>
 

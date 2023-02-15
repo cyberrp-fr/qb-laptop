@@ -3,3 +3,42 @@
 body {
     background-color: black !important;
 }
+
+.h-dividor {
+    border-bottom: 1px solid #48465f;
+}
+
+.w-100 {
+    width: 100% !important;
+}
+
+.w-70 {
+    width: 70% !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.m-auto {
+    margin: auto !important;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+    background: #1b1e22;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #2f333a;
+    border-radius: 10px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #474d58;
+}
