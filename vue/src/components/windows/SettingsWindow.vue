@@ -8,6 +8,7 @@ const windowFocus = ref(props.focus)
 const settingsStore = useSettingsStore()
 
 const currentSidebarTab = ref('background')
+const wallpaperUrl = ref('')
 
 // window position coords
 const containerElem = ref()
@@ -44,6 +45,14 @@ onMounted(() => {
 // change wallpaper
 function changeWallpaper(url: string) {
     settingsStore.settings.wallpaperUrl = url
+}
+
+function downloadWallpaper() {
+    try {
+        new URL(wallpaperUrl.value)
+
+        settingsStore.settings.wallpaperUrl = wallpaperUrl.value
+    } catch (e: any) {}
 }
 
 // -----------------
@@ -117,6 +126,11 @@ function selfDestruct() {
                             <div v-for="img in settingsStore.settings.wallpaperSelection" @click="changeWallpaper(img)" class="img-item">
                                 <img :src="img" draggable="false">
                             </div>
+                        </div>
+
+                        <div class="custom-background">
+                            <input v-model="wallpaperUrl" type="text" placeholder="URL...">
+                            <button @click="downloadWallpaper">Télécharger</button>
                         </div>
 
                     </div>
@@ -223,6 +237,7 @@ function selfDestruct() {
                 left: 0;
                 height: 100%;
                 font-size: 16px;
+                padding-top: 10px;
 
                 .sidebar-item {
                     padding: 10px 20px;
@@ -264,20 +279,59 @@ function selfDestruct() {
                         margin-top: 20px;
 
                         img {
-                            width: 50%;
+                            width: 40%;
                         }
                     }
 
                     .background-images {
                         overflow: hidden;
                         display: block;
+                        text-align: center;
 
                         .img-item {
                             display: inline-block;
                             cursor: pointer;
 
                             img {
-                                width: 175px;
+                                width: 160px;
+                            }
+                        }
+                    }
+
+                    .custom-background {
+                        margin-top: 30px;
+                        text-align: center;
+                        font-family: 'Ubuntu Mono', sans-serif;
+                        margin-bottom: 30px;
+
+                        input {
+                            border: none;
+                            background: #141820;
+                            height: 25px;
+                            border-top-left-radius: 4px;
+                            border-bottom-left-radius: 4px;
+                            width: 50%;
+                            color: #d9d9d9;
+
+                            &::placeholder {
+                                padding-left: 5px;
+                                color: #56537a;
+                            }
+                        }
+
+                        button {
+                            background-color: rgb(20, 24, 32);
+                            border: none;
+                            color: #d9d9d9;
+                            height: 27px;
+                            border-top-right-radius: 4px;
+                            border-bottom-right-radius: 4px;
+                            border-left: 1px solid #0d0f14;
+
+                            cursor: pointer;
+
+                            &:hover {
+                                background-color: rgba(20, 24, 32, 0.3);
                             }
                         }
                     }
