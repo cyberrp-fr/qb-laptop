@@ -111,6 +111,7 @@ onMounted(() => {
     top: 0;
     align-items: center;
     font-family: 'Ubuntu Mono', sans-serif;
+    z-index: 3;
 }
 
 .dividor {

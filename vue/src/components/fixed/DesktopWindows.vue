@@ -5,6 +5,7 @@ import { getCurrentInstance, onMounted, ref, reactive } from 'vue'
 import TerminalWindow from '@/components/windows/TerminalWindow.vue'
 import ExplorerWindow from '../windows/ExplorerWindow.vue'
 import SettingsWindow from '../windows/SettingsWindow.vue'
+import FirefoxWindow from '../windows/FirefoxWindow.vue'
 
 // Utils
 import { useSettingsStore } from '@/stores/settings'
@@ -30,6 +31,8 @@ function getComponentOfType(type: string) {
     return ExplorerWindow
   } else if (type == 'settings') {
     return SettingsWindow
+  } else if (type == 'firefox') {
+    return FirefoxWindow
   }
 
   return null
