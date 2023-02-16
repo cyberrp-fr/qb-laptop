@@ -66,3 +66,11 @@ RegisterNUICallback("TurnOffLaptop", function (_, cb)
 
     cb("ok")
 end)
+
+---------------
+-- LISTENERS --
+---------------
+
+-- AddEventHandler("onResourceStart", function(resource)
+--     if resource ~= GetCurrentResourceName() then return end
+-- end)

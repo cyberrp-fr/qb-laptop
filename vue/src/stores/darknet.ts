@@ -11,7 +11,12 @@ export const useDarknetStore = defineStore('darknet', () => {
         console.log('darknet post response: ', response)
     }
 
+    // async function CreatePost(post: any) {
+
+    // }
+
     return {
-        darknet
+        darknet,
+        GetPosts
     }
 });
