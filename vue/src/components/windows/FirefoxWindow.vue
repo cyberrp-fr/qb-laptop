@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, getCurrentInstance } from 'vue';
-
+import DarknetWebsite from '../websites/DarknetWebsite.vue';
 
 const props = defineProps(['id', 'focus'])
 const windowFocus = ref(props.focus)
@@ -84,7 +84,7 @@ function selfDestruct() {
                 </div>
             </div>
             <div class="web-content">
-                dkhfgsjdkhgsjkdhskjdhfkjsd
+                <DarknetWebsite />
             </div>
         </div>
     </div>
@@ -235,6 +235,10 @@ function selfDestruct() {
                     }
                 }
             }
+        }
+
+        .web-content {
+            margin-top: 10px;
         }
 
         /* width */

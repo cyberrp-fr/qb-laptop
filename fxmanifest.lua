@@ -14,7 +14,9 @@ shared_scripts {
 }
 
 server_scripts {
-    'server/main.lua'
+    '@oxmysql/lib/MySQL.lua',
+    'server/main.lua',
+    'server/darknet.lua'
 }
 
 client_scripts {
