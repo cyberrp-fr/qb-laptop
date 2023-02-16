@@ -4,13 +4,15 @@ import { defineStore } from 'pinia';
 export const useSettingsStore = defineStore('settings', () => {
     const settings = ref({
         // wallpaperUrl: 'https://wallpapercave.com/wp/wp6801277.jpg',
-        wallpaperUrl: 'src/assets/img/kali-bright.jpg',
+        wallpaperUrl: '/static/img/kali-bright.jpg',
         wallpaperSelection: [
-            'src/assets/img/kali-bright.jpg',
-            'src/assets/img/wallpapers/kali-dark.jpg',
-            'src/assets/img/wallpapers/kali-green.jpg',
-            'src/assets/img/wallpapers/kosmos.jpg',
-            'src/assets/img/wallpapers/0xibra-mysterious-individual.png'
+            '/static/img/kali-bright.jpg',
+            '/static/img/wallpapers/kali-dark.jpg',
+            '/static/img/wallpapers/kali-green.jpg',
+            '/static/img/wallpapers/kosmos.jpg',
+            '/static/img/wallpapers/city2.jpg',
+            '/static/img/wallpapers/nightcity.jpg',
+            '/static/img/wallpapers/0xibra-mysterious-individual.png'
         ],
 
         programs: [

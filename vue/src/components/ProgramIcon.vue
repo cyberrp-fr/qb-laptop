@@ -2,7 +2,7 @@
 import { getCurrentInstance, onMounted, ref } from 'vue';
 
 const props = defineProps(['id', 'program', 'name', 'focus'])
-const imgPath = '/src/assets/img/programs/' + props.program + '.png'
+const imgPath = 'static/img/programs/' + props.program + '.png'
 
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter;

@@ -24,7 +24,7 @@ onMounted(() => {
         <div class="container">
             <div class="brand-container">
                 <div class="brand-logo">
-                    <img src="@/assets/img/shadownet.png">
+                    <img src="static/img/shadownet.png">
                 </div>
                 <div class="brand">Shadow<span class="highlight">NET</span></div>
             </div>

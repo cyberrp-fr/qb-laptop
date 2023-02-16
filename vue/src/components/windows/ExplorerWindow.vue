@@ -133,7 +133,7 @@ function getKey(e: any) {
     <div ref="containerElem" @click="windowClicked" class="window explorer-window resizable" :class="{'window-focused': windowFocus}">
         <div class="window-header" @mousedown="onWindowMove">
             <div class="logo">
-                <img src="@/assets/img/kali-folder-vector.png" class="window-logo">
+                <img src="static/img/kali-folder-vector.png" class="window-logo">
                 <div class="title">Explorer</div>
             </div>
 
@@ -159,8 +159,8 @@ function getKey(e: any) {
                 </div> -->
                 <div class="directory-content">
                     <div v-for="item in currentDirectoryContent" class="item" @click="onExplorerItemClick" :data-type="item.type" :data-dir-path="item.fullPath">
-                        <img v-if="item.type == 'dir'" :data-type="item.type" :data-dir-path="item.fullPath" src="@/assets/img/kali-folder-vector.png">
-                        <img v-if="item.type == 'file'" :data-type="item.type" :data-dir-path="item.fullPath" src="@/assets/img/file-vector.png">
+                        <img v-if="item.type == 'dir'" :data-type="item.type" :data-dir-path="item.fullPath" src="static/img/kali-folder-vector.png">
+                        <img v-if="item.type == 'file'" :data-type="item.type" :data-dir-path="item.fullPath" src="static/img/file-vector.png">
                         <div :data-type="item.type" :data-dir-path="item.fullPath" class="label">{{ item.filename }}</div>
                     </div>
                 </div>

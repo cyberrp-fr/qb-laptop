@@ -15,6 +15,7 @@ export default defineConfig({
     outDir: '../html',
     emptyOutDir: true,
     rollupOptions: {
+      external: new RegExp('static/.*'),
       output: {
         entryFileNames: `assets/[name].js`,
         chunkFileNames: `assets/[name].js`,
