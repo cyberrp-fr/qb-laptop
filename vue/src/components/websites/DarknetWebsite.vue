@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, getCurrentInstance } from 'vue'
-import { useWebsitesStore } from '@/stores/websites';
+import { ref, getCurrentInstance, onMounted } from 'vue'
+import { useDarknetStore } from '@/stores/darknet'
 
 const categories = ref({
     'hacking': 'Hacking',
@@ -8,6 +8,13 @@ const categories = ref({
     'guns': 'Armes'
 })
 const selectedCategory = ref('')
+
+// stores
+const darknetStore = useDarknetStore()
+
+onMounted(() => {
+    darknetStore.GetPosts()
+})
 
 </script>
 
