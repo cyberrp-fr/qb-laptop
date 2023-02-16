@@ -6,9 +6,9 @@ LaptopData.Darknet = {
 -- FUNCTIONS --
 ---------------
 -- deletes posts older than 24h
-local function CleanDarknet() {
+local function CleanDarknet()
     MySQL.query("DELETE FROM `laptop_darknet_posts` WHERE `date` < NOW() - INTERVAL 24 HOUR", {})
-}
+end
 
 -- loads darknet posts
 local function LoadDarknet()
