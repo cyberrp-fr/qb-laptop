@@ -66,8 +66,8 @@ RegisterServerEvent("qb-laptop:server:darknet:CreatePost", function(source, data
     local i = #LaptopData.Darknet.Posts + 1
     LaptopData.Darknet.Posts[i] = post
 
-    local insertData = { post.citizenId, post.title, post.description, post.category }
-    MySQL.insert("INSERT INTO `laptop_darknet_posts` (`citizenid`, `title`, `description`, `category`) VALUES (?, ?, ?, ?)", insertData)
+    local insertData = { post.citizenId, post.userHandle, post.title, post.description, post.category }
+    MySQL.insert("INSERT INTO `laptop_darknet_posts` (`citizenid`, `user_handle`, `title`, `description`, `category`) VALUES (?, ?, ?, ?)", insertData)
 end)
 
 ---------------

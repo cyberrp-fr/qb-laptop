@@ -7,7 +7,11 @@ export const useDarknetStore = defineStore('darknet', () => {
     });
 
     async function GetPosts(filters = {}) {
-        const response: any = await fetch('https://qb-laptop/GetDarknetPosts', filters)
+        const opts = {
+            method: 'POST',
+            body: JSON.stringify(filters)
+        }
+        const response: any = await fetch('https://qb-laptop/GetDarknetPosts', opts)
         console.log('darknet post response: ', response)
     }
 

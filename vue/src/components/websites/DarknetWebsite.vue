@@ -2,15 +2,37 @@
 import { ref, getCurrentInstance, onMounted } from 'vue'
 import { useDarknetStore } from '@/stores/darknet'
 
+// stores
+const darknetStore = useDarknetStore()
+
+// navigation page
+const navigation = ref("homepage")
+
 const categories = ref({
     'hacking': 'Hacking',
     'drugs': 'Drogues',
     'guns': 'Armes'
 })
 const selectedCategory = ref('')
+const search = ref('')
 
-// stores
-const darknetStore = useDarknetStore()
+async function fetchPosts() {
+    let categoryTemp = null
+    let searchTemp = null
+
+    if (selectedCategory.value != '') {
+        categoryTemp = selectedCategory.value
+    }
+    if (search.value != '') {
+        searchTemp = search.value
+    }
+
+    await darknetStore.GetPosts({ category: categoryTemp, search: searchTemp })
+}
+
+function gotopage(page: string) {
+    navigation.value = page
+}
 
 onMounted(() => {
     darknetStore.GetPosts()
@@ -22,7 +44,7 @@ onMounted(() => {
 <div class="website">
     <div class="navbar">
         <div class="container">
-            <div class="brand-container">
+            <div class="brand-container" @click="gotopage('homepage')">
                 <div class="brand-logo">
                     <img src="static/img/shadownet.png">
                 </div>
@@ -31,17 +53,68 @@ onMounted(() => {
         </div>
     </div>
 
-    <div class="maincontent">
+    <div v-if="navigation == 'homepage'" class="maincontent">
         <div class="filters">
-            <div class="category-filter-wrapper">
-                <select v-model="selectedCategory" class="category-filter">
-                    <option value="">Catégorie de posts</option>
-                    <option v-for="(category, key, index) in categories" :value="key">{{ category }}</option>
-                </select>
+            <div class="flex">
+                <div class="category-filter-wrapper">
+                    <select @change="fetchPosts" v-model="selectedCategory" class="category-filter">
+                        <option value="">Catégorie de posts</option>
+                        <option v-for="(category, key, index) in categories" :value="key">{{ category }}</option>
+                    </select>
+                </div>
+                <div class="search-filter-wrapper">
+                    <input v-on:keydown.enter="fetchPosts" v-model="search" type="text" class="search-filter" placeholder="Recherche...">
+                </div>
+                <div class="submit-btn-wrapper">
+                    <button @click="fetchPosts" class="submit">Rechercher</button>
+                </div>
+            </div>
+
+            <div class="create-post-wrapper">
+                <button @click="gotopage('create')" class="create-post">Créer Post</button>
             </div>
         </div>
 
-        <div class="posts"></div>
+        <div class="posts">
+            <div class="post-wrapper">
+                <div class="post">
+                    <div class="post-title">Lorem Ipsum dolor</div>
+                    <div class="post-metadata">
+                        <span class="user-handle">0xIbra</span>
+                        <span class="category">Hacking</span>
+                    </div>
+                    <div class="post-description-part">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit earum consequatur, illo ipsum voluptate quidem, vero, quaerat temporibus ab magnam ipsam? Error maiores eaque ut aliquam et deleniti consequatur consequuntur?
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit earum consequatur, illo ipsum voluptate quidem, vero, quaerat temporibus ab magnam ipsam? Error maiores eaque ut aliquam et deleniti consequatur consequuntur?
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit earum consequatur, illo ipsum voluptate quidem, vero, quaerat temporibus ab magnam ipsam? Error maiores eaque ut aliquam et deleniti consequatur consequuntur?
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="navigation == 'create'" class="createform">
+        <div class="form-content">
+            <div class="breadcrumb-wrapper"></div>
+
+            <div class="form-wrapper">
+                <div class="title-wrapper">
+                    <input type="text" placeholder="Titre...">
+                </div>
+
+                <div class="metadata-wrapper">
+                    <div class="category">
+                        <select @change="fetchPosts" v-model="selectedCategory" class="category-filter">
+                            <option value="">Catégorie de posts</option>
+                            <option v-for="(category, key, index) in categories" :value="key">{{ category }}</option>
+                        </select>
+                    </div>
+                    <div class="user-handle">
+                        <input type="text" placeholder="Alias">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </template>
@@ -51,6 +124,10 @@ onMounted(() => {
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+.flex {
+    display: flex;
 }
 
 .container {
@@ -103,15 +180,19 @@ onMounted(() => {
         }
     }
 
+    // Homepage
     .maincontent {
         position: relative;
         top: 100px;
         width: 87%;
         margin: auto;
-        font-family: 'Ubuntu Mono', sans-serif;
+        // font-family: 'Ubuntu Mono', sans-serif;
+        font-family: Arial, Helvetica, sans-serif;
 
 
         .filters  {
+            display: flex;
+            justify-content: space-between;
 
             .category-filter {
                 background: transparent;
@@ -127,7 +208,115 @@ onMounted(() => {
                     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
                 }
             }
+
+            .search-filter {
+                background: transparent;
+                color: #d9d9d9;
+                border: 1px solid #182347;
+                border-radius: 4px;
+                padding: 6px 10px;
+                font-size: 15px;
+                margin-left: 10px;
+                outline: 0;
+            }
+
+            .submit-btn-wrapper {
+                margin-left: 0px;
+
+                button {
+                    background: #182347;
+                    color: #d9d9d9;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 7px 10px;
+                    font-size: 15px;
+                    margin-left: 10px;
+                    outline: 0;
+                    cursor: pointer;
+                    font-weight: bold;
+
+                    &:hover {
+                        background: #273972;
+                    }
+                }
+            }
+
+            .create-post-wrapper {
+
+                button {
+                    background: #182347;
+                    color: #d9d9d9;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 7px 10px;
+                    font-size: 15px;
+                    margin-left: 10px;
+                    outline: 0;
+                    cursor: pointer;
+                    font-weight: bolder;
+
+                    &:hover {
+                        background: #273972;
+                    }
+                }
+            }
         }
+
+        .posts {
+            margin-top: 30px;
+
+            .post-wrapper {
+
+                .post {
+                    color: #d9d9d9;
+                    // border: 1px solid #182347;
+                    background-color: rgb(18, 22, 49);
+                    padding: 15px 25px;
+                    border-radius: 7px;
+                    cursor: pointer;
+                    -webkit-box-shadow: -2px 2px 13px -4px #000000; 
+                    box-shadow: -2px 2px 13px -4px #000000;
+                    font-family: Arial, Helvetica, sans-serif;
+
+                    .post-title {
+                        font-size: 20px;
+                        margin-bottom: 5px;
+                        font-weight: bold;
+                    }
+
+                    .post-metadata {
+                        margin-top: 10px;
+                        margin-bottom: 10px;
+
+                        span {
+                            margin-right: 10px;
+                            background-color: #182347;
+                            padding: 2px 5px;
+                            border-radius: 3px;
+                            font-size: 13px;
+                        }
+                    }
+
+                    .post-description-part {
+                        margin-top: 20px;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        color: #868bb4;
+                        font-size: 13px;
+                    }
+                }
+            }
+        }
+    }
+
+    // Create page
+    .createform {
+        position: relative;
+        top: 100px;
+        width: 87%;
+        margin: auto;
+        font-family: Arial, Helvetica, sans-serif;
     }
 }
 </style>
