@@ -8,6 +8,7 @@ const darknetStore = useDarknetStore()
 // navigation page
 const navigation = ref("homepage")
 
+// homepage variables
 const categories = ref({
     'hacking': 'Hacking',
     'drugs': 'Drogues',
@@ -15,6 +16,22 @@ const categories = ref({
 })
 const selectedCategory = ref('')
 const search = ref('')
+
+
+// create page variables
+const formTitle = ref('')
+const formCategory = ref('')
+const formUserHandle = ref('')
+const formDescription = ref('')
+
+
+// ===============
+// == Functions ==
+// ===============
+
+async function createPost() {
+
+}
 
 async function fetchPosts() {
     let categoryTemp = null
@@ -99,19 +116,27 @@ onMounted(() => {
 
             <div class="form-wrapper">
                 <div class="title-wrapper">
-                    <input type="text" placeholder="Titre...">
+                    <input v-model="formTitle" type="text" placeholder="Titre...">
                 </div>
 
                 <div class="metadata-wrapper">
                     <div class="category">
-                        <select @change="fetchPosts" v-model="selectedCategory" class="category-filter">
-                            <option value="">Catégorie de posts</option>
+                        <select v-model="formCategory" class="category-filter">
+                            <option value="">Catégorie</option>
                             <option v-for="(category, key, index) in categories" :value="key">{{ category }}</option>
                         </select>
                     </div>
                     <div class="user-handle">
-                        <input type="text" placeholder="Alias">
+                        <input v-model="formUserHandle" type="text" placeholder="Alias">
                     </div>
+                </div>
+
+                <div class="description-wrapper">
+                    <textarea v-model="formDescription" rows="10" class="description" placeholder="Contenu de votre post..."></textarea>
+                </div>
+
+                <div class="submit-form-wrapper">
+                    <button @click="createPost">Valider</button>
                 </div>
             </div>
         </div>
@@ -131,7 +156,7 @@ onMounted(() => {
 }
 
 .container {
-    width: 90%;
+    width: 83%;
     margin: auto;
 }
 
@@ -154,6 +179,7 @@ onMounted(() => {
         .brand-container {
             display: flex;
             padding: 10px 20px;
+            cursor: pointer;
 
             .brand-logo {
                 margin-right: 20px;
@@ -184,7 +210,7 @@ onMounted(() => {
     .maincontent {
         position: relative;
         top: 100px;
-        width: 87%;
+        width: 80%;
         margin: auto;
         // font-family: 'Ubuntu Mono', sans-serif;
         font-family: Arial, Helvetica, sans-serif;
@@ -314,9 +340,94 @@ onMounted(() => {
     .createform {
         position: relative;
         top: 100px;
-        width: 87%;
+        width: 80%;
         margin: auto;
         font-family: Arial, Helvetica, sans-serif;
+
+        .title-wrapper {
+            width: 100%;
+
+            input {
+                background-color: transparent;
+                border: none;
+                outline: 0;
+                background-color: #161b3b;
+                padding: 8px 15px;
+                color: #d9d9d9;
+                width: 100%;
+                font-size: 16px;
+                font-weight: bold;
+                border-radius: 5px;
+            }
+        }
+
+        .metadata-wrapper {
+            display: flex;
+            margin-top: 10px;
+
+            .category {
+                margin-right: 10px;
+
+                select {
+                    background-color: #161b3b;
+                    border: none;
+                    outline: 0;
+                    color: #d9d9d9;
+                    font-size: 16px;
+                    padding: 8px 15px;
+                    border-radius: 4px;
+                }
+            }
+
+            .user-handle {
+
+                input {
+                    background-color: #161b3b;
+                    border: none;
+                    outline: 0;
+                    padding: 10px 15px;
+                    border-radius: 4px;
+                    color: #d9d9d9;
+                }
+            }
+        }
+
+        .description-wrapper {
+            width: 100%;
+            margin-top: 20px;
+
+            textarea {
+                width: 100%;
+                white-space: pre;
+                background-color: #161b3b;
+                border: none;
+                outline: 0;
+                padding: 10px 20px;
+                color: #d9d9d9;
+                font-size: 14px;
+                border-radius: 3px;
+            }
+        }
+
+        .submit-form-wrapper {
+            margin-top: 20px;
+
+            button {
+                background-color: #161b3b;
+                border: none;
+                outline: 0;
+                color: #d9d9d9;
+                padding: 10px 35px;
+                border-radius: 5px;
+                font-size: 14px;
+                font-weight: bold;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #202755;
+                }
+            }
+        }
     }
 }
 </style>
