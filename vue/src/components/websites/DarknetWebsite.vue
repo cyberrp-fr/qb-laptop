@@ -29,8 +29,40 @@ const formDescription = ref('')
 // == Functions ==
 // ===============
 
-async function createPost() {
+function validateForm() {
+    let violations: Array<any> = []
+	formTitle.value = formTitle.value.trim()
+	if (formTitle.value.length < 5) {
+		violations.push({field: 'title', error: 'Le titre doit avoir 5 caracteres minimum.'})
+	}
 
+	formUserHandle.value = formUserHandle.value.trim()
+	if (formUserHandle.value.length < 3) {
+		violations.push({field: 'userHandle', error: 'l\'alias doit avoir 3 caracteres minimum.'})
+	}
+
+	formDescription.value = formDescription.value.trim()
+	if (formDescription.value.length < 10) {
+		violations.push({field: 'description', error: 'la description doit faire au moins 10 caracteres.'})
+	}
+
+	return violations
+}
+
+async function createPostForm() {
+	let violations: Array<any> = validateForm()
+	if (violations.length > 0) {
+		//
+		return
+	}
+
+	const post = {
+		title: formTitle.value,
+		category: formCategory.value,
+		userHandle: formUserHandle.value,
+		description: formDescription.value
+	}
+	await darknetStore.CreatePost(post)
 }
 
 async function fetchPosts() {
@@ -136,7 +168,7 @@ onMounted(() => {
                 </div>
 
                 <div class="submit-form-wrapper">
-                    <button @click="createPost">Valider</button>
+                    <button @click="createPostForm">Valider</button>
                 </div>
             </div>
         </div>

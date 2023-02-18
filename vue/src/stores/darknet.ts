@@ -15,12 +15,19 @@ export const useDarknetStore = defineStore('darknet', () => {
         console.log('darknet post response: ', response)
     }
 
-    // async function CreatePost(post: any) {
+    async function CreatePost(post: any) {
+        const opts = {
+            method: 'POST',
+            body: JSON.stringify(post)
+        }
 
-    // }
+        const response: any = await fetch('https://qb-laptop/CreateDarknetPost', opts)
+        console.log('create post response: ', response)
+    }
 
     return {
         darknet,
-        GetPosts
+        GetPosts,
+        CreatePost
     }
 });
