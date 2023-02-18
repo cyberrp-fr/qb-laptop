@@ -26,8 +26,6 @@ client_scripts {
 files {
     'html/index.html',
     'html/assets/index.js',
-    'html/assets/index.css',
-    'html/assets/img/*.jpg',
-    'html/assets/img/*.png',
+    'html/assets/index.css'
 }
 
