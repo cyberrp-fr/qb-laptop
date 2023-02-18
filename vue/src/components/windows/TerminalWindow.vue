@@ -222,7 +222,7 @@ function getKey(e: any) {
     <div ref="containerElem" class="window terminal-window resizable" :class="{'window-focused': windowFocus}" @click="focusPrompt">
         <div class="window-header" @mousedown="onWindowMove">
             <div class="logo">
-                <img src="static/img/kali-terminal-vector.png" class="window-logo">
+                <img src="https://i.imgur.com/3hn6fsJ.png" class="window-logo">
             </div>
 
             <div class="header-action-buttons">

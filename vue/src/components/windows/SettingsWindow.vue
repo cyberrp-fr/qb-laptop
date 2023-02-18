@@ -92,7 +92,7 @@ function selfDestruct() {
     <div ref="containerElem" @click="windowClicked" class="window explorer-window resizable" :class="{'window-focused': windowFocus}">
         <div class="window-header" @mousedown="onWindowMove">
             <div class="logo">
-                <img src="static/img/gear.png" class="window-logo">
+                <img src="https://i.imgur.com/66vqfGw.png" class="window-logo">
                 <div class="title">Paramètres</div>
             </div>
 
@@ -106,7 +106,7 @@ function selfDestruct() {
             <div class="content-container">
                 <div class="sidebar">
                     <div class="sidebar-item">
-                        <img src="static/img/monitor.png" class="logo">
+                        <img src="https://i.imgur.com/zBP5xIL.png" class="logo">
                         <div class="label">Fond d'écran</div>
                     </div>
                 </div>

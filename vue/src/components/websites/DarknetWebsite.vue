@@ -95,7 +95,7 @@ onMounted(() => {
         <div class="container">
             <div class="brand-container" @click="gotopage('homepage')">
                 <div class="brand-logo">
-                    <img src="static/img/shadownet.png">
+                    <img src="https://i.imgur.com/ycfxccx.png">
                 </div>
                 <div class="brand">Shadow<span class="highlight">NET</span></div>
             </div>

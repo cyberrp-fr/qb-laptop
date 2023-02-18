@@ -60,18 +60,18 @@ onMounted(() => {
     <div id="toolbar">
         <div class="toolbar-item" @click="toggleLinuxMenu" :data-action="'linuxmenu'">
             <div class="linuxmenu item explorer">
-                <img src="/static/img/kali-vector.png">
+                <img src="https://i.imgur.com/hHTNHTV.png">
             </div>
         </div>
         <div class="dividor"></div>
         <div class="toolbar-item" @click="windowClick" :data-action="'explorer'">
             <div class="item">
-                <img src="/static/img/kali-folder-vector.png" :data-action="'explorer'">
+                <img src="https://i.imgur.com/T8dFIIZ.png" :data-action="'explorer'">
             </div>
         </div>
         <div class="toolbar-item" @click="windowClick" :data-action="'terminal'">
             <div class="item">
-                <img src="/static/img/kali-terminal-vector.png" :data-action="'terminal'" />
+                <img src="https://i.imgur.com/3hn6fsJ.png" :data-action="'terminal'" />
             </div>
         </div>
         <div class="dividor"></div>
@@ -85,17 +85,17 @@ onMounted(() => {
 
     <div class="linuxmenu" :class="{'active': linuxMenuOpen}" id="linuxmenu">
         <div class="linuxmenu-item" @click="windowClick" :data-action="'terminal'">
-            <img src="/static/img/kali-terminal-vector.png" class="item-logo">
+            <img src="https://i.imgur.com/3hn6fsJ.png" class="item-logo">
             <span class="item-label">Terminal</span>
         </div>
 
         <div class="linuxmenu-item" @click="windowClick" :data-action="'explorer'">
-            <img src="/static/img/kali-folder-vector.png" class="item-logo">
+            <img src="https://i.imgur.com/T8dFIIZ.png" class="item-logo">
             <span class="item-label">Explorer</span>
         </div>
 
         <div class="linuxmenu-item" @click="windowClick" :data-action="'settings'">
-            <img src="/static/img/gear.png" class="item-logo">
+            <img src="https://i.imgur.com/66vqfGw.png" class="item-logo">
             <span class="item-label">Paramètres</span>
         </div>
     </div>
