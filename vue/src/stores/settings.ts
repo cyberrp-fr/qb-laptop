@@ -1,5 +1,5 @@
-import { ref, computed } from 'vue';
-import { defineStore } from 'pinia';
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
 
 export const useSettingsStore = defineStore('settings', () => {
     const settings = ref({
@@ -19,7 +19,7 @@ export const useSettingsStore = defineStore('settings', () => {
             { id: 'terminal', name: 'Terminal', program: 'terminal', installed: true },
             { id: 'firefox', name: 'Firefox', program: 'firefox', installed: false }
         ]
-    });
+    })
 
     function setSettings(newSettings: any) {
         settings.value = newSettings;
@@ -29,9 +29,31 @@ export const useSettingsStore = defineStore('settings', () => {
         return settings.value.programs.filter(item => item.installed === true)
     }
 
+    function isInstallable(program: string) {
+        let programs = settings.value.programs.filter(item => item.id === program)
+        return programs.length > 0
+    }
+
+    function alreadyInstalled(program: string) {
+        let programs = settings.value.programs.filter(item => (item.id === program && item.installed === true))
+        return programs.length > 0
+    }
+
+    function installProgram(program: string) {
+        for (let i = 0; i < settings.value.programs.length; i++) {
+            const item = settings.value.programs[i]
+            if (program === item.id) {
+                settings.value.programs[i].installed = true
+            }
+        }
+    }
+
     return {
         settings,
         setSettings,
-        getInstalledPrograms
+        getInstalledPrograms,
+        isInstallable,
+        alreadyInstalled,
+        installProgram
     }
 });

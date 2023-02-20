@@ -63,9 +63,14 @@ function closeWindow(id: string) {
   app?.proxy?.$forceUpdate()
 }
 
+function refreshDesktop() {
+  app?.proxy?.$forceUpdate()
+}
+
 function initBus() {
   emitter.on('desktop/openwindow', openWindow)
   emitter.on('desktop/closeWindow', closeWindow)
+  emitter.on('desktop/refresh', refreshDesktop)
 }
 
 onMounted(() => {
