@@ -25,6 +25,16 @@ const formUserHandle = ref('')
 const formDescription = ref('')
 
 
+// LOGIN page variables
+const loginUsername = ref('')
+const loginPassword = ref('')
+
+// REGISTER page variables
+const registerUsername = ref('')
+const registerPassword = ref('')
+const registerPassword2 = ref('')
+
+
 // ===============
 // == Functions ==
 // ===============
@@ -63,6 +73,15 @@ async function createPostForm() {
 		description: formDescription.value
 	}
 	await darknetStore.CreatePost(post)
+    await darknetStore.GetPosts()
+}
+
+async function loginForm() {
+
+}
+
+async function registerForm() {
+
 }
 
 async function fetchPosts() {
@@ -81,6 +100,10 @@ async function fetchPosts() {
 
 function gotopage(page: string) {
     navigation.value = page
+
+    if (page == 'create' && !darknetStore.darknet.auth) {
+        navigation.value = 'login'
+    }
 }
 
 onMounted(() => {
@@ -92,12 +115,17 @@ onMounted(() => {
 <template>
 <div class="website">
     <div class="navbar">
-        <div class="container">
+        <div class="container flex justify-content-space-between">
             <div class="brand-container" @click="gotopage('homepage')">
                 <div class="brand-logo">
                     <img src="https://i.imgur.com/ycfxccx.png">
                 </div>
                 <div class="brand">Shadow<span class="highlight">NET</span></div>
+            </div>
+
+            <div v-if="darknetStore != null" class="nav-menu">
+                <div v-if="!darknetStore.darknet.auth" class="nav-item"><button @click="gotopage('login')">Connexion</button></div>
+                <div v-if="!darknetStore.darknet.auth" class="nav-item"><button @click="gotopage('register')">Inscription</button></div>
             </div>
         </div>
     </div>
@@ -173,6 +201,43 @@ onMounted(() => {
             </div>
         </div>
     </div>
+
+    <div v-if="navigation == 'login'" class="loginpage">
+        <div class="container">
+            <div class="loginform form">
+                <div class="header">Connexion</div>
+                <div class="form-field usernamefield">
+                    <input v-model="loginUsername" type="text" placeholder="Alias">
+                </div>
+                <div class="form-field passwordfield">
+                    <input v-model="loginPassword" type="password" placeholder="Mot de passe...">
+                </div>
+                <div class="form-submit">
+                    <button @click="loginForm">Connexion</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="navigation == 'register'" class="registerpage">
+        <div class="container">
+            <div class="loginform form">
+                <div class="header">Inscription</div>
+                <div class="form-field usernamefield">
+                    <input v-model="registerUsername" type="text" placeholder="Alias">
+                </div>
+                <div class="form-field passwordfield">
+                    <input v-model="registerPassword" type="password" placeholder="Mot de passe">
+                </div>
+                <div class="form-field passwordfield">
+                    <input v-model="registerPassword2" type="password" placeholder="Confirmation mot de passe">
+                </div>
+                <div class="form-submit">
+                    <button @click="registerForm">Inscription</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -185,6 +250,10 @@ onMounted(() => {
 
 .flex {
     display: flex;
+}
+
+.justify-content-space-between {
+    justify-content: space-between !important;
 }
 
 .container {
@@ -233,6 +302,27 @@ onMounted(() => {
                     font-family: Arial;
                     font-size: 20px;
                     font-weight: bold;
+                }
+            }
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+
+            .nav-item {
+
+                button {
+                    background-color: transparent;
+                    border: none;
+                    outline: 0;
+                    color: #656580;
+                    font-weight: bold;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: #444457;
+                    }
                 }
             }
         }
@@ -457,6 +547,52 @@ onMounted(() => {
 
                 &:hover {
                     background-color: #202755;
+                }
+            }
+        }
+    }
+
+    // login page - register page
+    .form {
+        position: relative;
+        width: 100%;
+        top: 150px;
+        margin: auto;
+        text-align: center;
+
+        .header {
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #4c5676;
+        }
+
+        .form-field {
+            margin-bottom: 10px;
+
+            input {
+                width: 20rem;
+                background-color: #182347;
+                border: none;
+                outline: 0;
+                padding: 10px 15px;
+                border-radius: 3px;
+                color: #d9d9d9;
+            }
+        }
+
+        .form-submit {
+            margin-top: 20px;
+
+            button {
+                background-color: #182347;
+                border: none;
+                color: #d9d9d9;
+                padding: 10px 20px;
+                border-radius: 3px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #233164;
                 }
             }
         }

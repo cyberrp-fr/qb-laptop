@@ -3,6 +3,8 @@ import { defineStore } from 'pinia';
 
 export const useDarknetStore = defineStore('darknet', () => {
     const darknet = ref({
+        auth: false,
+        user: null,
         posts: []
     });
 
@@ -11,17 +13,22 @@ export const useDarknetStore = defineStore('darknet', () => {
             method: 'POST',
             body: JSON.stringify(filters)
         }
-        const response: any = await fetch('https://qb-laptop/GetDarknetPosts', opts)
-        console.log('darknet post response: ', response)
+        const response: any = await fetch('http://localhost:3000/GetDarknetPosts', opts)
+        if (response.ok) {
+            darknet.value.posts = await response.json()
+        }
     }
 
     async function CreatePost(post: any) {
         const opts = {
             method: 'POST',
-            body: JSON.stringify(post)
+            body: JSON.stringify(post),
+            headers: {
+                'Content-Type': 'application/json'
+            }
         }
 
-        const response: any = await fetch('https://qb-laptop/CreateDarknetPost', opts)
+        const response: any = await fetch('http://localhost:3000/CreateDarknetPost', opts)
         console.log('create post response: ', response)
     }
 
