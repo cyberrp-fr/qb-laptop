@@ -1,4 +1,5 @@
 import LinuxFileSystem from './fs'
+import APT from './apt'
 
 class Linux {
     public static readonly REGEX = {
@@ -7,15 +8,24 @@ class Linux {
     }
 
     private _fs: LinuxFileSystem
+    private _apt: APT
     private _history: Array<string>
+    private _outputcallback: any
 
     constructor () {
         this._history = []
         this._fs = new LinuxFileSystem()
+        this._apt = new APT()        
+        this._outputcallback = null
     }
 
     setFs(fs: any) {
         this._fs.setFs(fs)
+    }
+
+    setOutputCallback(cb: any) {
+        this._outputcallback = cb
+        this._apt.setOutputCallback(cb)
     }
 
     execute(output: any, command: string) {
@@ -41,7 +51,8 @@ class Linux {
         let cmd = split[0].trim()
 
         if (cmd == null || cmd == '') {
-            return output += ' '
+            this._outputcallback(' ')
+            return
         }
         this._updateHistory(command)
 
@@ -50,7 +61,8 @@ class Linux {
             let matches: any = pattern.exec(command.trim())
             if (matches != null) {
                 let result = this.list(matches[3])
-                return output += result
+                this._outputcallback(result)
+                return
             }
         } else if (cmd === 'cd') {
             let split = command.trim().split(' ')
@@ -58,12 +70,13 @@ class Linux {
 
             let result = this.cd(path)
             if (result != null) {
-                output += result
+                this._outputcallback(result)
             }
 
-            return output
+            return
         } else if (cmd === 'whereami') {
-            return output += this._fs.getCurrentDirectory()
+            this._outputcallback(this._fs.getCurrentDirectory())
+            return
         } else if (cmd === 'mkdir') {
             let pattern = new RegExp(Linux.REGEX['mkdir'])
             let matches: any = pattern.exec(command.trim())
@@ -72,10 +85,10 @@ class Linux {
                 let mode = matches[2]
                 let result = this.mkdir(path, mode)
                 if (result != null) {
-                    output += result
+                    this._outputcallback(result)
                 }
 
-                return output
+                return
             }
         } else if (cmd === 'rm') {
             let split = command.trim().split(' ')
@@ -88,27 +101,33 @@ class Linux {
             }
 
             if (path == null || path == '') {
-                return output += 'rm: missing operand'
+                this._outputcallback('rm: missing operand')
+                return
             }
 
             let result = this.rm(path)
             if (result != null) {
-                output += result
+                this._outputcallback(result)
             }
 
-            return output
+            return
         } else if (cmd === 'cat') {
             let split = command.trim().split(' ')
             let path = split[1]
             if (path == null) {
-                return output + 'command incorrect, path argument required.'
+                this._outputcallback('command incorrect, path argument required.')
+                return
             }
 
             let result = this.read(path)
-            return output + result
+            this._outputcallback(result)
+            return
+        } else if (command.includes(' apt ')) {
+            this._apt.handleCommand(command, cmd)
         }
 
-        return output += `command not found: ${cmd}`
+        this._outputcallback(`command not found: ${cmd}`)
+        return
     }
 
 

@@ -49,6 +49,7 @@ onMounted(() => {
     }
 
     Linux.setFs(app?.appContext.config.globalProperties.$fs)
+    Linux.setOutputCallback(outputCallback)
     userDir.value = Linux.whereami()
 })
 
@@ -76,6 +77,16 @@ function lastCommand(e: any) {
     if (last != null) {
         prompt.value = last
     }
+}
+
+// output callback
+function outputCallback(text: string, clear: boolean = false) {
+    if (clear) {
+        output.value = ''
+    }
+
+    output.value += text
+    output.value += '\n'
 }
 
 // execute linux command
@@ -106,12 +117,12 @@ async function executeCommand(e: any) {
         return
     }
 
-    let res = await Linux.execute(output.value, prompt.value)
-    if (res != '') {
-        output.value = res + ' <br>'
-    } else {
-        output.value = res
-    }
+    await Linux.execute(output.value, prompt.value)
+    // if (res != '') {
+    //     output.value = res + ' <br>'
+    // } else {
+    //     output.value = res
+    // }
 
     prompt.value = ''
     userDir.value = Linux.whereami()
