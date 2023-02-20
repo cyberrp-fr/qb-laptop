@@ -56,6 +56,23 @@ function onWindowMove(e: any) {
     document.onmouseup = closeElemDrag
 }
 
+// EVENT BUS
+function focusWindow(id: string) {
+    if (id === props.id) {
+        windowFocus.value = true
+    } else {
+        windowFocus.value = false
+    }
+}
+
+function initBus() {
+    emitter.on('window/focus', focusWindow)
+}
+
+onMounted(() => {
+    initBus()
+})
+
 // close window
 function selfDestruct() {
     emitter.emit('desktop/closeWindow', props.id)
