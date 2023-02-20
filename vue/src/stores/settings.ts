@@ -17,7 +17,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
         programs: [
             { id: 'terminal', name: 'Terminal', program: 'terminal', installed: true },
-            { id: 'firefox', name: 'Firefox', program: 'firefox', installed: true }
+            { id: 'firefox', name: 'Firefox', program: 'firefox', installed: false }
         ]
     });
 
@@ -25,8 +25,13 @@ export const useSettingsStore = defineStore('settings', () => {
         settings.value = newSettings;
     }
 
+    function getInstalledPrograms() {
+        return settings.value.programs.filter(item => item.installed === true)
+    }
+
     return {
         settings,
-        setSettings
+        setSettings,
+        getInstalledPrograms
     }
 });

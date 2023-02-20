@@ -47,7 +47,7 @@ function turnoffLaptop() {
       <DesktopWindows />
 
       <div id="programs">
-        <component :is="ProgramIcon" v-bind:key="program['id']" :id="program['id']" :name="program['name']" :program="program['id']" :focus="true" v-for="program in settingsStore.settings.programs" />
+        <component :is="ProgramIcon" v-bind:key="program['id']" :id="program['id']" :name="program['name']" :program="program['id']" :focus="true" v-for="program in settingsStore.getInstalledPrograms()" />
       </div>
     </div>
 </template>
