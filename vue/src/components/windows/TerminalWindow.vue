@@ -117,12 +117,7 @@ async function executeCommand(e: any) {
         return
     }
 
-    await Linux.execute(output.value, prompt.value)
-    // if (res != '') {
-    //     output.value = res + ' <br>'
-    // } else {
-    //     output.value = res
-    // }
+    await Linux.execute(prompt.value)
 
     prompt.value = ''
     userDir.value = Linux.whereami()

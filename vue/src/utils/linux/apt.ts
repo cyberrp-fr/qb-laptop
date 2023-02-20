@@ -20,12 +20,14 @@ export default class APT {
 
     public handleCommand(command: string, cmd: string) {
         let split = command.split(' ')
-        let bin = split[1].trim()
+        let bin = split[1]
 
         if (cmd !== 'sudo') {
             this.noSudo()
             return
         }
+
+        // todo
     }
 
     public noSudo() {

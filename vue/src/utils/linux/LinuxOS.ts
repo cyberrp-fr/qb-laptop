@@ -28,8 +28,8 @@ class Linux {
         this._apt.setOutputCallback(cb)
     }
 
-    execute(output: any, command: string) {
-        return this.handleCommand(output, command);
+    execute(command: string) {
+        return this.handleCommand(command);
     }
 
     private _updateHistory(command: string) {
@@ -46,15 +46,19 @@ class Linux {
         return this._history[this._history.length - 1]
     }
 
-    async handleCommand(output: string, command: string) {
+    async handleCommand(command: string) {
         let split = command.split(' ')
-        let cmd = split[0].trim()
+        split = split.map(str => str.trim())
+        command = split.join(' ')
+        let cmd = split[0]
 
         if (cmd == null || cmd == '') {
             this._outputcallback(' ')
             return
         }
         this._updateHistory(command)
+
+        console.log('command: ', command)
 
         if (cmd === 'ls') {
             let pattern = new RegExp(Linux.REGEX['ls'])
@@ -122,8 +126,9 @@ class Linux {
             let result = this.read(path)
             this._outputcallback(result)
             return
-        } else if (command.includes(' apt ')) {
+        } else if (split.includes('apt')) {
             this._apt.handleCommand(command, cmd)
+            return
         }
 
         this._outputcallback(`command not found: ${cmd}`)
