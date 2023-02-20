@@ -32,9 +32,31 @@ export const useDarknetStore = defineStore('darknet', () => {
         console.log('create post response: ', response)
     }
 
+    async function RegisterUser(user: any) {
+        const opts = {
+            method: 'POST',
+            body: JSON.stringify(user),
+            headers: {'Content-Type': 'application/json'}
+        }
+        const response: any = await fetch('http://localhost:3000/RegisterDarknetUser', opts)
+        console.log('create user: ', response)
+    }
+
+    async function authenticateUser(username: string, password: string) {
+        const opts = {
+            method: 'POST',
+            body: JSON.stringify({ username, password }),
+            headers: {'Content-Type': 'application/json'}
+        }
+        const response: any = await fetch('http://localhost:3000/AuthenticateUser', opts)
+        console.log('auth response: ', response)
+    }
+
     return {
         darknet,
         GetPosts,
-        CreatePost
+        CreatePost,
+        RegisterUser,
+        authenticateUser
     }
 });

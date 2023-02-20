@@ -77,11 +77,34 @@ async function createPostForm() {
 }
 
 async function loginForm() {
-
+    // @todo: form validation
+    await darknetStore.authenticateUser(loginUsername.value, loginPassword.value)
 }
 
 async function registerForm() {
+    // validation
+    let violations = []
+    if (registerUsername.value.length < 3) {
+        violations.push({field: 'userHandle', error: 'l\'alias doit avoir 3 caracteres minimum.'})
+    }
+    if (registerPassword.value !== registerPassword2.value) {
+        violations.push({field: 'password', error: 'Le 2eme mot de passe n\'est pas identique au 1er.'})
+    }
 
+    if (violations.length > 0) {
+        // todo show error
+        return
+    }
+
+    const user = {
+        userHandle: registerUsername.value,
+        password: registerPassword.value
+    }
+
+    let result: any = await darknetStore.RegisterUser(user)
+    if (result === true) {
+
+    }
 }
 
 async function fetchPosts() {
