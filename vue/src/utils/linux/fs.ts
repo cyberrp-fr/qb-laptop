@@ -122,10 +122,8 @@ export default class LinuxFileSystem {
     }
 
     mkdir(path: string, mode: any) {
-        if (!path.startsWith('/') && !path.startsWith('./')) {
-            path = '/' + path
-        } else if (path.startsWith('./')) {
-            path = this.joinPath(this._cwd, path.substring(1))
+        if (!path.startsWith('/')) {
+            path = this.joinPath(this._cwd, path)
         }
 
         this._fs.mkdirSync(path)
