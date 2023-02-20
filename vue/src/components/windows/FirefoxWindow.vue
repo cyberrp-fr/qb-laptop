@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, getCurrentInstance } from 'vue';
-import DarknetWebsite from '../websites/DarknetWebsite.vue';
+import WebsiteProvider from '../websites/WebsiteProvider.vue';
 
 const props = defineProps(['id', 'focus'])
 const windowFocus = ref(props.focus)
@@ -12,7 +12,8 @@ const url = ref('')
 const navigationHistory = ref([])
 
 function navigate() {
-    
+    emitter.emit('firefox/navigate', url.value)
+    console.log('emit url: ', url.value)
 }
 
 // window position coords
@@ -84,7 +85,7 @@ function selfDestruct() {
                 </div>
             </div>
             <div class="web-content">
-                <DarknetWebsite />
+                <WebsiteProvider />
             </div>
         </div>
     </div>
@@ -226,9 +227,9 @@ function selfDestruct() {
                     outline: 0;
                     padding: 3px 15px;
 
-                    &::placeholder {
-                        padding-left: 10px;
-                    }
+                    // &::placeholder {
+                    //     padding-left: 10px;
+                    // }
 
                     &:focus {
                         border: none;
