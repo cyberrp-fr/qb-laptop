@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, getCurrentInstance, onMounted } from 'vue'
+import { ref, getCurrentInstance, onMounted, onUnmounted } from 'vue'
 import { useStateStore } from '@/stores/state';
 import LinuxOS from '@/utils/linux/LinuxOS'
 
@@ -43,7 +43,7 @@ const emitter = app?.appContext.config.globalProperties.$emitter
 // when component is mounted meaning rendered
 onMounted(() => {
     if (stateStore.state.user != null) {
-        user.value = stateStore.state.user.name + '@kali$'
+        user.value = stateStore.state.user + '@kali$'
         initBus()
         emitter.emit('window/focus', props.id)
     }
@@ -151,6 +151,7 @@ function handleNanoCommand() {
 
     currentProcess.value = 'nano'
     setTimeout(updateHeight, 200)
+    setTimeout(focusNano, 100)
 }
 
 // focus on input when clicked anywhere on the terminal window
@@ -161,6 +162,12 @@ function focusPrompt(): void {
 
     if (!windowFocus.value) {
         emitter.emit('window/focus', props.id)
+    }
+}
+
+function focusNano(): void {
+    if (currentProcess.value === 'nano') {
+        nanoField.value.focus()
     }
 }
 
@@ -205,7 +212,7 @@ function exitNanoFile() {
     nanoContent.value = ''
 
     currentProcess.value = 'bash'
-    focusPrompt()
+    setTimeout(focusPrompt, 100)
 }
 
 function updateHeight() {
@@ -248,7 +255,7 @@ function getKey(e: any) {
 
         <div v-if="currentProcess == 'nano'" class="content">
             <div class="prompt-zone">
-                <textarea v-on:keydown.ctrl.s="saveNanoFile" v-on:keydown.ctrl.x="exitNanoFile" ref="nanoField" v-model="nanoContent" class="prompt nano" @input="updateHeight" rows="3"></textarea>
+                <textarea ref="nanoField" v-on:keydown.ctrl.s="saveNanoFile" v-on:keydown.ctrl.x="exitNanoFile" v-model="nanoContent" class="prompt nano" @input="updateHeight" rows="3"></textarea>
             </div>
             <div v-if="nanoMessage != ''" class="nano-message">{{ nanoMessage }}</div>
         </div>

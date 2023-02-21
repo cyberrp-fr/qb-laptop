@@ -22,6 +22,7 @@ onMounted(() => {
   document.addEventListener("keydown", function(e) {
     if (e.keyCode === 27) {
       turnoffLaptop()
+        .then(res => null)
     }
   })
 })
@@ -30,12 +31,16 @@ onBeforeUnmount(() => {
   // window.removeEventListener("keyup", )
 })
 
-function turnoffLaptop() {
+async function turnoffLaptop() {
   if (stateStore.state.open) {
-    fetch("https://qb-laptop/TurnOffLaptop", {method: "POST"})
-      .then(res => {
-        stateStore.state.open = false
-      })
+    // fetch("https://qb-laptop/TurnOffLaptop", {method: "POST"})
+    //   .then(res => {
+    //     stateStore.state.open = false
+    //   })
+
+    await settingsStore.save()
+    await fetch('https://qb-laptop/TurnOffLaptop', { method: 'POST' })
+    stateStore.state.open = false
   }
 }
 

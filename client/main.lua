@@ -1,7 +1,10 @@
 QBCore = exports["qb-core"]:GetCoreObject()
+PlayerData = QBCore.Functions.GetPlayerData()
 LaptopData = {
-    isOn = false
+    isOn = false,
+    Settings = nil,
 }
+local LaptopDataKVPKey = "player_settings"
 
 ---------------
 -- FUNCTIONS --
@@ -28,6 +31,13 @@ local function DisableDisplayControlActions()
     DisableControlAction(0, 245, true) -- disable chat
 end
 
+local function LoadLaptopSettings()
+    local settingsData = GetResourceKvpString(LaptopDataKVPKey)
+    if settingsData ~= nil then
+        LaptopData.Settings = json.decode(settingsData)
+    end
+end
+
 ------------
 -- EVENTS --
 ------------
@@ -38,10 +48,17 @@ RegisterNetEvent("qb-laptop:client:TurnOnLaptop", function ()
         return
     end
 
+    if LaptopData.Settings ~= nil then
+        SendNUIMessage({
+            action = "settings/set",
+            settings = LaptopData.Settings
+        })
+    end
+
     SetNuiFocus(true, true)
     SendNUIMessage({
         action = "turnon",
-        data = {},
+        user = PlayerData.name
     })
 
     LaptopData.isOn = true
@@ -67,10 +84,24 @@ RegisterNUICallback("TurnOffLaptop", function (_, cb)
     cb("ok")
 end)
 
+RegisterNUICallback("SaveSettings", function (data, cb)
+    LaptopData.Settings = data
+    SetResourceKvp(LaptopDataKVPKey, json.encode(data))
+
+    cb("ok")
+end)
+
 ---------------
 -- LISTENERS --
 ---------------
 
--- AddEventHandler("onResourceStart", function(resource)
---     if resource ~= GetCurrentResourceName() then return end
--- end)
+AddEventHandler("onResourceStart", function(resource)
+    if resource ~= GetCurrentResourceName() then return end
+
+    LoadLaptopSettings()
+end)
+
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    PlayerData = QBCore.Functions.GetPlayerData()
+    LoadLaptopSettings()
+end)

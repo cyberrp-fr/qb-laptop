@@ -48,12 +48,23 @@ export const useSettingsStore = defineStore('settings', () => {
         }
     }
 
+    async function save() {
+        const opts = {
+            method: 'POST',
+            body: JSON.stringify(settings.value),
+            headers: {'Content-Type': 'application/json'}
+        }
+        const response = await fetch('https://qb-laptop/SaveSettings', opts)
+        console.log('save response: ', response)
+    }
+
     return {
         settings,
         setSettings,
         getInstalledPrograms,
         isInstallable,
         alreadyInstalled,
-        installProgram
+        installProgram,
+        save
     }
 });
