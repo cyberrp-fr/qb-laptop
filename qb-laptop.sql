@@ -13,7 +13,7 @@
 --     KEY `citizenid` (`citizenid`)
 -- ) ENGINE=InnoDB AUTO_INCREMENT=1
 
-CREATE TABLE IF NOT EXISTS `qb-laptop_darknet_users` (
+CREATE TABLE IF NOT EXISTS `laptop_darknet_users` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `citizenid` varchar(50) NOT NULL,
     `username` varchar(100) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `qb-laptop_darknet_users` (
     KEY `citizenid` (`citizenid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `qb-laptop_darknet_posts` (
+CREATE TABLE IF NOT EXISTS `laptop_darknet_posts` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `citizenid` varchar(50) NOT NULL,
     `user_id` int(11) NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `qb-laptop_darknet_posts` (
     KEY `citizenid` (`citizenid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `qb-laptop_darknet_post_replies` (
+CREATE TABLE IF NOT EXISTS `laptop_darknet_post_replies` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `post_id` int(11) NOT NULL,
     `citizenid` varchar(50) NOT NULL,

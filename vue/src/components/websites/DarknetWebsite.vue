@@ -103,7 +103,7 @@ async function registerForm() {
 
     let result: any = await darknetStore.RegisterUser(user)
     if (result === true) {
-
+        gotopage('homepage')
     }
 }
 

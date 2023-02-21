@@ -11,9 +11,10 @@ export const useDarknetStore = defineStore('darknet', () => {
     async function GetPosts(filters = {}) {
         const opts = {
             method: 'POST',
-            body: JSON.stringify(filters)
+            body: JSON.stringify(filters),
+            headers: {'Content-Type': 'application/json'}
         }
-        const response: any = await fetch('http://localhost:3000/GetDarknetPosts', opts)
+        const response: any = await fetch('https://qb-laptop/GetDarknetPosts', opts)
         if (response.ok) {
             darknet.value.posts = await response.json()
         }
@@ -28,7 +29,7 @@ export const useDarknetStore = defineStore('darknet', () => {
             }
         }
 
-        const response: any = await fetch('http://localhost:3000/CreateDarknetPost', opts)
+        const response: any = await fetch('https://qb-laptop/CreateDarknetPost', opts)
         console.log('create post response: ', response)
     }
 
@@ -38,8 +39,16 @@ export const useDarknetStore = defineStore('darknet', () => {
             body: JSON.stringify(user),
             headers: {'Content-Type': 'application/json'}
         }
-        const response: any = await fetch('http://localhost:3000/RegisterDarknetUser', opts)
-        console.log('create user: ', response)
+        const response: any = await fetch('https://qb-laptop/RegisterDarknetUser', opts)
+        const content = await response.json()
+        if (content.success) {
+            darknet.value.user = content.user
+            darknet.value.auth = true
+
+            return true
+        }
+
+        return false
     }
 
     async function authenticateUser(username: string, password: string) {
@@ -48,7 +57,7 @@ export const useDarknetStore = defineStore('darknet', () => {
             body: JSON.stringify({ username, password }),
             headers: {'Content-Type': 'application/json'}
         }
-        const response: any = await fetch('http://localhost:3000/AuthenticateUser', opts)
+        const response: any = await fetch('https://qb-laptop/AuthenticateUser', opts)
         console.log('auth response: ', response)
     }
 

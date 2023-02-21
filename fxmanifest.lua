@@ -5,8 +5,6 @@ lua54 'yes'
 author '0xIbra - https://github.com/0xIbra'
 description 'qb-laptop - laptops with linux OS'
 
-ui_page 'html/index.html'
-
 shared_scripts {
     '@qb-core/shared/locale.lua',
 	'locales/*.lua',
@@ -20,9 +18,11 @@ server_scripts {
 }
 
 client_scripts {
-    'client/main.lua'
+    'client/main.lua',
+    'client/darknet.lua'
 }
 
+ui_page 'html/index.html'
 files {
     'html/index.html',
     'html/assets/index.js',
