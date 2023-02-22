@@ -14,7 +14,7 @@ export const useDarknetStore = defineStore('darknet', () => {
             body: JSON.stringify(filters),
             headers: {'Content-Type': 'application/json'}
         }
-        const response: any = await fetch('https://qb-laptop/GetDarknetPosts', opts)
+        const response: any = await fetch('http://localhost:3000/GetDarknetPosts', opts)
         if (response.ok) {
             darknet.value.posts = await response.json()
         }
@@ -80,12 +80,24 @@ export const useDarknetStore = defineStore('darknet', () => {
         darknet.value.auth = false
     }
 
+    function getPostById(id: any) {
+        for (let i = 0; i < darknet.value.posts.length; i++) {
+            const post = darknet.value.posts[i];
+            if (id == post['id']) {
+                return post
+            }
+        }
+
+        return null
+    }
+
     return {
         darknet,
         GetPosts,
         CreatePost,
         RegisterUser,
         authenticateUser,
-        logout
+        logout,
+        getPostById
     }
 });

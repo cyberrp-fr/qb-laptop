@@ -36,6 +36,9 @@ const registerPassword2 = ref('')
 const registerFormError = ref('')
 
 
+// show post page variables
+const displayPost = ref()
+
 // ===============
 // == Functions ==
 // ===============
@@ -137,6 +140,11 @@ function gotopage(page: string) {
     }
 }
 
+function showPost(id: any) {
+    displayPost.value = darknetStore.getPostById(id)
+    gotopage('showpost')
+}
+
 onMounted(() => {
     darknetStore.GetPosts()
 })
@@ -185,7 +193,7 @@ onMounted(() => {
         </div>
 
         <div class="posts">
-            <div v-for="post in darknetStore.darknet.posts" class="post-wrapper">
+            <div v-for="post in darknetStore.darknet.posts" @click="showPost(post['id'])" class="post-wrapper">
                 <div class="post">
                     <div class="post-title">{{ post['title'] }}</div>
                     <div class="post-metadata">
@@ -267,6 +275,97 @@ onMounted(() => {
             </div>
         </div>
     </div>
+
+    <div v-if="navigation == 'showpost'" class="showpostpage">
+        <div class="container">
+            <div class="post-display-wrapper">
+                <div class="post-display">
+                    <div class="post-author-zone">
+                        <div class="author-img-zone">
+                            <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
+                        </div>
+                        <div class="author-name-zone">{{ displayPost['userHandle'] }}</div>
+                    </div>
+                    <div class="post-content-zone">
+                        <div class="post-content-date-zone"></div>
+                        <div class="post-content-description-zone">
+                            {{ displayPost['description'] }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-comment">
+                <div class="comment-author">
+                    <div class="comment-author-img">
+                        <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
+                    </div>
+                    <div class="comment-author-name">0xIbra</div>
+                </div>
+                <div class="comment-content">
+                    <div class="comment-content-description">
+                        You will...
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-comment">
+                <div class="comment-author">
+                    <div class="comment-author-img">
+                        <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
+                    </div>
+                    <div class="comment-author-name">0xIbra</div>
+                </div>
+                <div class="comment-content">
+                    <div class="comment-content-description">
+                        be hearing...
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-comment">
+                <div class="comment-author">
+                    <div class="comment-author-img">
+                        <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
+                    </div>
+                    <div class="comment-author-name">0xIbra</div>
+                </div>
+                <div class="comment-content">
+                    <div class="comment-content-description">
+                        from me.
+                    </div>
+                </div>
+            </div>
+            <div class="post-comment">
+                <div class="comment-author">
+                    <div class="comment-author-img">
+                        <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
+                    </div>
+                    <div class="comment-author-name">0xIbra</div>
+                </div>
+                <div class="comment-content">
+                    <div class="comment-content-description">
+                        from me.
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-comment post-new-comment">
+                <div class="comment-author">
+                    <div class="comment-author-img">
+                        <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
+                    </div>
+                    <div class="comment-author-name">0xIbra</div>
+                </div>
+                <div class="comment-content">
+                    <textarea cols="30" rows="8" placeholder="Votre commentaire..."></textarea>
+                    <div class="w-100 text-right">
+                        <button class="post-comment-btn">Commenter</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -299,10 +398,10 @@ onMounted(() => {
 .website {
     position: relative;
     width: 100%;
+    min-height: 720px;
     height: 100%;
-    min-height: 1900px;
     background-color: rgb(11, 14, 32);
-    overflow: scroll;
+    padding-bottom: 200px;
 
     .navbar {
         position: absolute;
@@ -629,6 +728,139 @@ onMounted(() => {
 
                 &:hover {
                     background-color: #233164;
+                }
+            }
+        }
+    }
+
+    .showpostpage {
+        position: relative;
+        top: 100px;
+        // width: 80%;
+        margin: auto;
+        font-family: Arial, Helvetica, sans-serif;
+
+        .post-display {
+            display: flex;
+            min-height: 200px;
+            margin-bottom: 50px;
+
+            .post-author-zone {
+                position: relative;
+                background-color: #1d2b59;
+                padding: 20px 40px;
+                border-top-left-radius: 7px;
+                border-bottom-left-radius: 7px;
+
+                .author-img-zone {
+
+                    img {
+                        width: 100px;
+                        border-radius: 50%;
+                        border: 3px solid #03d5ca;
+                    }
+                }
+
+                .author-name-zone {
+                    margin-top: 20px;
+                    text-align: center;
+                    font-size: 18px;
+                    color: #03d5ca;
+                    font-weight: bold;
+                }
+            }
+
+            .post-content-zone {
+                width: 100%;
+                position: relative;
+                padding: 20px 50px;
+                background-color: #161b3b;
+                color: #d9d9d9;
+                border-top-right-radius: 7px;
+                border-bottom-right-radius: 7px;
+
+                .post-content-description-zone {
+                    white-space: pre;
+                }
+            }
+        }
+
+        .post-comment {
+            display: flex;
+            margin-top: 15px;
+
+            &.post-new-comment {
+                margin-top: 40px;
+            }
+
+            .comment-author {
+                position: relative;
+                background-color: #1d2b59;
+                padding: 20px 55px;
+                border-top-left-radius: 7px;
+                border-bottom-left-radius: 7px;
+
+                .comment-author-img {
+                    img {
+                        width: 70px;
+                        border-radius: 50%;
+                        border: 2px solid rebeccapurple;
+                    }
+                }
+
+                .comment-author-name {
+                    text-align: center;
+                    color: rebeccapurple;
+                    margin-top: 10px;
+                    font-weight: bold;
+                }
+
+            }
+
+            .comment-content {
+                width: 100%;
+                position: relative;
+                padding: 20px 50px;
+                background-color: #161b3b;
+                color: #d9d9d9;
+                border-top-right-radius: 7px;
+                border-bottom-right-radius: 7px;
+
+                .comment-content-description {
+                    white-space: pre;
+                }
+
+                textarea {
+                    background-color: #182347;
+                    border: none;
+                    outline: 0;
+                    width: 100%;
+                    padding: 20px 20px;
+                    color: #d9d9d9;
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 14px;
+                    white-space: pre;
+                    margin-bottom: 10px;
+                    border-radius: 5px;
+                }
+
+                .post-comment-btn {
+                    position: relative;
+                    text-align: right;
+                    background: #182347;
+                    color: #d9d9d9;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 7px 10px;
+                    font-size: 15px;
+                    margin-left: 10px;
+                    outline: 0;
+                    cursor: pointer;
+                    font-weight: bold;
+
+                    &:hover {
+                        background: #273972;
+                    }
                 }
             }
         }

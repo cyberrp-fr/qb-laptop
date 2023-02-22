@@ -87,6 +87,11 @@ function outputCallback(text: string, clear: boolean = false) {
 
     output.value += text
     output.value += '\n'
+
+    setTimeout(() => {
+        let outputContainer: any = document.querySelector('.content')
+        outputContainer.scrollTop = outputContainer.scrollHeight - outputContainer.clientHeight
+    }, 20)
 }
 
 // execute linux command
@@ -121,11 +126,6 @@ async function executeCommand(e: any) {
 
     prompt.value = ''
     userDir.value = Linux.whereami()
-
-    setTimeout(() => {
-        let outputContainer: any = document.querySelector('.content')
-        outputContainer.scrollTop = outputContainer.scrollHeight - outputContainer.clientHeight
-    }, 15)
 }
 
 function handleNanoCommand() {

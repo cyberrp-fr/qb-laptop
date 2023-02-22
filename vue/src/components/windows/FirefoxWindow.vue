@@ -191,7 +191,7 @@ function selfDestruct() {
         left: 0;
         bottom: 0;
         overflow-x: hidden;
-        overflow-y: hidden;
+        overflow-y: scroll;
 
         .content-header {
             display: flex;
