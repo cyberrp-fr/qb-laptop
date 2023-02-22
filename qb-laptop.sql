@@ -42,10 +42,10 @@ CREATE TABLE IF NOT EXISTS `laptop_darknet_posts` (
 CREATE TABLE IF NOT EXISTS `laptop_darknet_post_replies` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `post_id` int(11) NOT NULL,
-    `citizenid` varchar(50) NOT NULL,
+    `user_id` int(11) NOT NULL,
     `comment` text NOT NULL,
     `created_at` datetime DEFAULT current_timestamp(),
 
     PRIMARY KEY (`id`),
-    KEY `citizenid` (`citizenid`)
+    KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1;

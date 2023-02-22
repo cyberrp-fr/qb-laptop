@@ -16,7 +16,8 @@ local function LoadDarknet()
     local sql = "SELECT * FROM `laptop_darknet_posts` WHERE `created_at` > NOW() - INTERVAL 24 HOUR ORDER BY `created_at` DESC"
     local result = MySQL.query.await(sql, {})
     for key, post in pairs(result) do
-        LaptopData.Darknet.Posts[key] = post
+        post.replies = {}
+        LaptopData.Darknet.Posts[post.id] = post
     end
 
     sql = "SELECT id, citizenid, username, password FROM `laptop_darknet_users`"
@@ -76,6 +77,28 @@ AddEventHandler("onResourceStart", function(resource)
 
     CleanDarknet()
     LoadDarknet()
+end)
+
+RegisterServerEvent("qb-laptop:server:darknet:CommentPost")
+AddEventHandler("qb-laptop:server:darknet:CommentPost", function (data)
+    local postId = data.post_id
+    local postUser = getUserByID(data.user_id)
+    local reply = {
+        postId = data.post_id,
+        userId = data.user_id,
+        username = postUser.username,
+        comment = data.comment
+    }
+
+    if LaptopData.Darknet.Posts[postId] ~= nil then
+        if LaptopData.Darknet.Posts[postId].replies == nil then
+            LaptopData.Darknet.Posts[postId].replies = {}
+        end
+
+        table.insert(LaptopData.Darknet.Posts[postId].replies, reply)
+
+        TriggerClientEvent("qb-laptop:client:darknet:RefreshComments", -1, {postId = postId, replies = LaptopData.Darknet.Posts[postId].replies})
+    end
 end)
 
 ---------------

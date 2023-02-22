@@ -14,7 +14,7 @@ export const useDarknetStore = defineStore('darknet', () => {
             body: JSON.stringify(filters),
             headers: {'Content-Type': 'application/json'}
         }
-        const response: any = await fetch('http://localhost:3000/GetDarknetPosts', opts)
+        const response: any = await fetch('https://qb-laptop/GetDarknetPosts', opts)
         if (response.ok) {
             darknet.value.posts = await response.json()
         }
@@ -91,6 +91,24 @@ export const useDarknetStore = defineStore('darknet', () => {
         return null
     }
 
+    function setRepliesForPost(postId: any, replies: any) {
+        for (let i = 0; i < darknet.value.posts.length; i++) {
+            const post: any = darknet.value.posts[i]
+            if (post['id'] == postId) {
+                post['replies'] = replies
+            }
+        }
+    }
+
+    async function postComment(data: any) {
+        const opts = {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {'Content-Type': 'application/json'}
+        }
+        const response: any = await fetch('https://qb-laptop/DarknetPostComment', opts)
+    }
+
     return {
         darknet,
         GetPosts,
@@ -98,6 +116,8 @@ export const useDarknetStore = defineStore('darknet', () => {
         RegisterUser,
         authenticateUser,
         logout,
-        getPostById
+        getPostById,
+        setRepliesForPost,
+        postComment
     }
 });

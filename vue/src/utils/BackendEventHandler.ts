@@ -1,5 +1,6 @@
 import { useStateStore } from "@/stores/state"
 import { useSettingsStore } from "@/stores/settings"
+import { useDarknetStore } from "@/stores/darknet"
 
 // this function handles event messages regarding all the base actions (ex: change desktop wallpaper)
 function handleBaseActions(event: any) {
@@ -20,6 +21,17 @@ function handleBaseActions(event: any) {
     }
 }
 
+// this function handles event messages relating to the darknet website
+function handleDarknetActions(event: any) {
+    const darknetStore = useDarknetStore()
+
+    switch(event.data.action) {
+        case "darknet/post/replies/set":
+            darknetStore.setRepliesForPost(event.data.postId, event.data.replies)
+            break
+    }
+}
+
 // All messages sent from back-end, go through this function.
 // It distributes the received event message to approriate handler
 export function handleEvent(event: any) {
@@ -32,6 +44,10 @@ export function handleEvent(event: any) {
         case "turnon":
         case "turnoff":
             handleBaseActions(event)
+            break
+
+        case "darknet/post/replies/set":
+            handleDarknetActions(event)
             break
 
         default:

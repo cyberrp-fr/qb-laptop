@@ -1,5 +1,17 @@
 local DarknetUser
 
+------------
+-- EVENTS --
+------------
+RegisterNetEvent("qb-laptop:client:darknet:RefreshComments", function (data)
+    
+    SendNUIMessage({
+        action = 'darknet/post/replies/set',
+        postId = data.postId,
+        replies = data.replies
+    })
+end)
+
 ---------------
 -- CALLBACKS --
 ---------------
@@ -15,6 +27,12 @@ RegisterNUICallback("CreateDarknetPost", function(data, cb)
     QBCore.Functions.TriggerCallback("qb-laptop:server:darknet:CreatePost", function (response)
         cb(response)
     end, data)
+end)
+
+-- post comment
+RegisterNUICallback("DarknetPostComment", function(data, cb)
+    TriggerServerEvent("qb-laptop:server:darknet:CommentPost", data)
+    cb("ok")
 end)
 
 -- register user

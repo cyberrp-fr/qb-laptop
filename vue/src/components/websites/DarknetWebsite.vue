@@ -38,6 +38,7 @@ const registerFormError = ref('')
 
 // show post page variables
 const displayPost = ref()
+const postReplyContent = ref('')
 
 // ===============
 // == Functions ==
@@ -143,6 +144,22 @@ function gotopage(page: string) {
 function showPost(id: any) {
     displayPost.value = darknetStore.getPostById(id)
     gotopage('showpost')
+}
+
+async function postComment() {
+    if (darknetStore.darknet.user == null) {
+        return
+    }
+
+    let payload = {
+        post_id: displayPost.value.id,
+        user_id: darknetStore.darknet.user['id'],
+        username: darknetStore.darknet.user['username'],
+        comment: postReplyContent.value
+    }
+
+    await darknetStore.postComment(payload)
+    postReplyContent.value = ''
 }
 
 onMounted(() => {
@@ -295,72 +312,29 @@ onMounted(() => {
                 </div>
             </div>
 
-            <div class="post-comment">
+            <div v-for="reply in displayPost.replies" class="post-comment">
                 <div class="comment-author">
                     <div class="comment-author-img">
                         <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
                     </div>
-                    <div class="comment-author-name">0xIbra</div>
+                    <div class="comment-author-name">{{ reply['username'] }}</div>
                 </div>
                 <div class="comment-content">
-                    <div class="comment-content-description">
-                        You will...
-                    </div>
+                    <div class="comment-content-description">{{ reply['comment'] }}</div>
                 </div>
             </div>
 
-            <div class="post-comment">
+            <div v-if="darknetStore.darknet.auth" class="post-comment post-new-comment">
                 <div class="comment-author">
                     <div class="comment-author-img">
                         <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
                     </div>
-                    <div class="comment-author-name">0xIbra</div>
+                    <div v-if="darknetStore.darknet.user" class="comment-author-name">{{ darknetStore.darknet.user['username'] }}</div>
                 </div>
                 <div class="comment-content">
-                    <div class="comment-content-description">
-                        be hearing...
-                    </div>
-                </div>
-            </div>
-
-            <div class="post-comment">
-                <div class="comment-author">
-                    <div class="comment-author-img">
-                        <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
-                    </div>
-                    <div class="comment-author-name">0xIbra</div>
-                </div>
-                <div class="comment-content">
-                    <div class="comment-content-description">
-                        from me.
-                    </div>
-                </div>
-            </div>
-            <div class="post-comment">
-                <div class="comment-author">
-                    <div class="comment-author-img">
-                        <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
-                    </div>
-                    <div class="comment-author-name">0xIbra</div>
-                </div>
-                <div class="comment-content">
-                    <div class="comment-content-description">
-                        from me.
-                    </div>
-                </div>
-            </div>
-
-            <div class="post-comment post-new-comment">
-                <div class="comment-author">
-                    <div class="comment-author-img">
-                        <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
-                    </div>
-                    <div class="comment-author-name">0xIbra</div>
-                </div>
-                <div class="comment-content">
-                    <textarea cols="30" rows="8" placeholder="Votre commentaire..."></textarea>
+                    <textarea v-model="postReplyContent" v-on:keyup.enter="postComment" cols="30" rows="8" placeholder="Votre commentaire..."></textarea>
                     <div class="w-100 text-right">
-                        <button class="post-comment-btn">Commenter</button>
+                        <button @click="postComment" class="post-comment-btn">Commenter</button>
                     </div>
                 </div>
             </div>
@@ -398,7 +372,7 @@ onMounted(() => {
 .website {
     position: relative;
     width: 100%;
-    min-height: 720px;
+    min-height: 820px;
     height: 100%;
     background-color: rgb(11, 14, 32);
     padding-bottom: 200px;
