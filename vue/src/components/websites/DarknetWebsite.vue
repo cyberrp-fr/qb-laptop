@@ -28,11 +28,13 @@ const formDescription = ref('')
 // LOGIN page variables
 const loginUsername = ref('')
 const loginPassword = ref('')
+const loginFormError = ref('')
 
 // REGISTER page variables
 const registerUsername = ref('')
 const registerPassword = ref('')
 const registerPassword2 = ref('')
+const registerFormError = ref('')
 
 
 // ===============
@@ -78,7 +80,12 @@ async function createPostForm() {
 
 async function loginForm() {
     // @todo: form validation
-    await darknetStore.authenticateUser(loginUsername.value, loginPassword.value)
+    let result = await darknetStore.authenticateUser(loginUsername.value, loginPassword.value)
+    if (result === true) {
+        gotopage('homepage')
+    } else {
+        loginFormError.value = result.message
+    }
 }
 
 async function registerForm() {
@@ -97,13 +104,15 @@ async function registerForm() {
     }
 
     const user = {
-        userHandle: registerUsername.value,
+        username: registerUsername.value,
         password: registerPassword.value
     }
 
     let result: any = await darknetStore.RegisterUser(user)
     if (result === true) {
         gotopage('homepage')
+    } else if (result.success === false) {
+        registerFormError.value = result.message
     }
 }
 
@@ -149,6 +158,7 @@ onMounted(() => {
             <div v-if="darknetStore != null" class="nav-menu">
                 <div v-if="!darknetStore.darknet.auth" class="nav-item"><button @click="gotopage('login')">Connexion</button></div>
                 <div v-if="!darknetStore.darknet.auth" class="nav-item"><button @click="gotopage('register')">Inscription</button></div>
+                <div v-if="darknetStore.darknet.auth" class="nav-item"><button @click="darknetStore.logout">Déconnexion</button></div>
             </div>
         </div>
     </div>
@@ -238,6 +248,7 @@ onMounted(() => {
                 <div class="form-submit">
                     <button @click="loginForm">Connexion</button>
                 </div>
+                <div v-if="loginFormError != ''" class="form-errors">{{ loginFormError }}</div>
             </div>
         </div>
     </div>
@@ -258,6 +269,7 @@ onMounted(() => {
                 <div class="form-submit">
                     <button @click="registerForm">Inscription</button>
                 </div>
+                <div v-if="registerFormError != ''" class="form-errors">{{ registerFormError }}</div>
             </div>
         </div>
     </div>
@@ -282,6 +294,12 @@ onMounted(() => {
 .container {
     width: 83%;
     margin: auto;
+}
+
+.form-errors {
+    margin-top: 20px;
+    color: #ff4141;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .website {

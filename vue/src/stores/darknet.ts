@@ -48,7 +48,7 @@ export const useDarknetStore = defineStore('darknet', () => {
             return true
         }
 
-        return false
+        return content
     }
 
     async function authenticateUser(username: string, password: string) {
@@ -58,7 +58,20 @@ export const useDarknetStore = defineStore('darknet', () => {
             headers: {'Content-Type': 'application/json'}
         }
         const response: any = await fetch('https://qb-laptop/AuthenticateUser', opts)
-        console.log('auth response: ', response)
+        const content = await response.json()
+        if (content.success) {
+            darknet.value.user = content.user
+            darknet.value.auth = true
+
+            return true
+        }
+
+        return content
+    }
+
+    function logout() {
+        darknet.value.user = null
+        darknet.value.auth = false
     }
 
     return {
@@ -66,6 +79,7 @@ export const useDarknetStore = defineStore('darknet', () => {
         GetPosts,
         CreatePost,
         RegisterUser,
-        authenticateUser
+        authenticateUser,
+        logout
     }
 });

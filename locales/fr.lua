@@ -1,7 +1,9 @@
 local Translations = {
     darknet = {
         error = {
-            ["username_taken"] = "Alias déjà pris par quelqu'un."
+            ["username_taken"] = "Alias déjà pris par quelqu'un.",
+            ["no_user_found"] = "0 utilisateur trouvé avec cet Alias.",
+            ["invalid_password"] = "Mot de passe incorrect."
         }
     }
 }

@@ -19,7 +19,7 @@ local function LoadDarknet()
         LaptopData.Darknet.Posts[key] = post
     end
 
-    sql = "SELECT id, citizenid, username FROM `laptop_darknet_users`"
+    sql = "SELECT id, citizenid, username, password FROM `laptop_darknet_users`"
     result = MySQL.query.await(sql, {})
     for key, user in pairs(result) do
         LaptopData.Darknet.Users[user.username] = user
@@ -89,15 +89,15 @@ end)
 
 -- register user
 QBCore.Functions.CreateCallback("qb-laptop:server:darknet:RegisterUser", function(source, cb, userData)
-    if LaptopData.Darknet.Users[userData.userHandle] ~= nil then
+    if LaptopData.Darknet.Users[userData.username] ~= nil then
         cb({
-            error = true,
+            success = false,
             message = Lang:t("darknet.error.username_taken")
         })
         return
     end
 
-    local username = userData.userHandle
+    local username = userData.username
     local password = userData.password
     local Player = QBCore.Functions.GetPlayer(source)
     local citizenid = Player.PlayerData.citizenid
@@ -106,11 +106,35 @@ QBCore.Functions.CreateCallback("qb-laptop:server:darknet:RegisterUser", functio
     local result = MySQL.insert.await(sql, {citizenid, username, password})
 
     if not result then
-        cb({error = true})
+        cb({success = false})
     end
 
     local user = {id = result, citizenid = citizenid, username = username}
     LaptopData.Darknet.Users[username] = user
 
-    cb({error = false, user = user})
+    cb({success = true, user = user})
+end)
+
+-- authenticate user
+QBCore.Functions.CreateCallback("qb-laptop:server:darknet:AuthenticateUser", function(source, cb, userData)
+    if LaptopData.Darknet.Users[userData.username] == nil then
+        cb({
+            success = false,
+            message = Lang:t("darknet.error.no_user_found")
+        })
+        return
+    end
+
+    local user = LaptopData.Darknet.Users[userData.username]
+    if user.password ~= userData.password then
+        cb({
+            success = false,
+            message = Lang:t("darknet.error.invalid_password")
+        })
+    else
+        cb({
+            success = true,
+            user = user
+        })
+    end
 end)

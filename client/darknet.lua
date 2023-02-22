@@ -21,11 +21,18 @@ RegisterNUICallback("RegisterDarknetUser", function(userData, cb)
     -- @todo validation
 
     QBCore.Functions.TriggerCallback("qb-laptop:server:darknet:RegisterUser", function (response)
-        if response.error == false then
+        if response.success then
             DarknetUser = response.user
-            cb({success = true, user = DarknetUser})
+            cb(response)
         else
-            cb({success = false, message = response.message})
+            cb(response)
         end
+    end, userData)
+end)
+
+-- authenticate user
+RegisterNUICallback("AuthenticateUser", function(userData, cb)
+    QBCore.Functions.TriggerCallback("qb-laptop:server:darknet:AuthenticateUser", function (response)
+        cb(response)
     end, userData)
 end)
