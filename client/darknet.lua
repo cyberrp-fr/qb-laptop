@@ -6,15 +6,23 @@ local DarknetUser
 RegisterNetEvent("qb-laptop:client:darknet:RefreshComments", function (data)
     
     SendNUIMessage({
-        action = 'darknet/post/replies/set',
+        action = "darknet/post/replies/set",
         postId = data.postId,
         replies = data.replies
+    })
+end)
+
+RegisterNetEvent("qb-laptop:client:darknet:RefreshPosts", function (posts)
+    SendNUIMessage({
+        action = "darknet/posts/set",
+        posts = posts
     })
 end)
 
 ---------------
 -- CALLBACKS --
 ---------------
+
 -- get darknet posts
 RegisterNUICallback("GetDarknetPosts", function(filters, cb)
     QBCore.Functions.TriggerCallback("qb-laptop:server:darknet:GetPosts", function(posts)

@@ -29,6 +29,9 @@ function handleDarknetActions(event: any) {
         case "darknet/post/replies/set":
             darknetStore.setRepliesForPost(event.data.postId, event.data.replies)
             break
+        case "darknet/posts/set":
+            darknetStore.SetPosts(event.data.posts)
+            break
     }
 }
 
@@ -47,6 +50,7 @@ export function handleEvent(event: any) {
             break
 
         case "darknet/post/replies/set":
+        case "darknet/posts/set":
             handleDarknetActions(event)
             break
 

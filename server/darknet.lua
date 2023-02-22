@@ -84,8 +84,8 @@ AddEventHandler("qb-laptop:server:darknet:CommentPost", function (data)
     local postId = data.post_id
     local postUser = getUserByID(data.user_id)
     local reply = {
-        postId = data.post_id,
-        userId = data.user_id,
+        post_id = data.post_id,
+        user_id = data.user_id,
         username = postUser.username,
         comment = data.comment
     }
@@ -123,9 +123,10 @@ QBCore.Functions.CreateCallback("qb-laptop:server:darknet:CreatePost", function 
     local insertId = MySQL.insert.await("INSERT INTO `laptop_darknet_posts` (`citizenid`, `user_id`, `title`, `description`, `category`) VALUES (?, ?, ?, ?, ?)", insertData)
 
     post.id = insertId
-    local i = #LaptopData.Darknet.Posts + 1
-    LaptopData.Darknet.Posts[i] = post
+    post.replies = {}
+    LaptopData.Darknet.Posts[post.id] = post
 
+    TriggerClientEvent("qb-laptop:client:darknet:RefreshPosts", LaptopData.Darknet.Posts)
     cb({success = true, post = post})
 end)
 

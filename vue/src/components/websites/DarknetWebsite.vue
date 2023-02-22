@@ -73,7 +73,7 @@ async function createPostForm() {
 	}
 	let result = await darknetStore.CreatePost(post)
     if (result === true) {
-        await darknetStore.GetPosts()
+        // await darknetStore.GetPosts()
         gotopage('homepage')
         formTitle.value = ''
         formDescription.value = ''
@@ -314,10 +314,10 @@ onMounted(() => {
 
             <div v-for="reply in displayPost.replies" class="post-comment">
                 <div class="comment-author">
-                    <div class="comment-author-img">
+                    <div class="comment-author-img" :class="{'owner': reply.user_id == displayPost.user_id}">
                         <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
                     </div>
-                    <div class="comment-author-name">{{ reply['username'] }}</div>
+                    <div class="comment-author-name" :class="{'owner': reply.user_id == displayPost.user_id}">{{ reply['username'] }}</div>
                 </div>
                 <div class="comment-content">
                     <div class="comment-content-description">{{ reply['comment'] }}</div>
@@ -780,6 +780,13 @@ onMounted(() => {
                         border-radius: 50%;
                         border: 2px solid rebeccapurple;
                     }
+
+                    &.owner {
+
+                        img {
+                            border: 2px solid #03d5ca !important;
+                        }
+                    }
                 }
 
                 .comment-author-name {
@@ -787,6 +794,10 @@ onMounted(() => {
                     color: rebeccapurple;
                     margin-top: 10px;
                     font-weight: bold;
+
+                    &.owner {
+                        color: #03d5ca !important;
+                    }
                 }
 
             }

@@ -8,6 +8,10 @@ export const useDarknetStore = defineStore('darknet', () => {
         posts: []
     });
 
+    function SetPosts(posts: any) {
+        darknet.value.posts = posts
+    }
+
     async function GetPosts(filters = {}) {
         const opts = {
             method: 'POST',
@@ -111,6 +115,7 @@ export const useDarknetStore = defineStore('darknet', () => {
 
     return {
         darknet,
+        SetPosts,
         GetPosts,
         CreatePost,
         RegisterUser,
