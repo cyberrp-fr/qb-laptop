@@ -21,7 +21,6 @@ const search = ref('')
 // create page variables
 const formTitle = ref('')
 const formCategory = ref('')
-const formUserHandle = ref('')
 const formDescription = ref('')
 
 
@@ -48,11 +47,6 @@ function validateForm() {
 		violations.push({field: 'title', error: 'Le titre doit avoir 5 caracteres minimum.'})
 	}
 
-	formUserHandle.value = formUserHandle.value.trim()
-	if (formUserHandle.value.length < 3) {
-		violations.push({field: 'userHandle', error: 'l\'alias doit avoir 3 caracteres minimum.'})
-	}
-
 	formDescription.value = formDescription.value.trim()
 	if (formDescription.value.length < 10) {
 		violations.push({field: 'description', error: 'la description doit faire au moins 10 caracteres.'})
@@ -71,11 +65,16 @@ async function createPostForm() {
 	const post = {
 		title: formTitle.value,
 		category: formCategory.value,
-		userHandle: formUserHandle.value,
 		description: formDescription.value
 	}
-	await darknetStore.CreatePost(post)
-    await darknetStore.GetPosts()
+	let result = await darknetStore.CreatePost(post)
+    if (result === true) {
+        await darknetStore.GetPosts()
+        gotopage('homepage')
+        formTitle.value = ''
+        formDescription.value = ''
+        formCategory.value = ''
+    }
 }
 
 async function loginForm() {
@@ -186,17 +185,15 @@ onMounted(() => {
         </div>
 
         <div class="posts">
-            <div class="post-wrapper">
+            <div v-for="post in darknetStore.darknet.posts" class="post-wrapper">
                 <div class="post">
-                    <div class="post-title">Lorem Ipsum dolor</div>
+                    <div class="post-title">{{ post['title'] }}</div>
                     <div class="post-metadata">
-                        <span class="user-handle">0xIbra</span>
-                        <span class="category">Hacking</span>
+                        <span class="user-handle">{{ post['userHandle'] }}</span>
+                        <span class="category">{{ categories[post['category']] }}</span>
                     </div>
-                    <div class="post-description-part">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit earum consequatur, illo ipsum voluptate quidem, vero, quaerat temporibus ab magnam ipsam? Error maiores eaque ut aliquam et deleniti consequatur consequuntur?
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit earum consequatur, illo ipsum voluptate quidem, vero, quaerat temporibus ab magnam ipsam? Error maiores eaque ut aliquam et deleniti consequatur consequuntur?
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit earum consequatur, illo ipsum voluptate quidem, vero, quaerat temporibus ab magnam ipsam? Error maiores eaque ut aliquam et deleniti consequatur consequuntur?
+                    <div class="post-descrition-part">
+                        {{ post['description'] }}
                     </div>
                 </div>
             </div>
@@ -218,9 +215,6 @@ onMounted(() => {
                             <option value="">Catégorie</option>
                             <option v-for="(category, key, index) in categories" :value="key">{{ category }}</option>
                         </select>
-                    </div>
-                    <div class="user-handle">
-                        <input v-model="formUserHandle" type="text" placeholder="Alias">
                     </div>
                 </div>
 
@@ -455,6 +449,7 @@ onMounted(() => {
             margin-top: 30px;
 
             .post-wrapper {
+                margin-bottom: 10px;
 
                 .post {
                     color: #d9d9d9;

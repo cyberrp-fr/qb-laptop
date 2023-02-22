@@ -12,8 +12,9 @@ end)
 
 -- create darknet post
 RegisterNUICallback("CreateDarknetPost", function(data, cb)
-    TriggerServerEvent("qb-laptop:server:darknet:CreatePost", data)
-    cb("ok")
+    QBCore.Functions.TriggerCallback("qb-laptop:server:darknet:CreatePost", function (response)
+        cb(response)
+    end, data)
 end)
 
 -- register user

@@ -26,6 +26,17 @@ local function LoadDarknet()
     end
 end
 
+local function getUserByID(id)
+    local found
+    for key, user in pairs(LaptopData.Darknet.Users) do
+        if id == user.id then
+            found = user
+        end
+    end
+
+    return found
+end
+
 -- filter posts
 local function FilterDarknetPosts(filters)
     local result = {}
@@ -45,6 +56,10 @@ local function FilterDarknetPosts(filters)
         end
 
         if match then
+            local postUser = getUserByID(post.user_id)
+            if postUser ~= nil then
+                post.userHandle = postUser.username
+            end
             table.insert(result, post)
         end
     end
@@ -63,20 +78,6 @@ AddEventHandler("onResourceStart", function(resource)
     LoadDarknet()
 end)
 
-RegisterServerEvent("qb-laptop:server:darknet:CreatePost", function(source, data)
-    local Player = QBCore.Functions.GetPlayer(source)
-    local CitizenId = Player.PlayerData.citizenid
-
-    local post = data
-    post.citizenid = CitizenId
-
-    local i = #LaptopData.Darknet.Posts + 1
-    LaptopData.Darknet.Posts[i] = post
-
-    local insertData = { post.citizenId, post.userHandle, post.title, post.description, post.category }
-    MySQL.insert("INSERT INTO `laptop_darknet_posts` (`citizenid`, `user_handle`, `title`, `description`, `category`) VALUES (?, ?, ?, ?)", insertData)
-end)
-
 ---------------
 -- CALLBACKS --
 ---------------
@@ -85,6 +86,24 @@ end)
 QBCore.Functions.CreateCallback("qb-laptop:server:darknet:GetPosts", function(source, cb, filters)
     local result = FilterDarknetPosts(filters)
     cb(result)
+end)
+
+-- create post
+QBCore.Functions.CreateCallback("qb-laptop:server:darknet:CreatePost", function (source, cb, data)
+    local Player = QBCore.Functions.GetPlayer(source)
+    local CitizenId = Player.PlayerData.citizenid
+
+    local post = data
+    post.citizenid = CitizenId
+
+    local insertData = { post.citizenid, post.user_id, post.title, post.description, post.category }
+    local insertId = MySQL.insert.await("INSERT INTO `laptop_darknet_posts` (`citizenid`, `user_id`, `title`, `description`, `category`) VALUES (?, ?, ?, ?, ?)", insertData)
+
+    post.id = insertId
+    local i = #LaptopData.Darknet.Posts + 1
+    LaptopData.Darknet.Posts[i] = post
+
+    cb({success = true, post = post})
 end)
 
 -- register user

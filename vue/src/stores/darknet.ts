@@ -21,6 +21,9 @@ export const useDarknetStore = defineStore('darknet', () => {
     }
 
     async function CreatePost(post: any) {
+        if (darknet.value.user != null) {
+            post.user_id = darknet.value.user['id']
+        }
         const opts = {
             method: 'POST',
             body: JSON.stringify(post),
@@ -30,7 +33,10 @@ export const useDarknetStore = defineStore('darknet', () => {
         }
 
         const response: any = await fetch('https://qb-laptop/CreateDarknetPost', opts)
-        console.log('create post response: ', response)
+        const content = await response.json()
+        if (content.success === true) {
+            return true
+        }
     }
 
     async function RegisterUser(user: any) {
