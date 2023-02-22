@@ -65,8 +65,13 @@ function focusWindow(id: string) {
     }
 }
 
+function setNavigationUrl(currentUrl: string) {
+    url.value = currentUrl
+}
+
 function initBus() {
     emitter.on('window/focus', focusWindow)
+    emitter.on('firefox/url/set', setNavigationUrl)
 }
 
 onMounted(() => {

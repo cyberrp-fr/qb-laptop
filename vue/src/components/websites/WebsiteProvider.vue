@@ -8,7 +8,15 @@ const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
 
 const WebMapping = [
-    { name: 'ShadowNET', url: 'tor://shadownet.onion', component: DarknetWebsite, matches: ['shadownet.onion'] }
+    {
+        name: 'ShadowNET',
+        url: 'tor://shadownet.onion',
+        component: DarknetWebsite,
+        matches: [
+            'shadownet.onion',
+            'tor://shadownet.onion',
+        ]
+    }
 ]
 
 const currentWebsite = ref()
@@ -31,6 +39,7 @@ function webNavigation() {
 
     let website = findWebsite(navigationUrl.value)
     if (website != null) {
+        emitter.emit('firefox/url/set', website.url)
         currentWebsite.value = website
         return website.component
     }
@@ -39,7 +48,6 @@ function webNavigation() {
 }
 
 function navigate(url: string) {
-    console.log('url received: ', url)
     navigationUrl.value = url
     webNavigation()
 }
