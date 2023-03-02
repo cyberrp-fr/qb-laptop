@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { getCurrentInstance, onMounted, ref } from 'vue';
-import DarknetWebsite from './DarknetWebsite.vue';
+import { getCurrentInstance, onMounted, ref } from 'vue'
+import DarknetWebsite from './DarknetWebsite.vue'
+import IbragimWebsite from './IbragimWebsite.vue'
 
 const props = defineProps(['website'])
 const navigationUrl = ref(props.website)
@@ -15,6 +16,16 @@ const WebMapping = [
         matches: [
             'shadownet.onion',
             'tor://shadownet.onion',
+        ]
+    },
+    {
+        name: 'Ibragim',
+        url: 'https://www.ibragim.fr/',
+        component: IbragimWebsite,
+        matches: [
+            'ibragim.fr',
+            'http://ibragim.fr',
+            'https://ibragim.fr'
         ]
     }
 ]
