@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, ref } from 'vue'
+import NotFound from './NotFound.vue'
 import WebMapping from './webmap'
 
 const props = defineProps(['website'])
@@ -33,7 +34,16 @@ function webNavigation() {
         return website.component
     }
 
-    return null
+    currentWebsite.value = {
+        name: 'Could not find website',
+        url: navigationUrl,
+        props: {
+            url: navigationUrl
+        }
+    }
+    emitter.emit('firefox/url/set', currentWebsite.value.url)
+
+    return NotFound
 }
 
 function navigate(url: string) {
