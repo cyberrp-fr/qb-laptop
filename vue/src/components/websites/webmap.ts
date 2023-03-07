@@ -16,7 +16,7 @@ export default [
         url: 'https://nerko.io',
         component: IframeProvider,
         props: {
-            url: 'http://websites.cyberrp.fr.s3-website.eu-west-3.amazonaws.com/themegenix.net-775881f17d1b4965cb9fb56f7344ab75/'
+            url: 'https://websites.cyberrp.fr/themegenix.net-775881f17d1b4965cb9fb56f7344ab75/'
         },
         matches: [
             'nerkonft.io',
