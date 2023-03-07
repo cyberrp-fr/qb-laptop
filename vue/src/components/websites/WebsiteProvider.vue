@@ -1,23 +1,12 @@
 <script setup lang="ts">
-import { getCurrentInstance, onMounted, ref } from 'vue';
-import DarknetWebsite from './DarknetWebsite.vue';
+import { getCurrentInstance, onMounted, ref } from 'vue'
+import WebMapping from './webmap'
 
 const props = defineProps(['website'])
 const navigationUrl = ref(props.website)
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
 
-const WebMapping = [
-    {
-        name: 'ShadowNET',
-        url: 'tor://shadownet.onion',
-        component: DarknetWebsite,
-        matches: [
-            'shadownet.onion',
-            'tor://shadownet.onion',
-        ]
-    }
-]
 
 const currentWebsite = ref()
 
@@ -59,5 +48,5 @@ onMounted(() => {
 </script>
 
 <template>
-    <component v-if="currentWebsite != null" :is="webNavigation()" />
+    <component v-if="currentWebsite != null" :is="webNavigation()" :data="currentWebsite.props" />
 </template>
