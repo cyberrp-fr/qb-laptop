@@ -1,7 +1,22 @@
 import DarknetWebsite from "./DarknetWebsite.vue"
 import IframeProvider from "./IframeProvider.vue"
+import GoogleWebsite from "./GoogleWebsite.vue"
 
 export default [
+    {
+        name: 'Google',
+        url: 'https://www.google.com',
+        component: GoogleWebsite,
+        matches: [
+            'google.com',
+            'google.fr',
+            'www.google.com',
+            'www.google.fr',
+            'http://www.google.fr',
+            'https://www.google.fr',
+            'https://www.google.com'
+        ]
+    },
     {
         name: 'ShadowNET',
         url: 'tor://shadownet.onion',
@@ -13,6 +28,7 @@ export default [
     },
     {
         name: 'Nerko NFT',
+        description: 'Join Nerko NFT in building the biggest DAO for crypto holders.\nCheckout our whitepaper on our site.',
         url: 'https://nerko.io',
         component: IframeProvider,
         props: {
