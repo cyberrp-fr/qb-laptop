@@ -177,7 +177,6 @@ export default class LinuxFileSystem {
         }
 
         let res = this._fs.readFileSync(path).toString()
-        console.log('data: res', res)
 
         return res
     }

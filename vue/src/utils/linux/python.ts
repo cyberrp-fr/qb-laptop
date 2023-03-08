@@ -11,6 +11,8 @@ export default class Python {
     constructor(fs: LinuxFileSystem) {
         this._fs = fs
         this._settingsStore = useSettingsStore()
+
+        this._init()
     }
 
     public setOutputCallback(cb: any) {
@@ -38,8 +40,32 @@ export default class Python {
         }
 
         let pycode = this._fs.read(file)
-        console.log("Pycode: ", pycode)
+        this._runPy(pycode)
+    }
 
-        console.log("SKULPT: ", Sk)
+    private _output(text: string) {
+        console.log('oout: ', this._outputCallback)
+        this._outputCallback(text)
+    }
+
+    private _init() {
+        function builtInRead(x: string) {
+            if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+                throw "File not found: '" + x + "'"
+            return Sk.builtinFiles["files"][x]
+        }
+
+        Sk.configure({
+            output: (txt: string) => this._outputCallback(txt),
+            read: builtInRead
+        })
+    }
+
+    private async _runPy(code: string) {
+        try {
+            await Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, code))
+        } catch (e) {
+            this._outputCallback(`Error: ${e}`)
+        }
     }
 }
