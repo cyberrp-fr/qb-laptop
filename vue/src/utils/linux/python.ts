@@ -40,6 +40,6 @@ export default class Python {
         let pycode = this._fs.read(file)
         console.log("Pycode: ", pycode)
 
-        console.log("SKULPT: ", SK)
+        console.log("SKULPT: ", Sk)
     }
 }
