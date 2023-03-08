@@ -45,6 +45,10 @@ function executeSearch() {
     queryResults.value = results
 }
 
+function navigate(page: string) {
+    navigation.value = page
+}
+
 </script>
 
 <template>
@@ -64,6 +68,22 @@ function executeSearch() {
         </div>
 
         <div v-if="navigation == 'results'" class="results-page">
+            <div class="header">
+                <div @click="navigate('search')" class="google-brand">
+                    <div @click="navigate('search')" class="brand">Google</div>
+                </div>
+                <div class="search-field-group">
+                    <input v-model="searchQuery" v-on:keydown.enter="executeSearch" type="text" placeholder="Recherche...">
+                </div>
+            </div>
+
+            <div class="results-content">
+                <div v-for="result in queryResults" class="result">
+                    <div class="title">{{ result.name }}</div>
+                    <div class="url">{{ result.url }}</div>
+                    <div class="description">{{ result.description }}</div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -131,6 +151,66 @@ function executeSearch() {
         position: absolute;
         width: 100%;
         height: 100%;
+
+        .header {
+            width: 100%;
+            display: flex;
+            padding: 15px 25px;
+            border-bottom: 1px solid #1e1d1d;
+            margin-bottom: 40px;
+
+            .google-brand {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 38px;
+                font-weight: bolder;
+                color: #d9d9d9;
+                margin-bottom: 20px;
+                margin-right: 30px;
+                cursor: pointer;
+            }
+
+            .search-field-group {
+                width: 30%;
+                input {
+                    margin-top: 3px;
+                    border: none;
+                    outline: 0;
+                    background-color: #1e1e1e;
+                    padding: 10px 15px;
+                    width: 100%;
+                    border-radius: 20px;
+                    margin-bottom: 15px;
+                    color: #d9d9d9;
+                }
+            }
+        }
+
+        .results-content {
+            padding: 5px 30px;
+            font-family: Arial, Helvetica, sans-serif;
+
+            .result {
+                margin-bottom: 15px;
+
+                .title {
+                    font-weight: bold;
+                    font-size: 18px;
+                    color: #8ab4f8;
+                }
+
+                .url {
+                    font-size: 14px;
+                    margin-top: 3px;
+                    margin-bottom: 10px;
+                    color: rgb(181, 174, 164);
+                }
+
+                .description {
+                    color: rgb(181, 174, 164);
+                    font-size: 13px;
+                }
+            }
+        }
     }
 }
 </style>
