@@ -16,8 +16,9 @@ export const useSettingsStore = defineStore('settings', () => {
         ],
 
         programs: [
-            { id: 'terminal', name: 'Terminal', program: 'terminal', installed: true },
-            { id: 'firefox', name: 'Firefox', program: 'firefox', installed: false }
+            { id: 'terminal', name: 'Terminal', program: 'terminal', installed: true, showOnDesktop: true },
+            { id: 'firefox', name: 'Firefox', program: 'firefox', installed: false, showOnDesktop: true },
+            { id: 'python', name: 'Python', program: 'python', installed: false, showOnDesktop: false }
         ]
     })
 
@@ -26,7 +27,7 @@ export const useSettingsStore = defineStore('settings', () => {
     }
 
     function getInstalledPrograms() {
-        return settings.value.programs.filter(item => item.installed === true)
+        return settings.value.programs.filter(item => (item.installed === true && item.showOnDesktop === true))
     }
 
     function isInstallable(program: string) {
