@@ -56,7 +56,7 @@ export default class Python {
         }
 
         Sk.configure({
-            output: (txt: string) => this._outputCallback(txt),
+            output: (txt: string) => this._outputCallback(txt, false, false),
             read: builtInRead
         })
     }
