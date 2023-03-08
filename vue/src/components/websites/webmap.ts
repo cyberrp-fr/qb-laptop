@@ -36,6 +36,7 @@ export default [
         },
         matches: [
             'nerkonft.io',
+            'https://nerko.io',
             'http://nerkonft.io',
             'https://nerkonft.io'
         ]

@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, getCurrentInstance } from 'vue'
 import WebMapping from './webmap'
+
+const app = getCurrentInstance()
+const emitter = app?.appContext.config.globalProperties.$emitter
 
 const navigation = ref('search')
 
@@ -49,6 +52,10 @@ function navigate(page: string) {
     navigation.value = page
 }
 
+function navigateWebsite(url: string) {
+    emitter.emit('firefox/navigate', url)
+}
+
 </script>
 
 <template>
@@ -78,7 +85,7 @@ function navigate(page: string) {
             </div>
 
             <div class="results-content">
-                <div v-for="result in queryResults" class="result">
+                <div v-for="result in queryResults" @click="navigateWebsite(result.url)" class="result">
                     <div class="title">{{ result.name }}</div>
                     <div class="url">{{ result.url }}</div>
                     <div class="description">{{ result.description }}</div>
@@ -191,6 +198,7 @@ function navigate(page: string) {
 
             .result {
                 margin-bottom: 15px;
+                cursor: pointer;
 
                 .title {
                     font-weight: bold;
