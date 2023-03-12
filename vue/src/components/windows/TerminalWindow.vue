@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, getCurrentInstance, onMounted, onUnmounted } from 'vue'
-import { useStateStore } from '@/stores/state';
+import { useStateStore } from '@/stores/state'
 import LinuxOS from '@/utils/linux/LinuxOS'
 
 const Linux = new LinuxOS()
