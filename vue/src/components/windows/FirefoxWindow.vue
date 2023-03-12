@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, getCurrentInstance } from 'vue';
-import WebsiteProvider from '../websites/WebsiteProvider.vue';
+import { ref, onMounted, getCurrentInstance } from 'vue'
+import WebsiteProvider from '../websites/WebsiteProvider.vue'
 
 const props = defineProps(['id', 'focus'])
 const windowFocus = ref(props.focus)
@@ -113,7 +113,7 @@ function selfDestruct() {
     </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .window {
     position: absolute;
     width: 100%;

@@ -46,3 +46,101 @@
 ::-webkit-scrollbar-thumb:hover {
     background: #474d58;
 }
+
+
+/* WINDOWS */
+.window {
+    position: absolute;
+    width: 900px;
+    height: 450px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 20px 1px rgba(0, 0, 0, 0.5);
+    left: 20%;
+    top: 20%;
+    background-color: rgba(36, 42, 56, 1);
+    resize: both;
+    overflow: hidden;
+    font-family: 'Ubuntu Mono', sans-serif;
+    font-size: 15px;
+}
+.window.resizable {
+    resize: both;
+}
+.window .window-header {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    color: rgba(222, 222, 222, 0.9);
+}
+.window .window-header .logo {
+    display: flex;
+    padding-left: 7px;
+}
+.window .window-header .logo img {
+    width: 15px;
+}
+.window .window-header .logo .title {
+    margin-left: 10px;
+}
+.window .window-header .header-action-buttons {
+    padding-right: 15px;
+    display: flex;
+    justify-content: space-between;
+    width: 30px;
+}
+.window .window-header .header-action-buttons .window-action {
+    border: none;
+    outline: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: relative;
+}
+.window .window-header .header-action-buttons .window-action:hover {
+    opacity: 0.6 !important;
+}
+.window .window-header .header-action-buttons .window-action.window-action-close {
+    background-color: #f83a3a;
+}
+.window .window-header .header-action-buttons .window-action.window-action-minimize {
+    background-color: #e6c821;
+}
+.window .content {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 25px);
+    left: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+   /* width */
+   /* Track */
+   /* Handle */
+   /* Handle on hover */
+}
+.window .content .content-container {
+    position: relative;
+    display: flex;
+    height: 100%;
+}
+
+.window .content::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+.window .content::-webkit-scrollbar-track {
+    background: #1b1e22;
+}
+.window .content::-webkit-scrollbar-thumb {
+    background: #2f333a;
+    border-radius: 10px;
+}
+.window .content::-webkit-scrollbar-thumb:hover {
+    background: #474d58;
+}
+

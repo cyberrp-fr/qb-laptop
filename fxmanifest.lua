@@ -26,6 +26,8 @@ ui_page 'html/index.html'
 files {
     'html/index.html',
     'html/assets/index.js',
-    'html/assets/index.css'
+    'html/assets/index.css',
+    'html/static/js/skulpt/skulpt.min.js',
+    'html/static/js/skulpt/skulpt-stdlib.js'
 }
 
