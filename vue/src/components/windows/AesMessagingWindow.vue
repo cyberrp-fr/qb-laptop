@@ -258,6 +258,7 @@ function selfDestruct() {
                     color: #d9d9d9;
                     margin-right: 10px;
                     border-radius: 5px;
+                    resize: none;
                 }
 
                 button {
