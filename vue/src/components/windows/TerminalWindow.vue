@@ -80,13 +80,15 @@ function lastCommand(e: any) {
 }
 
 // output callback
-function outputCallback(text: string, clear: boolean = false) {
+function outputCallback(text: string, clear: boolean = false, newLine = true) {
     if (clear) {
         output.value = ''
     }
 
     output.value += text
-    output.value += '\n'
+    if (newLine) {
+        output.value += '\n'
+    }
 
     setTimeout(() => {
         let outputContainer: any = document.querySelector('.content')
