@@ -8,8 +8,12 @@ const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
 
 const aesStore = useAesMessageStore()
+
+const newDiscussionForm = ref(false)
 const selectedDiscussion = ref()
 
+const recipientAddress = ref('')
+const newMessageContent = ref('') // only used for new discussion creations
 const messageContent = ref('')
 const formError = ref(false)
 
@@ -24,7 +28,17 @@ async function sendMessage() {
     // await aesStore.sendMessage(messageContent)
 }
 
+async function startNewDiscussion() {
+
+}
+
+function newDiscussionFormCreate() {
+    selectedDiscussion.value = null
+    newDiscussionForm.value = true
+}
+
 function selectDiscussion(hash: string) {
+    newDiscussionForm.value = false
     selectedDiscussion.value = aesStore.getDiscussion(hash)
 }
 
@@ -112,6 +126,9 @@ function selfDestruct() {
                         <div class="search-field">
                             <input type="text" class="form-control" placeholder="Search...">
                         </div>
+                        <div class="new-discussion-btn">
+                            <button @click="newDiscussionFormCreate">+</button>
+                        </div>
                     </div>
                     <div class="address-group">
                         <div class="address-label">Address:</div>
@@ -126,9 +143,20 @@ function selfDestruct() {
                         </div>
                     </div>
 
-                    <div v-if="selectedDiscussion == null" class="conversation-tab">
+                    <div v-if="selectedDiscussion == null && newDiscussionForm === false" class="conversation-tab">
                         <div class="center">
                             <h5>No discussion selected</h5>
+                        </div>
+                    </div>
+
+                    <div v-if="newDiscussionForm === true" class="conversation-tab">
+                        <div class="recipient-address">
+                            <input v-model="recipientAddress" type="text" placeholder="Recipient address">
+                        </div>
+                        <div class="message-history empty"></div>
+                        <div class="compose">
+                            <textarea v-model="newMessageContent" v-on:keydown.enter="startNewDiscussion" :class="{'error': formError}" placeholder="Message..."></textarea>
+                            <button @click="startNewDiscussion">Send</button>
                         </div>
                     </div>
 
@@ -178,17 +206,42 @@ function selfDestruct() {
 
         .search-group {
             padding-left: 10px !important;
-            width: 20%;
+            width: 24%;
+            display: flex;
 
-            input {
+            .search-field {
                 width: 100%;
 
-                background-color: #1a212b !important;
-                border: none;
-                outline: 0;
-                padding: 5px 10px;
-                border-radius: 3px;
-                color: #d9d9d9;
+                input {
+                    width: 100%;
+                    background-color: #1a212b !important;
+                    border: none;
+                    outline: 0;
+                    padding: 5px 10px;
+                    border-radius: 3px;
+                    color: #d9d9d9;
+                }
+            }
+
+            .new-discussion-btn {
+                position: relative;
+
+                button {
+                    margin-left: 30px;
+                    border: none;
+                    outline: 0;
+                    padding: 4px 10px;
+                    border-radius: 3px;
+                    background-color: #1a212b;
+                    color: #d9d9d9;
+                    font-size: 14px;
+                    font-weight: bolder;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: #0e1621;
+                    }
+                }
             }
         }
 
@@ -247,11 +300,29 @@ function selfDestruct() {
                 }
             }
 
+            .recipient-address {
+                width: 100%;
+                padding: 10px;
+
+                input {
+                    background-color: #242f3d;
+                    border: none;
+                    outline: 0;
+                    padding: 10px 10px;
+                    width: 90%;
+                    color: #d9d9d9;
+                }
+            }
+
             .message-history {
                 height: 80%;
                 padding: 0 20px;
                 display: flex;
                 flex-direction: column;
+
+                &.empty {
+                    height: 67% !important;
+                }
 
                 .message {
                     display: block;
