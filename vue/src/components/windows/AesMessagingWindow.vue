@@ -9,6 +9,10 @@ const emitter = app?.appContext.config.globalProperties.$emitter
 
 const aesStore = useAesMessageStore()
 
+const searchFound = ref(false)
+const searchResults = ref({})
+const discussionSearchValue = ref('')
+
 const newDiscussionForm = ref(false)
 const selectedDiscussion = ref()
 
@@ -31,6 +35,7 @@ async function sendMessage() {
 }
 
 async function startNewDiscussion() {
+    recipientAddress.value = recipientAddress.value.trim()
     newMessageContent.value = newMessageContent.value.trim()
     if (newMessageContent.value === '') {
         formError.value = true
@@ -60,6 +65,28 @@ function newDiscussionFormCreate() {
 function selectDiscussion(hash: string) {
     newDiscussionForm.value = false
     selectedDiscussion.value = aesStore.getDiscussion(hash)
+}
+
+function searchDiscussion() {
+    // discussionSearchValue.value = discussionSearchValue.value.trim()
+    if (discussionSearchValue.value === '') {
+        searchResults.value = []
+        searchFound.value = false
+    } else {
+        searchResults.value = aesStore.searchDiscussion(discussionSearchValue.value)
+        searchFound.value = true
+    }
+}
+
+function copyAddress() {
+    const address = aesStore.address
+
+    const el = document.createElement("textarea");
+    el.value = address;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
 }
 
 function windowClicked() {
@@ -144,21 +171,25 @@ function selfDestruct() {
                 <div class="header">
                     <div class="search-group">
                         <div class="search-field">
-                            <input type="text" class="form-control" placeholder="Search...">
+                            <input v-model="discussionSearchValue" v-on:keyup="searchDiscussion" type="text" class="form-control" placeholder="Search...">
                         </div>
                         <div class="new-discussion-btn">
                             <button @click="newDiscussionFormCreate">+</button>
                         </div>
                     </div>
                     <div class="address-group">
-                        <div class="address-label">Address:</div>
-                        <div class="address-value">{{ aesStore.address }}</div>
+                        <div @click="copyAddress" class="address-label">My Address:</div>
+                        <div @click="copyAddress" class="address-value">{{ aesStore.address }}</div>
                     </div>
                 </div>
 
                 <div class="main-content-container">
                     <div class="sidebar">
-                        <div @click="selectDiscussion(discussion)" v-for="discussion in Object.keys(aesStore.discussions)" class="conversation" :class="{'active': (selectedDiscussion != null && discussion == selectedDiscussion.discussionId)}">
+                        <div v-if="searchFound === false" @click="selectDiscussion(discussion)" v-for="discussion in Object.keys(aesStore.discussions)" class="conversation" :class="{'active': (selectedDiscussion != null && discussion == selectedDiscussion.discussionId)}">
+                            <div class="address">{{ discussion }}</div>
+                        </div>
+
+                        <div v-if="searchFound === true" @click="selectDiscussion(discussion)" v-for="discussion in Object.keys(searchResults)" class="conversation" :class="{'active': (selectedDiscussion != null && discussion == selectedDiscussion.discussionId)}">
                             <div class="address">{{ discussion }}</div>
                         </div>
                     </div>
@@ -268,6 +299,11 @@ function selfDestruct() {
         .address-group {
             display: flex;
             padding-right: 10px !important;
+            cursor: pointer;
+
+            &:hover {
+                color: #9f9f9f !important;
+            }
 
             .address-label {
                 margin-right: 8px;

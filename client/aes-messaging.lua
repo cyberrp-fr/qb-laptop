@@ -60,6 +60,14 @@ end)
 -- EVENTS --
 ------------
 
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    initialize()
+end)
+
+RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
+    TriggerServerEvent("qb-laptop:server:aes:userOffline", HashAddress)
+end)
+
 AddEventHandler("onResourceStart", function (resource)
     if resource ~= GetCurrentResourceName() then return end
 

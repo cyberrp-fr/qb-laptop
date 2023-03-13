@@ -61,6 +61,34 @@ export const useAesMessageStore = defineStore('aes-message', () => {
         const response = await fetch('https://qb-laptop/AESSendMessage', opts)
     }
 
+    function searchDiscussion(search: string) {
+        const result: any = {}
+        const values = Object.values(discussions.value)
+        for (let i = 0; i < values.length; i++) {
+            const discussion: any = values[i]
+            
+            try {
+
+                if (discussion.from.includes(search)) {
+                    result[discussion.discussionId] = discussion
+                    continue
+                }
+                if (discussion.to.includes(search)) {
+                    result[discussion.discussionId] = discussion
+                    continue
+                }
+                
+                let matches = discussion.messages.filter((msg: any) => msg.content.includes(search))
+                if (matches.length > 0) {
+                    result[discussion.discussionId] = discussion
+                }
+
+            } catch (e) {}
+        }
+
+        return result
+    }
+
     return {
         address,
         discussions,
@@ -70,6 +98,7 @@ export const useAesMessageStore = defineStore('aes-message', () => {
         getDiscussion,
         getStartedDiscussion,
         newDiscussion,
-        sendMessage
+        sendMessage,
+        searchDiscussion
     }
 });
