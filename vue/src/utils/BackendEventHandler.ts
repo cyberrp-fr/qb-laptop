@@ -1,6 +1,7 @@
 import { useStateStore } from "@/stores/state"
 import { useSettingsStore } from "@/stores/settings"
 import { useDarknetStore } from "@/stores/darknet"
+import { useAesMessageStore } from "@/stores/aes-message"
 
 // this function handles event messages regarding all the base actions (ex: change desktop wallpaper)
 function handleBaseActions(event: any) {
@@ -35,6 +36,17 @@ function handleDarknetActions(event: any) {
     }
 }
 
+// handles event messages related to AES Messaging program
+function handleAesMessagingActions(event: any) {
+    const aesStore = useAesMessageStore()
+
+    switch (event.data.action) {
+        case "aes-messaging/receive":
+            aesStore.receiveMessage(event.data.discussionId, event.data.discussionMessage)
+            break
+    }
+}
+
 // All messages sent from back-end, go through this function.
 // It distributes the received event message to approriate handler
 export function handleEvent(event: any) {
@@ -52,6 +64,10 @@ export function handleEvent(event: any) {
         case "darknet/post/replies/set":
         case "darknet/posts/set":
             handleDarknetActions(event)
+            break
+
+        case "aes-messaging/receive":
+            handleAesMessagingActions(event)
             break
 
         default:

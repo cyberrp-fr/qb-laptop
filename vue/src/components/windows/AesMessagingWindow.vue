@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted, getCurrentInstance } from 'vue'
+import { useAesMessageStore } from "@/stores/aes-message"
 
 const props = defineProps(['id', 'focus'])
 const windowFocus = ref(props.focus)
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
+
+const aesStore = useAesMessageStore()
+const selectedDiscussion = ref()
+
+function windowClicked() {
+    emitter.emit('window/focus', props.id)
+}
 
 // window position coords
 const containerElem = ref()
@@ -14,10 +22,6 @@ const containerPos = ref({
     movementX: 0,
     movementY: 0
 })
-
-function windowClicked() {
-    emitter.emit('window/focus', props.id)
-}
 
 // -----------------
 // -- move window --
@@ -99,19 +103,9 @@ function selfDestruct() {
 
                 <div class="main-content-container">
                     <div class="sidebar">
-                        <div class="conversation">
-                            <div class="address">hash@77837897983489347</div>
+                        <div v-for="discussion in Object.keys(aesStore.discussions)" class="conversation">
+                            <div class="address">{{ discussion }}</div>
                         </div>
-                        <div class="conversation">
-                            <div class="address">hash@77837897983489347</div>
-                        </div>
-                        <div class="conversation">
-                            <div class="address">hash@77837897983489347</div>
-                        </div>
-                        <div class="conversation">
-                            <div class="address">hash@77837897983489347</div>
-                        </div>
-                        
                     </div>
 
                     <div class="conversation-tab">
@@ -162,8 +156,8 @@ function selfDestruct() {
         background-color: #242f3d;
 
         .search-group {
-            padding-left: 20px !important;
-            width: 25%;
+            padding-left: 10px !important;
+            width: 20%;
 
             input {
                 width: 100%;
@@ -179,7 +173,7 @@ function selfDestruct() {
 
         .address-group {
             display: flex;
-            padding-right: 20px !important;
+            padding-right: 10px !important;
 
             .address-label {
                 margin-right: 8px;
@@ -207,6 +201,9 @@ function selfDestruct() {
 
                 &:hover {
                     background-color: #1a222c;
+                }
+                &.active {
+                    background-color: #2b6492;
                 }
             }
         }
@@ -254,7 +251,7 @@ function selfDestruct() {
                     border: none;
                     outline: 0;
                     background-color: #18202a;
-                    padding: 10px 20px;
+                    padding: 10px 10px;
                     color: #d9d9d9;
                     margin-right: 10px;
                     border-radius: 5px;
