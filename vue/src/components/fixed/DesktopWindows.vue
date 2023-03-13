@@ -6,6 +6,7 @@ import TerminalWindow from '@/components/windows/TerminalWindow.vue'
 import ExplorerWindow from '../windows/ExplorerWindow.vue'
 import SettingsWindow from '../windows/SettingsWindow.vue'
 import FirefoxWindow from '../windows/FirefoxWindow.vue'
+import AesMessagingWindow from '../windows/AesMessagingWindow.vue'
 
 // Utils
 import { useSettingsStore } from '@/stores/settings'
@@ -33,6 +34,8 @@ function getComponentOfType(type: string) {
     return SettingsWindow
   } else if (type == 'firefox') {
     return FirefoxWindow
+  } else if (type == 'aes-msg') {
+    return AesMessagingWindow
   }
 
   return null

@@ -6,7 +6,8 @@ const props = defineProps(['id', 'program', 'name', 'focus'])
 const icons: any = {
     'firefox': 'https://i.imgur.com/CwYZABb.png',
     'terminal': 'https://i.imgur.com/zyNd2Cc.png',
-    'explorer': 'https://i.imgur.com/T8dFIIZ.png'
+    'explorer': 'https://i.imgur.com/T8dFIIZ.png',
+    'aes-msg': 'https://i.imgur.com/govaedU.png'
 }
 
 const imgPath = icons[props.program]
