@@ -37,7 +37,7 @@ export const useAesMessageStore = defineStore('aes-message', () => {
             body: JSON.stringify({
                 to,
                 from: address.value,
-                message
+                messages: [message]
             }),
             headers: {'Content-Type': 'application/json'}
         }

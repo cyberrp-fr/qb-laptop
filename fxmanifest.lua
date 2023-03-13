@@ -8,18 +8,21 @@ description 'qb-laptop - laptops with linux OS'
 shared_scripts {
     '@qb-core/shared/locale.lua',
 	'locales/*.lua',
-    'shared/config.lua'
+    'shared/config.lua',
+    'shared/utils.lua'
 }
 
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     'server/main.lua',
-    'server/darknet.lua'
+    'server/darknet.lua',
+    'server/aes-messaging.lua'
 }
 
 client_scripts {
     'client/main.lua',
-    'client/darknet.lua'
+    'client/darknet.lua',
+    'client/aes-messaging.lua'
 }
 
 ui_page 'html/index.html'
