@@ -10,6 +10,20 @@ const emitter = app?.appContext.config.globalProperties.$emitter
 const aesStore = useAesMessageStore()
 const selectedDiscussion = ref()
 
+const messageContent = ref('')
+const formError = ref(false)
+
+async function sendMessage() {
+    messageContent.value = messageContent.value.trim()
+    if (messageContent.value === '') {
+        formError.value = true
+        return
+    }
+    formError.value = false
+
+    // await aesStore.sendMessage(messageContent)
+}
+
 function selectDiscussion(hash: string) {
     selectedDiscussion.value = aesStore.getDiscussion(hash)
 }
@@ -120,16 +134,13 @@ function selfDestruct() {
 
                     <div v-if="selectedDiscussion != null" class="conversation-tab">
                         <div class="message-history">
-                            <div class="message received">
-                                <div class="message-box">Hi 0xIbra !</div>
-                            </div>
-                            <div class="message sent">
-                                <div class="message-box">Hey !</div>
+                            <div v-for="message in selectedDiscussion.messages" class="message" :class="{ 'received': message.from !== aesStore.address, 'sent': message.from === aesStore.address }">
+                                <div class="message-box">{{ message.content }}</div>
                             </div>
                         </div>
                         <div class="compose">
-                            <textarea placeholder="Message..."></textarea>
-                            <button>Send</button>
+                            <textarea v-model="messageContent" v-on:keydown.enter="sendMessage" :class="{'error': formError}" placeholder="Message..."></textarea>
+                            <button @click="sendMessage">Send</button>
                         </div>
                     </div>
                 </div>
@@ -280,6 +291,10 @@ function selfDestruct() {
                     margin-right: 10px;
                     border-radius: 5px;
                     resize: none;
+
+                    &.error {
+                        border: 1px solid rgb(214, 31, 31) !important;
+                    }
                 }
 
                 button {
