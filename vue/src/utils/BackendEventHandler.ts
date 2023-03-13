@@ -41,6 +41,12 @@ function handleAesMessagingActions(event: any) {
     const aesStore = useAesMessageStore()
 
     switch (event.data.action) {
+        case "aes-messaging/address/set":
+            aesStore.setAddress(event.data.AESAddress)
+            break
+        case "aes-messaging/discussion/set":
+            aesStore.setDiscussion(event.data.AESDiscussion.hash, event.data.AESDiscussion)
+            break
         case "aes-messaging/receive":
             aesStore.receiveMessage(event.data.discussionId, event.data.discussionMessage)
             break
@@ -66,6 +72,8 @@ export function handleEvent(event: any) {
             handleDarknetActions(event)
             break
 
+        case "aes-messaging/address/set":
+        case "aes-messaging/discussion/set":
         case "aes-messaging/receive":
             handleAesMessagingActions(event)
             break
