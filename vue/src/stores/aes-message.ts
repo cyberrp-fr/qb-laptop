@@ -23,6 +23,18 @@ export const useAesMessageStore = defineStore('aes-message', () => {
         return discussions.value[hash]
     }
 
+    function getStartedDiscussion(to: string) {
+        let values = Object.values(discussions.value)
+        for (let i = 0; i < values.length; i++) {
+            const discussion: any = values[i]
+            if (discussion.from === address.value && discussion.to === to) {
+                return discussion
+            }
+        }
+
+        return null
+    }
+
     async function newDiscussion(to: string, message: string) {
         const opts = {
             method: 'POST',
@@ -56,6 +68,7 @@ export const useAesMessageStore = defineStore('aes-message', () => {
         setDiscussion,
         receiveMessage,
         getDiscussion,
+        getStartedDiscussion,
         newDiscussion,
         sendMessage
     }

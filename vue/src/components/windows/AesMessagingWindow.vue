@@ -26,6 +26,8 @@ async function sendMessage() {
     formError.value = false
 
     await aesStore.sendMessage(selectedDiscussion.value.discussionId, messageContent.value)
+
+    messageContent.value = ''
 }
 
 async function startNewDiscussion() {
@@ -37,6 +39,17 @@ async function startNewDiscussion() {
     formError.value = false
 
     await aesStore.newDiscussion(recipientAddress.value, newMessageContent.value)
+
+    const toAddress = recipientAddress.value
+
+    newDiscussionForm.value = false
+    newMessageContent.value = ''
+    recipientAddress.value = ''
+
+    while (selectedDiscussion.value == null) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+        selectedDiscussion.value = aesStore.getStartedDiscussion(toAddress)
+    }
 }
 
 function newDiscussionFormCreate() {
