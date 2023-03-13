@@ -37,7 +37,11 @@ end)
 RegisterNUICallback("AESSendMessage", function (data, cb)
     local from = HashAddress
     local discussionId = data.discussionId
+
     local to = Discussions[discussionId].to
+    if to == HashAddress then
+        to = Discussions[discussionId].from
+    end
 
     local payload = {
         from = from,
@@ -88,10 +92,13 @@ RegisterNetEvent("qb-laptop:client:aes:ReceiveMessage", function (data)
     local discussionId = data.discussionId
     local from = data.from
     local to = data.to
-    local message = data.discussionMessage
+    local messageContent = data.discussionMessage
 
-    message.to = to
-    message.from = from
+    local message = {
+        to = to,
+        from = from,
+        content = messageContent
+    }
 
     table.insert(Discussions[discussionId]['messages'], message)
 

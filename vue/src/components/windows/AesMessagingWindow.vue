@@ -175,7 +175,7 @@ function selfDestruct() {
                         </div>
                         <div class="message-history empty"></div>
                         <div class="compose">
-                            <textarea v-model="newMessageContent" v-on:keydown.enter="startNewDiscussion" :class="{'error': formError}" placeholder="Message..."></textarea>
+                            <textarea v-model="newMessageContent" :class="{'error': formError}" placeholder="Message..."></textarea>
                             <button @click="startNewDiscussion">Send</button>
                         </div>
                     </div>
@@ -187,7 +187,7 @@ function selfDestruct() {
                             </div>
                         </div>
                         <div class="compose">
-                            <textarea v-model="messageContent" v-on:keydown.enter="sendMessage" :class="{'error': formError}" placeholder="Message..."></textarea>
+                            <textarea v-model="messageContent" :class="{'error': formError}" placeholder="Message..."></textarea>
                             <button @click="sendMessage">Send</button>
                         </div>
                     </div>
@@ -363,6 +363,7 @@ function selfDestruct() {
                         background-color: #242f3d;
                         padding: 8px 10px;
                         border-radius: 7px;
+                        white-space: pre;
                     }
                 }
             }
@@ -384,6 +385,7 @@ function selfDestruct() {
                     margin-right: 10px;
                     border-radius: 5px;
                     resize: none;
+                    white-space: pre;
 
                     &.error {
                         border: 1px solid rgb(214, 31, 31) !important;
