@@ -16,7 +16,9 @@ end)
 -- declare user went offline, remove his address from registry
 RegisterServerEvent("qb-laptop:server:aes:userOffline")
 AddEventHandler("qb-laptop:server:aes:userOffline", function (hashAddress)
-    LaptopData.AES.Users[hashAddress] = nil
+    if LaptopData.AES.Users[hashAddress] ~= nil then
+        LaptopData.AES.Users[hashAddress] = nil
+    end
 end)
 
 -- create new discussion
@@ -27,6 +29,7 @@ AddEventHandler("qb-laptop:server:aes:newDiscussion", function (data)
 
     local destSource = LaptopData.AES.Users[data.to]
     if destSource ~= nil then
+        print('destSource: ', destSource)
         TriggerClientEvent("qb-laptop:client:aes:SetDiscussion", destSource, data)
     end
 end)

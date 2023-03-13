@@ -25,11 +25,18 @@ async function sendMessage() {
     }
     formError.value = false
 
-    // await aesStore.sendMessage(messageContent)
+    await aesStore.sendMessage(selectedDiscussion.value.discussionId, messageContent.value)
 }
 
 async function startNewDiscussion() {
+    newMessageContent.value = newMessageContent.value.trim()
+    if (newMessageContent.value === '') {
+        formError.value = true
+        return
+    }
+    formError.value = false
 
+    await aesStore.newDiscussion(recipientAddress.value, newMessageContent.value)
 }
 
 function newDiscussionFormCreate() {
@@ -138,7 +145,7 @@ function selfDestruct() {
 
                 <div class="main-content-container">
                     <div class="sidebar">
-                        <div @click="selectDiscussion(discussion)" v-for="discussion in Object.keys(aesStore.discussions)" class="conversation" :class="{'active': (selectedDiscussion != null && discussion == selectedDiscussion.hash)}">
+                        <div @click="selectDiscussion(discussion)" v-for="discussion in Object.keys(aesStore.discussions)" class="conversation" :class="{'active': (selectedDiscussion != null && discussion == selectedDiscussion.discussionId)}">
                             <div class="address">{{ discussion }}</div>
                         </div>
                     </div>
@@ -265,6 +272,8 @@ function selfDestruct() {
             background-color: #242f3d;
             width: 25%;
             height: 100%;
+            overflow-x: hidden;
+            overflow-y: scroll;
             // padding-left: 10px;
             // padding-top: 10px;
 

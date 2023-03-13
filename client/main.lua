@@ -55,6 +55,8 @@ RegisterNetEvent("qb-laptop:client:TurnOnLaptop", function ()
         })
     end
 
+    TriggerEvent("qb-laptop:client:aes:OnLaptopTurnOn")
+
     SetNuiFocus(true, true)
     SendNUIMessage({
         action = "turnon",

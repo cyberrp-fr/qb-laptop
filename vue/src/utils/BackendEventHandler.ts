@@ -45,7 +45,7 @@ function handleAesMessagingActions(event: any) {
             aesStore.setAddress(event.data.AESAddress)
             break
         case "aes-messaging/discussion/set":
-            aesStore.setDiscussion(event.data.AESDiscussion.hash, event.data.AESDiscussion)
+            aesStore.setDiscussion(event.data.discussion)
             break
         case "aes-messaging/receive":
             aesStore.receiveMessage(event.data.discussionId, event.data.discussionMessage)

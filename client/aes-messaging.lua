@@ -7,7 +7,6 @@ local Discussions = {}
 
 local function initialize()
     HashAddress = "hash@" .. Utils.GenerateHash(tostring(PlayerData.citizenid))
-
     TriggerServerEvent("qb-laptop:server:aes:userOnline", HashAddress)
 end
 
@@ -16,7 +15,7 @@ end
 -------------------
 
 -- create new discussion with 1 message
-RegisterNUICallback("AESNewDiscussion", function (data)
+RegisterNUICallback("AESNewDiscussion", function (data, cb)
     local from = HashAddress
     local to = data.to
     local messages = data.messages
@@ -26,14 +25,16 @@ RegisterNUICallback("AESNewDiscussion", function (data)
         from = from,
         to = to,
         messages = messages,
-        hash = hash
+        discussionId = hash
     }
 
     TriggerServerEvent("qb-laptop:server:aes:newDiscussion", discussion)
+
+    cb("ok")
 end)
 
 -- send message to discussion
-RegisterNUICallback("AESSendMessage", function (data)
+RegisterNUICallback("AESSendMessage", function (data, cb)
     local from = HashAddress
     local discussionId = data.discussionId
     local to = Discussions[discussionId].to
@@ -46,6 +47,8 @@ RegisterNUICallback("AESSendMessage", function (data)
     }
 
     TriggerServerEvent("qb-laptop:server:aes:SendMessage", payload)
+
+    cb("ok")
 end)
 
 
@@ -63,6 +66,13 @@ AddEventHandler("onResourceStop", function (resource)
     if resource ~= GetCurrentResourceName() then return end
 
     TriggerServerEvent("qb-laptop:server:aes:userOffline", HashAddress)
+end)
+
+AddEventHandler("qb-laptop:client:aes:OnLaptopTurnOn", function ()
+    SendNUIMessage({
+        action = "aes-messaging/address/set",
+        AESAddress = HashAddress
+    })
 end)
 
 RegisterNetEvent("qb-laptop:client:aes:SetDiscussion", function (data)

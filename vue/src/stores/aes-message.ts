@@ -3,22 +3,14 @@ import { defineStore } from 'pinia'
 
 export const useAesMessageStore = defineStore('aes-message', () => {
     const address = ref('hash@0000000000000')
-    const discussions: any = ref({
-        'hash@98237845243347457': {
-            hash: 'hash@98237845243347457',
-            messages: [
-                {from: 'hash@834587345987345', to: 'hash@0000000000000', content: 'Hello !'},
-                {from: 'hash@0000000000000', to: 'hash@834587345987345', content: 'Hi !'},
-            ]
-        }
-    })
+    const discussions: any = ref({})
 
     function setAddress(addr: string) {
         address.value = addr
     }
 
-    function setDiscussion(id: string, discussion: any) {
-        discussion[id] = discussion
+    function setDiscussion(discussion: any) {
+        discussions.value[discussion.discussionId] = discussion
     }
 
     function receiveMessage(id: string, message: any) {
@@ -37,7 +29,7 @@ export const useAesMessageStore = defineStore('aes-message', () => {
             body: JSON.stringify({
                 to,
                 from: address.value,
-                messages: [message]
+                messages: [{ from: address.value, to, content: message }]
             }),
             headers: {'Content-Type': 'application/json'}
         }
@@ -58,8 +50,8 @@ export const useAesMessageStore = defineStore('aes-message', () => {
     }
 
     return {
-        discussions,
         address,
+        discussions,
         setAddress,
         setDiscussion,
         receiveMessage,
