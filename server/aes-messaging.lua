@@ -29,7 +29,6 @@ AddEventHandler("qb-laptop:server:aes:newDiscussion", function (data)
 
     local destSource = LaptopData.AES.Users[data.to]
     if destSource ~= nil then
-        print('destSource: ', destSource)
         TriggerClientEvent("qb-laptop:client:aes:SetDiscussion", destSource, data)
     end
 end)
