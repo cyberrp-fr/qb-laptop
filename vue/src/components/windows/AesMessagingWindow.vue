@@ -101,13 +101,13 @@ function selfDestruct() {
                     </div>
                     <div class="address-group">
                         <div class="address-label">Address:</div>
-                        <div class="address-value">3242378562378575</div>
+                        <div class="address-value">{{ aesStore.address }}</div>
                     </div>
                 </div>
 
                 <div class="main-content-container">
                     <div class="sidebar">
-                        <div @click="selectDiscussion(discussion)" v-for="discussion in Object.keys(aesStore.discussions)" class="conversation">
+                        <div @click="selectDiscussion(discussion)" v-for="discussion in Object.keys(aesStore.discussions)" class="conversation" :class="{'active': (selectedDiscussion != null && discussion == selectedDiscussion.hash)}">
                             <div class="address">{{ discussion }}</div>
                         </div>
                     </div>
