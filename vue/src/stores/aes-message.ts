@@ -18,8 +18,14 @@ export const useAesMessageStore = defineStore('aes-message', () => {
         }
     }
 
+    function getDiscussion(hash: string) {
+        return discussions.value[hash]
+    }
+
     return {
         discussions,
-        receiveMessage
+        address,
+        receiveMessage,
+        getDiscussion
     }
 });

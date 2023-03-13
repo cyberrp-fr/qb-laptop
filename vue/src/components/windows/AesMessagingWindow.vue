@@ -10,6 +10,10 @@ const emitter = app?.appContext.config.globalProperties.$emitter
 const aesStore = useAesMessageStore()
 const selectedDiscussion = ref()
 
+function selectDiscussion(hash: string) {
+    selectedDiscussion.value = aesStore.getDiscussion(hash)
+}
+
 function windowClicked() {
     emitter.emit('window/focus', props.id)
 }
@@ -103,12 +107,18 @@ function selfDestruct() {
 
                 <div class="main-content-container">
                     <div class="sidebar">
-                        <div v-for="discussion in Object.keys(aesStore.discussions)" class="conversation">
+                        <div @click="selectDiscussion(discussion)" v-for="discussion in Object.keys(aesStore.discussions)" class="conversation">
                             <div class="address">{{ discussion }}</div>
                         </div>
                     </div>
 
-                    <div class="conversation-tab">
+                    <div v-if="selectedDiscussion == null" class="conversation-tab">
+                        <div class="center">
+                            <h5>No discussion selected</h5>
+                        </div>
+                    </div>
+
+                    <div v-if="selectedDiscussion != null" class="conversation-tab">
                         <div class="message-history">
                             <div class="message received">
                                 <div class="message-box">Hi 0xIbra !</div>
@@ -211,6 +221,20 @@ function selfDestruct() {
         .conversation-tab {
             width: 75%;
             height: 100%;
+
+            .center {
+                display: flex;
+                width: 100%;
+                height: 90%;
+                justify-content: center;
+                align-items: center;
+
+                h5 {
+                    font-size: 24px;
+                    font-weight: 100;
+                    color: rgba(255, 255, 255, 0.3);
+                }
+            }
 
             .message-history {
                 height: 80%;
