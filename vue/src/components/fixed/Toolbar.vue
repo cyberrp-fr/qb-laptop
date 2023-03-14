@@ -196,6 +196,7 @@ onMounted(() => {
     border-bottom-right-radius: 5px;
     font-family: 'Ubuntu Mono', sans-serif;
     transition: ease-in .3s;
+    z-index: 50 !important;
 
     &.active {
         display: block !important;
