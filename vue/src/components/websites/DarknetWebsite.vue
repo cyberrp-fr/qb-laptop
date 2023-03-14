@@ -36,6 +36,12 @@ const registerPassword2 = ref('')
 const registerFormError = ref('')
 
 
+// PROFILE page variables
+const profilePictureUrl = ref('https://i.imgur.com/UugXIxP.png')
+if (darknetStore.darknet.user != null && darknetStore.darknet.user['profile_picture_url'] != null) {
+    profilePictureUrl.value = darknetStore.darknet.user['profile_picture_url']
+}
+
 // show post page variables
 const displayPost = ref()
 const postReplyContent = ref('')
@@ -119,6 +125,10 @@ async function registerForm() {
     }
 }
 
+async function editProfileForm() {
+    await darknetStore.editProfile(profilePictureUrl.value)
+}
+
 async function fetchPosts() {
     let categoryTemp = null
     let searchTemp = null
@@ -182,6 +192,7 @@ onMounted(() => {
             <div v-if="darknetStore != null" class="nav-menu">
                 <div v-if="!darknetStore.darknet.auth" class="nav-item"><button @click="gotopage('login')">Connexion</button></div>
                 <div v-if="!darknetStore.darknet.auth" class="nav-item"><button @click="gotopage('register')">Inscription</button></div>
+                <div v-if="darknetStore.darknet.auth" class="nav-item"><button @click="gotopage('profile')">Profil</button></div>
                 <div v-if="darknetStore.darknet.auth" class="nav-item"><button @click="darknetStore.logout">Déconnexion</button></div>
             </div>
         </div>
@@ -337,6 +348,23 @@ onMounted(() => {
                         <button @click="postComment" class="post-comment-btn">Commenter</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="navigation == 'profile'" class="profilepage">
+        <div class="container">
+            <div class="profile-form">
+                <div class="picture-display">
+                    <img :src="profilePictureUrl" >
+                </div>
+                <div class="picture-url-form-group">
+                    <label for="profilepicture">Photo profil:</label>
+                    <input v-model="profilePictureUrl" type="text" id="profilepicture" placeholder="URL de la photo">
+                </div>
+            </div>
+            <div class="profile-form-submit">
+                <button @click="editProfileForm">Sauvegarder</button>
             </div>
         </div>
     </div>
@@ -832,6 +860,78 @@ onMounted(() => {
                 .post-comment-btn {
                     position: relative;
                     text-align: right;
+                    background: #182347;
+                    color: #d9d9d9;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 7px 10px;
+                    font-size: 15px;
+                    margin-left: 10px;
+                    outline: 0;
+                    cursor: pointer;
+                    font-weight: bold;
+
+                    &:hover {
+                        background: #273972;
+                    }
+                }
+            }
+        }
+    }
+
+    .profilepage {
+        position: relative;
+        top: 150px;
+        font-family: Arial, Helvetica, sans-serif;
+
+        .container {
+            
+            
+            .profile-form {
+                display: flex;
+                justify-content: center;
+
+                .picture-display {
+                    margin-right: 50px;
+
+                    img {
+                        width: 150px;
+                        height: 150px;
+                        border-radius: 50%;
+                        border: 1px solid #444457
+                    }
+                }
+
+                .picture-url-form-group {
+                    display: flex;
+                    align-items: center;
+                    min-width: 400px;
+
+                    label {
+                        font-weight: bold;
+                        color: #d9d9d9;
+                        margin-right: 10px;
+                    }
+
+                    input {
+                        width: 100%;
+                        background-color: #161b3b;
+                        border: none;
+                        outline: 0;
+                        padding: 10px;
+                        color: #d9d9d9;
+                        border-radius: 5px;
+                    }
+                }
+            }
+
+            .profile-form-submit {
+                display: block;
+                width: 100%;
+                text-align: center;
+                margin-top: 10px;
+
+                button {
                     background: #182347;
                     color: #d9d9d9;
                     border: none;

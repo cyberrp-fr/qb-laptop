@@ -33,6 +33,9 @@ function handleDarknetActions(event: any) {
         case "darknet/posts/set":
             darknetStore.SetPosts(event.data.posts)
             break
+        case "darknet/user/set":
+            darknetStore.SetUser(event.data.user)
+            break
     }
 }
 
@@ -69,6 +72,7 @@ export function handleEvent(event: any) {
 
         case "darknet/post/replies/set":
         case "darknet/posts/set":
+        case "darknet/user/set":
             handleDarknetActions(event)
             break
 
