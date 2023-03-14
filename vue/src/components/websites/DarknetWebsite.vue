@@ -37,7 +37,7 @@ const registerFormError = ref('')
 
 
 // PROFILE page variables
-const profilePictureUrl = ref('https://i.imgur.com/UugXIxP.png')
+const profilePictureUrl = ref('https://i.imgur.com/1M5IK1E.jpg')
 if (darknetStore.darknet.user != null && darknetStore.darknet.user['profile_picture_url'] != null) {
     profilePictureUrl.value = darknetStore.darknet.user['profile_picture_url']
 }
