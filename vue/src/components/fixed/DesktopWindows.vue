@@ -49,6 +49,19 @@ function openWindow(program: string) {
     render: true
   }
 
+  // only allow opening 1 window of AES Messaging
+  if (program === 'aes-msg') {
+    let values = Object.values(windows)
+    let matches = values.filter((item: any) => item.type === program)
+
+    console.log('values: ', values)
+    console.log('matches: ', matches)
+
+    if (matches.length > 0) {
+      return
+    }
+  }
+
   windows[window.id] = window
 
   emitter.emit('toolbar/openwindow', {id: window.id, type: window.type})
