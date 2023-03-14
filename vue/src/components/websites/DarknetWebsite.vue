@@ -310,7 +310,7 @@ onMounted(() => {
                 <div class="post-display">
                     <div class="post-author-zone">
                         <div class="author-img-zone">
-                            <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
+                            <img :src="displayPost['user']['profile_picture_url']" alt="anonymous-user-placeholder">
                         </div>
                         <div class="author-name-zone">{{ displayPost['userHandle'] }}</div>
                     </div>
@@ -326,7 +326,7 @@ onMounted(() => {
             <div v-for="reply in displayPost.replies" class="post-comment">
                 <div class="comment-author">
                     <div class="comment-author-img" :class="{'owner': reply.user_id == displayPost.user_id}">
-                        <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
+                        <img :src="reply['user']['profile_picture_url']" alt="anonymous-user-placeholder">
                     </div>
                     <div class="comment-author-name" :class="{'owner': reply.user_id == displayPost.user_id}">{{ reply['username'] }}</div>
                 </div>
@@ -338,7 +338,7 @@ onMounted(() => {
             <div v-if="darknetStore.darknet.auth" class="post-comment post-new-comment">
                 <div class="comment-author">
                     <div class="comment-author-img">
-                        <img src="https://i.imgur.com/1M5IK1E.jpg" alt="anonymous-user-placeholder">
+                        <img :src="darknetStore.darknet.user['profile_picture_url'] || 'https://i.imgur.com/1M5IK1E.jpg'" alt="anonymous-user-placeholder">
                     </div>
                     <div v-if="darknetStore.darknet.user" class="comment-author-name">{{ darknetStore.darknet.user['username'] }}</div>
                 </div>

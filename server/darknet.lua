@@ -11,22 +11,6 @@ local function CleanDarknet()
     MySQL.query("DELETE FROM `laptop_darknet_posts` WHERE `created_at` < NOW() - INTERVAL 24 HOUR", {})
 end
 
--- loads darknet posts
-local function LoadDarknet()
-    local sql = "SELECT * FROM `laptop_darknet_posts` WHERE `created_at` > NOW() - INTERVAL 24 HOUR ORDER BY `created_at` DESC"
-    local result = MySQL.query.await(sql, {})
-    for key, post in pairs(result) do
-        post.replies = {}
-        LaptopData.Darknet.Posts[post.id] = post
-    end
-
-    sql = "SELECT id, citizenid, username, password, profile_picture_url FROM `laptop_darknet_users`"
-    result = MySQL.query.await(sql, {})
-    for key, user in pairs(result) do
-        LaptopData.Darknet.Users[user.username] = user
-    end
-end
-
 local function getUserByID(id)
     local found
     for key, user in pairs(LaptopData.Darknet.Users) do
@@ -36,6 +20,27 @@ local function getUserByID(id)
     end
 
     return found
+end
+
+-- loads darknet posts
+local function LoadDarknet()
+    -- load users
+    local sql = "SELECT id, citizenid, username, password, profile_picture_url FROM `laptop_darknet_users`"
+    local result = MySQL.query.await(sql, {})
+    for key, user in pairs(result) do
+        LaptopData.Darknet.Users[user.username] = user
+    end
+
+    -- load posts
+    sql = "SELECT * FROM `laptop_darknet_posts` WHERE `created_at` > NOW() - INTERVAL 24 HOUR ORDER BY `created_at` DESC"
+    result = MySQL.query.await(sql, {})
+    for key, post in pairs(result) do
+        post.replies = {}
+        local user = getUserByID(post.user_id)
+        post.user = user
+
+        LaptopData.Darknet.Posts[post.id] = post
+    end
 end
 
 -- filter posts
@@ -87,6 +92,7 @@ AddEventHandler("qb-laptop:server:darknet:CommentPost", function (data)
         post_id = data.post_id,
         user_id = data.user_id,
         username = postUser.username,
+        user = postUser,
         comment = data.comment
     }
 
@@ -108,14 +114,9 @@ AddEventHandler("qb-laptop:server:darknet:EditUserProfilePicture", function (dat
     local username = data.username
     local profilePictureUrl = data.profilePictureUrl
 
-    print("editProfile values: ", username, profilePictureUrl)
+    local sql = "UPDATE `laptop_darknet_users` SET `profile_picture_url` = ? WHERE 1=1 AND username = ?"
+    MySQL.update.await(sql, {profilePictureUrl, username})
 
-    local sql = "UPDATE `laptop_darknet_users` SET `profile_picture_url` = ? WHERE username = ?"
-    local result = MySQL.update.await(sql, { data.username, data.profilePictureUrl })
-
-    print("mysql result: ", result)
-
-    print("users: ", json.encode(LaptopData.Darknet.Users))
     if LaptopData.Darknet.Users[username] ~= nil then
         local User = LaptopData.Darknet.Users[username]
         User['profile_picture_url'] = profilePictureUrl

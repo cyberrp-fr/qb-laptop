@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `laptop_darknet_users` (
     `username` varchar(100) NOT NULL,
     `password` varchar(255) NOT NULL,
     `created_at` datetime DEFAULT current_timestamp(),
-    `profile_picture_url` varchar(255) NULL DEFAULT NULL,
+    `profile_picture_url` varchar(255) DEFAULT NULL,
 
     PRIMARY KEY (`id`),
     KEY `citizenid` (`citizenid`)
