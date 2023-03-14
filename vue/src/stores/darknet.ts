@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 export const useDarknetStore = defineStore('darknet', () => {
     const darknet = ref({
         auth: false,
-        user: null,
+        user: null as any,
         posts: []
     });
 
@@ -79,6 +79,19 @@ export const useDarknetStore = defineStore('darknet', () => {
         return content
     }
 
+    async function editProfile(profilePictureUrl: string) {
+        const payload = {
+            username: darknet.value.user['username'],
+            profilePictureUrl
+        }
+        const opts = {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {'Content-Type': 'application/json'}
+        }
+        await fetch('https://qb-laptop/DarknetEditProfile', opts)
+    }
+
     function logout() {
         darknet.value.user = null
         darknet.value.auth = false
@@ -113,6 +126,10 @@ export const useDarknetStore = defineStore('darknet', () => {
         const response: any = await fetch('https://qb-laptop/DarknetPostComment', opts)
     }
 
+    function SetUser(user: any) {
+        darknet.value.user = user
+    }
+
     return {
         darknet,
         SetPosts,
@@ -120,9 +137,11 @@ export const useDarknetStore = defineStore('darknet', () => {
         CreatePost,
         RegisterUser,
         authenticateUser,
+        editProfile,
         logout,
         getPostById,
         setRepliesForPost,
-        postComment
+        postComment,
+        SetUser
     }
 });

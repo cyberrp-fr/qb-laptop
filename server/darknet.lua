@@ -11,22 +11,6 @@ local function CleanDarknet()
     MySQL.query("DELETE FROM `laptop_darknet_posts` WHERE `created_at` < NOW() - INTERVAL 24 HOUR", {})
 end
 
--- loads darknet posts
-local function LoadDarknet()
-    local sql = "SELECT * FROM `laptop_darknet_posts` WHERE `created_at` > NOW() - INTERVAL 24 HOUR ORDER BY `created_at` DESC"
-    local result = MySQL.query.await(sql, {})
-    for key, post in pairs(result) do
-        post.replies = {}
-        LaptopData.Darknet.Posts[post.id] = post
-    end
-
-    sql = "SELECT id, citizenid, username, password FROM `laptop_darknet_users`"
-    result = MySQL.query.await(sql, {})
-    for key, user in pairs(result) do
-        LaptopData.Darknet.Users[user.username] = user
-    end
-end
-
 local function getUserByID(id)
     local found
     for key, user in pairs(LaptopData.Darknet.Users) do
@@ -36,6 +20,27 @@ local function getUserByID(id)
     end
 
     return found
+end
+
+-- loads darknet posts
+local function LoadDarknet()
+    -- load users
+    local sql = "SELECT id, citizenid, username, password, profile_picture_url FROM `laptop_darknet_users`"
+    local result = MySQL.query.await(sql, {})
+    for key, user in pairs(result) do
+        LaptopData.Darknet.Users[user.username] = user
+    end
+
+    -- load posts
+    sql = "SELECT * FROM `laptop_darknet_posts` WHERE `created_at` > NOW() - INTERVAL 24 HOUR ORDER BY `created_at` DESC"
+    result = MySQL.query.await(sql, {})
+    for key, post in pairs(result) do
+        post.replies = {}
+        local user = getUserByID(post.user_id)
+        post.user = user
+
+        LaptopData.Darknet.Posts[post.id] = post
+    end
 end
 
 -- filter posts
@@ -87,6 +92,7 @@ AddEventHandler("qb-laptop:server:darknet:CommentPost", function (data)
         post_id = data.post_id,
         user_id = data.user_id,
         username = postUser.username,
+        user = postUser,
         comment = data.comment
     }
 
@@ -98,6 +104,26 @@ AddEventHandler("qb-laptop:server:darknet:CommentPost", function (data)
         table.insert(LaptopData.Darknet.Posts[postId].replies, reply)
 
         TriggerClientEvent("qb-laptop:client:darknet:RefreshComments", -1, {postId = postId, replies = LaptopData.Darknet.Posts[postId].replies})
+    end
+end)
+
+RegisterServerEvent("qb-laptop:server:darknet:EditUserProfilePicture")
+AddEventHandler("qb-laptop:server:darknet:EditUserProfilePicture", function (data)
+    local src = source
+
+    local username = data.username
+    local profilePictureUrl = data.profilePictureUrl
+
+    local sql = "UPDATE `laptop_darknet_users` SET `profile_picture_url` = ? WHERE 1=1 AND username = ?"
+    MySQL.update.await(sql, {profilePictureUrl, username})
+
+    if LaptopData.Darknet.Users[username] ~= nil then
+        local User = LaptopData.Darknet.Users[username]
+        User['profile_picture_url'] = profilePictureUrl
+
+        LaptopData.Darknet.Users[username] = User
+
+        TriggerClientEvent("qb-laptop:client:darknet:SetUser", src, User)
     end
 end)
 

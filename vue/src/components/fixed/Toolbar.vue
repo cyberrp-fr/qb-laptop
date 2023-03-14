@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, reactive, ref } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
 
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
+
+const settingsStore = useSettingsStore()
 
 const windowsTabs: any = reactive({})
 const focusWindowId = ref()
@@ -92,6 +95,16 @@ onMounted(() => {
         <div class="linuxmenu-item" @click="windowClick" :data-action="'explorer'">
             <img src="https://i.imgur.com/T8dFIIZ.png" class="item-logo">
             <span class="item-label">Explorer</span>
+        </div>
+
+        <div class="linuxmenu-item" @click="windowClick" :data-action="'firefox'">
+            <img src="https://i.imgur.com/CwYZABb.png" class="item-logo">
+            <span class="item-label">Firefox</span>
+        </div>
+
+        <div v-if="settingsStore.alreadyInstalled('aes-msg')" class="linuxmenu-item" @click="windowClick" :data-action="'aes-msg'">
+            <img src="https://i.imgur.com/govaedU.png" class="item-logo">
+            <span class="item-label">AES Messaging</span>
         </div>
 
         <div class="linuxmenu-item" @click="windowClick" :data-action="'settings'">
@@ -196,6 +209,7 @@ onMounted(() => {
     border-bottom-right-radius: 5px;
     font-family: 'Ubuntu Mono', sans-serif;
     transition: ease-in .3s;
+    z-index: 50 !important;
 
     &.active {
         display: block !important;

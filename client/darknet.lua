@@ -19,6 +19,13 @@ RegisterNetEvent("qb-laptop:client:darknet:RefreshPosts", function (posts)
     })
 end)
 
+RegisterNetEvent("qb-laptop:client:darknet:SetUser", function (user)
+    SendNUIMessage({
+        action = "darknet/user/set",
+        user = user
+    })
+end)
+
 ---------------
 -- CALLBACKS --
 ---------------
@@ -62,4 +69,10 @@ RegisterNUICallback("AuthenticateUser", function(userData, cb)
     QBCore.Functions.TriggerCallback("qb-laptop:server:darknet:AuthenticateUser", function (response)
         cb(response)
     end, userData)
+end)
+
+-- edit profile picture
+RegisterNUICallback("DarknetEditProfile", function(data, cb)
+    TriggerServerEvent("qb-laptop:server:darknet:EditUserProfilePicture", data)
+    cb("ok")
 end)
