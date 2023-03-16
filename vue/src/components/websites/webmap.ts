@@ -2,7 +2,9 @@ import DarknetWebsite from "./DarknetWebsite.vue"
 import IframeProvider from "./IframeProvider.vue"
 import GoogleWebsite from "./GoogleWebsite.vue"
 
-export default [
+import data from "@/data/webmap.json"
+
+const Map = [
     {
         name: 'Google',
         url: 'https://www.google.com',
@@ -42,3 +44,12 @@ export default [
         ]
     }
 ]
+
+for (let i = 0; i < data.length; i++) {
+    const website: any = data[i]
+    website.component = IframeProvider
+
+    Map.push(website)
+}
+
+export default Map

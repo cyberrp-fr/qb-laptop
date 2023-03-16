@@ -31,14 +31,14 @@ function executeSearch() {
 
         let queryWords = prepareQuery(searchQuery.value)
         for (let i = 0; i < queryWords.length; i++) {
-            let word = queryWords[i]
+            let word = queryWords[i].toLowerCase()
 
-            if (website.name.includes(word)) {
+            if (website.name.toLowerCase().includes(word)) {
                 results.push(website)
                 break
             }
 
-            if (website.description.includes(word)) {
+            if (website.description.toLowerCase().includes(word)) {
                 results.push(website)
                 break
             }
