@@ -97,7 +97,7 @@ onMounted(() => {
             <span class="item-label">Explorer</span>
         </div>
 
-        <div class="linuxmenu-item" @click="windowClick" :data-action="'firefox'">
+        <div v-if="settingsStore.alreadyInstalled('firefox')" class="linuxmenu-item" @click="windowClick" :data-action="'firefox'">
             <img src="https://i.imgur.com/CwYZABb.png" class="item-logo">
             <span class="item-label">Firefox</span>
         </div>
