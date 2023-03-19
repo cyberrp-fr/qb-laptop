@@ -38,6 +38,21 @@ local function LoadLaptopSettings()
     end
 end
 
+local function GetUSBs()
+    local found = {}
+    for slot, item in pairs(PlayerData.items) do
+        if item.name == "usb_stick_1" or item.name == "usb_stick_2" then
+            table.insert(found, item)
+        end
+
+        if #found >= 4 then
+            break
+        end
+    end
+
+    return found
+end
+
 ------------
 -- EVENTS --
 ------------
@@ -70,6 +85,15 @@ RegisterNetEvent("qb-laptop:client:TurnOnLaptop", function ()
             Wait(1)
         end
     end)
+
+    Wait(1000)
+    local usbs = GetUSBs()
+    if #usbs > 0 then
+        SendNUIMessage({
+            action = "usb/set",
+            usbs = usbs
+        })
+    end
 end)
 
 

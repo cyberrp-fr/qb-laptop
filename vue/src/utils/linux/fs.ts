@@ -35,6 +35,8 @@ export default class LinuxFileSystem {
             '/var',
             '/var/log',
             '/tmp',
+            '/media',
+            '/media/usb'
         ]
 
         for (let i = 0; i < dirs.length; i++) {
