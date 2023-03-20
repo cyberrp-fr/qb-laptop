@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, getCurrentInstance, onMounted } from 'vue'
 import LinuxOS from '@/utils/linux/LinuxOS'
+import LinuxFileSystem from '@/utils/linux/fs'
 
 const Linux = new LinuxOS()
+const fs = new LinuxFileSystem()
 
 // window id and window focus
 const props = defineProps(['id', 'focus'])
@@ -41,6 +43,7 @@ function initBus() {
 
 onMounted(() => {
     Linux.setFs(app?.appContext.config.globalProperties.$fs)
+    fs.setFs(app?.appContext.config.globalProperties.$fs)
 
     currentDirectory.value = Linux.whereami()
     currentDirectoryContent.value = Linux.explorer()
@@ -94,6 +97,10 @@ function onExplorerItemClick(e: any) {
     }
 }
 
+function refreshExplorer() {
+    goto(currentDirectory.value)
+}
+
 // -------------------
 // -- drag and drop --
 // -------------------
@@ -101,6 +108,11 @@ function onDrop(e: any) {
     const sourcePath: string = e.dataTransfer.getData('text/plain')
     const split = sourcePath.split('/')
     const basename = split[split.length -1]
+    const destination = fs.joinPath(currentDirectory.value, basename)
+
+    fs.mv(sourcePath, destination)
+
+    refreshExplorer()
 }
 
 function onDragStart(e: any) {
@@ -108,6 +120,7 @@ function onDragStart(e: any) {
 }
 
 function onDragEnd(e: any) {
+    refreshExplorer()
 }
 
 // -----------------
@@ -169,13 +182,13 @@ function getKey(e: any) {
                     <input v-on:keyup.enter="goto(currentDirectory)" v-model="currentDirectory" type="text" placeholder="/home/user/">
                 </div>
             </div>
-            <div class="explorer-content">
+            <div @dragover.prevent @drop="onDrop" class="explorer-content">
                 <!-- <div class="sidebar">
                     <div class="list-dir-item">Documents</div>
                     <div class="list-dir-item">Desktop</div>
                     <div class="list-dir-item">Downloads</div>
                 </div> -->
-                <div @dragover.prevent @drop="onDrop" class="directory-content">
+                <div class="directory-content">
                     <div v-for="item in currentDirectoryContent" class="item" @click="onExplorerItemClick" draggable="true" @dragstart="onDragStart" @dragend="onDragEnd" :data-type="item.type" :data-dir-path="item.fullPath">
                         <img v-if="item.type == 'dir'" :data-type="item.type" :data-dir-path="item.fullPath" src="https://i.imgur.com/T8dFIIZ.png">
                         <img v-if="item.type == 'file'" :data-type="item.type" :data-dir-path="item.fullPath" src="https://i.imgur.com/bDpDN9T.png">

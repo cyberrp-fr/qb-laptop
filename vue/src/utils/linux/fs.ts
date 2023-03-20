@@ -182,4 +182,15 @@ export default class LinuxFileSystem {
 
         return res
     }
+
+    mv(source: string, destination: string) {
+        if (!source.startsWith('/')) {
+            source = this.joinPath(this._cwd, source)
+        }
+        if (!destination.startsWith('/')) {
+            destination = this.joinPath(this._cwd, destination)
+        }
+
+        return this._fs.renameSync(source, destination)
+    }
 }
