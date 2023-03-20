@@ -92,6 +92,22 @@ function onExplorerItemClick(e: any) {
     }
 }
 
+// -------------------
+// -- drag and drop --
+// -------------------
+function onDrop(e: any) {
+    const sourcePath: string = e.dataTransfer.getData('text/plain')
+    const split = sourcePath.split('/')
+    const basename = split[split.length -1]
+}
+
+function onDragStart(e: any) {
+    e.dataTransfer.setData('text/plain', e.target.getAttribute('data-dir-path'))
+}
+
+function onDragEnd(e: any) {
+}
+
 // -----------------
 // -- move window --
 // -----------------
@@ -146,7 +162,7 @@ function getKey(e: any) {
         <div class="content">
             <div class="explorer-toolbar">
                 <div @click="prev" class="prev">{{ '<' }}</div>
-                <div class="next">></div>
+                <div @click="next" class="next">></div>
                 <div class="path">
                     <input v-on:keyup.enter="goto(currentDirectory)" v-model="currentDirectory" type="text" placeholder="/home/user/">
                 </div>
@@ -157,8 +173,8 @@ function getKey(e: any) {
                     <div class="list-dir-item">Desktop</div>
                     <div class="list-dir-item">Downloads</div>
                 </div> -->
-                <div class="directory-content">
-                    <div v-for="item in currentDirectoryContent" class="item" @click="onExplorerItemClick" :data-type="item.type" :data-dir-path="item.fullPath">
+                <div @dragover.prevent @drop="onDrop" class="directory-content">
+                    <div v-for="item in currentDirectoryContent" class="item" @click="onExplorerItemClick" draggable="true" @dragstart="onDragStart" @dragend="onDragEnd" :data-type="item.type" :data-dir-path="item.fullPath">
                         <img v-if="item.type == 'dir'" :data-type="item.type" :data-dir-path="item.fullPath" src="https://i.imgur.com/T8dFIIZ.png">
                         <img v-if="item.type == 'file'" :data-type="item.type" :data-dir-path="item.fullPath" src="https://i.imgur.com/bDpDN9T.png">
                         <div :data-type="item.type" :data-dir-path="item.fullPath" class="label">{{ item.filename }}</div>
