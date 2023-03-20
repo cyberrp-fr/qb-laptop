@@ -117,6 +117,14 @@ RegisterNUICallback("SaveSettings", function (data, cb)
     cb("ok")
 end)
 
+RegisterNUICallback("UnmountUSBs", function (data, cb)
+    print("data: ", json.encode(data))
+
+    -- QBCore.Functions.UpdateItem()
+
+    cb("ok")
+end)
+
 ---------------
 -- LISTENERS --
 ---------------

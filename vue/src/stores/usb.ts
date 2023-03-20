@@ -28,7 +28,8 @@ export const useUsbStore = defineStore("usb", () => {
         }
     }
 
-    function unmount() {
+    async function unmount() {
+        
     }
 
     return {
