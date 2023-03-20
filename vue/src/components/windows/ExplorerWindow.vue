@@ -63,18 +63,20 @@ function goto(path: string) {
 }
 
 function prev() {
-    let prevIndex = explorerHistory.value.length - 2
+    let prevIndex = explorerHistoryIndex.value - 1
     if (prevIndex >= 0 && explorerHistory.value[prevIndex] != null) {
         let path = explorerHistory.value[prevIndex]
         goto(path)
+        explorerHistoryIndex.value = prevIndex
     }
 }
 
 function next() {
-    let nextIndex = explorerHistory.value.length -1
+    let nextIndex = explorerHistoryIndex.value + 1
     if (nextIndex > 0 && explorerHistory.value[nextIndex] != null) {
         let path = explorerHistory.value[nextIndex]
         goto(path)
+        explorerHistoryIndex.value = nextIndex
     }
 }
 
@@ -312,6 +314,7 @@ function getKey(e: any) {
                     width: 15rem;
                     border-radius: 3px;
                     color: #d9d9d9;
+                    padding: 0 5px;
                 }
             }
         }
