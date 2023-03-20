@@ -215,4 +215,43 @@ export default class LinuxFileSystem {
             this.cp(source, destination)
         }
     }
+
+    rlist(directory: string) {
+        // if (!directory.startsWith('/')) {
+        //     directory = this.joinPath(this._cwd, directory)
+        // }
+
+        const result: any = {
+            path: directory,
+            type: 'dir',
+            contents: [],
+            size: 0
+        }
+
+        const files = this._fs.readdirSync(directory)
+        for (let i = 0; i < files.length; i++) {
+            let filepath = files[i]
+            const item: any = {
+                filename: filepath,
+                path: this.joinPath(directory, filepath),
+                type: 'file'
+            }
+            filepath = item.path
+
+            if (this.isDir(filepath)) {
+                let nestedResult = this.rlist(filepath)
+                item.type = 'dir'
+                item.contents = nestedResult.contents
+                result.size += nestedResult.size
+            } else {
+                item.data = this._fs.readFileSync(filepath)
+                item.size = this._fs.statSync(filepath).size
+                result.size += item.size
+            }
+
+            result.contents.push(item)
+        }
+
+        return result
+    }
 }

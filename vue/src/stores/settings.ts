@@ -68,7 +68,6 @@ export const useSettingsStore = defineStore('settings', () => {
             headers: {'Content-Type': 'application/json'}
         }
         const response = await fetch('https://qb-laptop/SaveSettings', opts)
-        console.log('save response: ', response)
     }
 
     return {
