@@ -2,6 +2,7 @@
 import { ref, getCurrentInstance, onMounted } from 'vue'
 import LinuxOS from '@/utils/linux/LinuxOS'
 import LinuxFileSystem from '@/utils/linux/fs'
+import { useSettingsStore } from '@/stores/settings'
 
 const Linux = new LinuxOS()
 const fs = new LinuxFileSystem()
@@ -9,6 +10,8 @@ const fs = new LinuxFileSystem()
 // window id and window focus
 const props = defineProps(['id', 'focus'])
 const windowFocus = ref(props.focus)
+
+const settingsStore = useSettingsStore()
 
 // window position coords
 const containerElem = ref()
@@ -18,6 +21,16 @@ const containerPos = ref({
     movementX: 0,
     movementY: 0
 })
+
+// options menu (right click)
+const optionsMenuElem = ref()
+const optionsMenuPos = ref({
+    x: 0,
+    y: 0
+})
+const optionsMenuActive = ref(false)
+
+const focusedObject = ref()
 
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
@@ -101,27 +114,88 @@ function refreshExplorer() {
     goto(currentDirectory.value)
 }
 
-// -------------------
-// -- drag and drop --
-// -------------------
-function onDrop(e: any) {
-    const sourcePath: string = e.dataTransfer.getData('text/plain')
-    const split = sourcePath.split('/')
-    const basename = split[split.length -1]
-    const destination = fs.joinPath(currentDirectory.value, basename)
 
-    fs.mv(sourcePath, destination)
+// ----------------------
+// -- copy, cut, paste --
+// ----------------------
 
-    refreshExplorer()
+function copy() {
+    if (focusedObject.value != null) {
+        settingsStore.setClipboard({
+            action: 'cp',
+            type: focusedObject.value.type,
+            path: focusedObject.value.path
+        })
+
+        console.log('copy: ', settingsStore.getClipboard())
+    }
+
+    optionsMenuActive.value = false
 }
 
-function onDragStart(e: any) {
-    e.dataTransfer.setData('text/plain', e.target.getAttribute('data-dir-path'))
+function cut() {
+    if (focusedObject.value != null) {
+        settingsStore.setClipboard({
+            action: 'mv',
+            type: focusedObject.value.type,
+            path: focusedObject.value.path
+        })
+    }
+
+    optionsMenuActive.value = false
 }
 
-function onDragEnd(e: any) {
-    refreshExplorer()
+function paste() {
+    if (settingsStore.getClipboard() != null) {
+        const { action, type, path } = settingsStore.getClipboard()
+        if (action === 'mv' && path == currentDirectory.value) {
+            settingsStore.setClipboard(null)
+            return
+        }
+
+        const split = path.split('/')
+        const basename = split[split.length -1]
+        const destination = fs.joinPath(currentDirectory.value, basename)
+
+        if (action == 'mv') {
+            fs.mv(path, destination)
+            refreshExplorer()
+            settingsStore.setClipboard(null)
+
+            return
+        }
+
+        if (action == 'cp') {
+            fs.cpr(path, destination)
+            refreshExplorer()
+
+            return
+        }
+    }
 }
+
+function rightClick(e: any) {
+    if (e.button === 2) {
+        const path = e.target.getAttribute("data-dir-path")
+        const type = e.target.getAttribute("data-type")
+        if (type != null) {
+            focusedObject.value = {
+                type,
+                path
+            }
+        } else {
+            focusedObject.value = null
+        }
+
+        optionsMenuActive.value = true
+        optionsMenuElem.value.style.top = e.layerY + 'px'
+        optionsMenuElem.value.style.left = e.layerX + 'px'
+    } else {
+        optionsMenuActive.value = false
+    }
+}
+
+
 
 // -----------------
 // -- move window --
@@ -182,14 +256,21 @@ function getKey(e: any) {
                     <input v-on:keyup.enter="goto(currentDirectory)" v-model="currentDirectory" type="text" placeholder="/home/user/">
                 </div>
             </div>
-            <div @dragover.prevent @drop="onDrop" class="explorer-content">
+            <div @mousedown="rightClick" class="explorer-content">
+                <div ref="optionsMenuElem" class="options-float-menu" :class="{'active': optionsMenuActive}">
+                    <div class="option" @click="refreshExplorer">Actualiser</div>
+                    <div v-if="focusedObject != null" @mousedown="copy" class="option">Copier</div>
+                    <div v-if="focusedObject != null" @mousedown="cut" class="option">Couper</div>
+                    <div v-if="settingsStore.getClipboard() != null" @mousedown="paste" class="option">Coller</div>
+                    <div class="option">Nouveau dossier</div>
+                </div>
                 <!-- <div class="sidebar">
                     <div class="list-dir-item">Documents</div>
                     <div class="list-dir-item">Desktop</div>
                     <div class="list-dir-item">Downloads</div>
                 </div> -->
                 <div class="directory-content">
-                    <div v-for="item in currentDirectoryContent" class="item" @click="onExplorerItemClick" draggable="true" @dragstart="onDragStart" @dragend="onDragEnd" :data-type="item.type" :data-dir-path="item.fullPath">
+                    <div v-for="item in currentDirectoryContent" class="item" @click="onExplorerItemClick" @mousedown="rightClick" :data-type="item.type" :data-dir-path="item.fullPath">
                         <img v-if="item.type == 'dir'" :data-type="item.type" :data-dir-path="item.fullPath" src="https://i.imgur.com/T8dFIIZ.png">
                         <img v-if="item.type == 'file'" :data-type="item.type" :data-dir-path="item.fullPath" src="https://i.imgur.com/bDpDN9T.png">
                         <div :data-type="item.type" :data-dir-path="item.fullPath" class="label">{{ item.filename }}</div>
@@ -336,6 +417,30 @@ function getKey(e: any) {
             position: relative;
             display: flex;
             height: 100%;
+
+            .options-float-menu {
+                position: absolute;
+                display: none;
+                width: 150px;
+                // top: 50px;
+                // left: 200px;
+                color: #d9d9d9;
+                background-color: #1b1e22;
+                border-radius: 4px;
+
+                &.active {
+                    display: block !important;
+                }
+
+                .option {
+                    padding: 5px 10px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: #4b5ab9 !important;
+                    }
+                }
+            }
 
             .sidebar {
                 // background-color: #1b1e22;

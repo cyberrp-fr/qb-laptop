@@ -24,6 +24,16 @@ export const useSettingsStore = defineStore('settings', () => {
         ]
     })
 
+    const clipboardObject = ref()
+
+    function setClipboard(item: any) {
+        clipboardObject.value = item
+    }
+
+    function getClipboard() {
+        return clipboardObject.value
+    }
+
     function setSettings(newSettings: any) {
         settings.value = newSettings;
     }
@@ -63,6 +73,9 @@ export const useSettingsStore = defineStore('settings', () => {
 
     return {
         settings,
+        clipboardObject,
+        setClipboard,
+        getClipboard,
         setSettings,
         getInstalledPrograms,
         isInstallable,

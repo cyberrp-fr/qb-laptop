@@ -193,4 +193,26 @@ export default class LinuxFileSystem {
 
         return this._fs.renameSync(source, destination)
     }
+
+    cp(source: string, destination: string) {
+        const data = this._fs.readFileSync(source)
+        this._fs.writeFileSync(destination, data)
+    }
+
+    cpr(source: string, destination: string) {
+        if (!source.startsWith('/')) {
+            source = this.joinPath(this._cwd, source)
+        }
+        if (!destination.startsWith('/')) {
+            destination = this.joinPath(this._cwd, destination)
+        }
+
+        const isDir = this.exists(source) && this.isDir(source)
+        if (isDir) {
+            this._fs.mkdirSync(destination)
+            this._fs.readdirSync(source).forEach((itemName) => this.cpr(this.joinPath(source, itemName), this.joinPath(destination, itemName)))
+        } else {
+            this.cp(source, destination)
+        }
+    }
 }
