@@ -40,6 +40,7 @@ end
 
 local function GetUSBs()
     local found = {}
+    PlayerData = QBCore.Functions.GetPlayerData()
     for slot, item in pairs(PlayerData.items) do
         if item.name == "usb_stick_1" or item.name == "usb_stick_2" then
             table.insert(found, item)

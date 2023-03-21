@@ -216,6 +216,21 @@ export default class LinuxFileSystem {
         }
     }
 
+    rmr(directory: string) {
+        if (this._fs.existsSync(directory)) {
+            this._fs.readdirSync(directory).forEach(file => {
+                const curPath = this.joinPath(directory, file)
+                if (this._fs.lstatSync(curPath).isDirectory()) {
+                    this.rmr(curPath)
+                } else {
+                    this._fs.unlinkSync(curPath)
+                }
+            })
+
+            this._fs.rmdirSync(directory)
+        }
+    }
+
     rlist(directory: string) {
         // if (!directory.startsWith('/')) {
         //     directory = this.joinPath(this._cwd, directory)
