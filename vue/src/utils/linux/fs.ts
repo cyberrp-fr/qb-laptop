@@ -155,7 +155,6 @@ export default class LinuxFileSystem {
             path = this.joinPath(this._cwd, path.substring(1))
         }
 
-        console.log('write data: ', data)
         this._fs.writeFileSync(path, data)
     }
 
