@@ -272,7 +272,7 @@ function getKey(e: any) {
             </div>
             <div @mousedown="rightClick" class="explorer-content">
                 <div ref="optionsMenuElem" class="options-float-menu" :class="{'active': optionsMenuActive}">
-                    <div class="option" @click="refreshExplorer">Actualiser</div>
+                    <div class="option" @mousedown="refreshExplorer">Actualiser</div>
                     <div v-if="focusedObject != null" @mousedown="copy" class="option">Copier</div>
                     <div v-if="focusedObject != null" @mousedown="cut" class="option">Couper</div>
                     <div v-if="settingsStore.getClipboard() != null" @mousedown="paste" class="option">Coller</div>
