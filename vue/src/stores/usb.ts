@@ -21,10 +21,10 @@ export const useUsbStore = defineStore("usb", () => {
                 fs.mkdir(dirPath, null)
             }
 
-            for (let j = 0; j < usbItem.info.data.contents.length; j++) {
-                const { filename, path, size, data } = usbItem.info.data.contents[j];
-                fs.writeFile(path, data)
-            }
+            // for (let j = 0; j < usbItem.info.data.contents.length; j++) {
+            //     const { filename, path, size, data } = usbItem.info.data.contents[j];
+            //     fs.writeFile(path, data)
+            // }
         }
     }
 
@@ -37,11 +37,11 @@ export const useUsbStore = defineStore("usb", () => {
         }
 
         for (let i = 0; i < result.contents.length; i++) {
-            const item = result.contents[i]
+            let item = result.contents[i]
             item.path = item.path.replace(rootPathRegex, '')
 
             if (item.contents != null) {
-                item.contents = referencePaths(item.contents)
+                item = referencePaths(item)
             }
 
             result.contents[i] = item
@@ -51,16 +51,29 @@ export const useUsbStore = defineStore("usb", () => {
     }
 
     async function unmount() {
+        let payload: any[] = []
 
         for (let i = 0; i < usbs.value.length; i++) {
             const usb = usbs.value[i]
+            const name = 'port_1' + (i+1)
+            const mountPoint = fs.joinPath(rootPath, name)
 
-            const path = fs.joinPath(rootPath, "port_" + (i+1))
-            let result = fs.rlist(path)
-            // result = referencePaths(result)
-            
-            console.log('rlist: ', result, usb)
+            let result = fs.rlist(mountPoint)
+            result = referencePaths(result)
+
+            usb.info.data = result
+            payload.push(usb)
+
+            // remove local dir
+            fs.rm(mountPoint)
         }
+
+        const opts = {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {'Content-Type': 'application/json'}
+        }
+        await fetch('https://qb-laptop/UnmountUSBs', opts)
     }
 
     return {

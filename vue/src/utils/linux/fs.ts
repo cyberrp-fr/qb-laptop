@@ -244,7 +244,7 @@ export default class LinuxFileSystem {
                 item.contents = nestedResult.contents
                 result.size += nestedResult.size
             } else {
-                item.data = this._fs.readFileSync(filepath)
+                item.data = this._fs.readFileSync(filepath).toString('utf8')
                 item.size = this._fs.statSync(filepath).size
                 result.size += item.size
             }

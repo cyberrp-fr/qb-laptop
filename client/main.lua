@@ -118,9 +118,7 @@ RegisterNUICallback("SaveSettings", function (data, cb)
 end)
 
 RegisterNUICallback("UnmountUSBs", function (data, cb)
-    print("data: ", json.encode(data))
-
-    -- QBCore.Functions.UpdateItem()
+    TriggerServerEvent("qb-laptop:server:usb:Unmount", data)
 
     cb("ok")
 end)
