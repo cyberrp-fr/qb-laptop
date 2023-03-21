@@ -70,6 +70,19 @@ export const useSettingsStore = defineStore('settings', () => {
         const response = await fetch('https://qb-laptop/SaveSettings', opts)
     }
 
+    function reset() {
+        settings.value.wallpaperUrl = settings.value.wallpaperSelection[0]
+
+        for (let i = 0; i < settings.value.programs.length; i++) {
+            const program = settings.value.programs[i]
+            if (program.id !== 'terminal') {
+                program.installed = false
+
+                settings.value.programs[i] = program
+            }
+        }
+    }
+
     return {
         settings,
         clipboardObject,
@@ -80,6 +93,7 @@ export const useSettingsStore = defineStore('settings', () => {
         isInstallable,
         alreadyInstalled,
         installProgram,
-        save
+        save,
+        reset
     }
 });

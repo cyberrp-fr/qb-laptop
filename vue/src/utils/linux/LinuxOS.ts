@@ -1,6 +1,7 @@
 import LinuxFileSystem from './fs'
 import APT from './apt'
 import Python from './python'
+import { useSettingsStore } from '@/stores/settings'
 
 class Linux {
     public static readonly REGEX = {
@@ -135,6 +136,13 @@ class Linux {
             return
         } else if (cmd === 'python' || cmd === 'python3') {
             this._python.handleCommand(command, cmd)
+            return
+        } else if (cmd === 'reset-os') {
+            const settingsStore = useSettingsStore()
+            settingsStore.reset()
+
+            this._outputcallback('Your OS has been reinitialized, all of your data has been wiped.')
+
             return
         }
 
