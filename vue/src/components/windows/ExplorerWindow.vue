@@ -174,6 +174,20 @@ function paste() {
     }
 }
 
+function deleteObject() {
+    if (focusedObject.value != null) {
+        if (fs.isDir(focusedObject.value.path)) {
+            fs.rmr(focusedObject.value.path)
+        } else {
+            fs.rm(focusedObject.value.path)
+        }
+
+        focusedObject.value = null
+
+        refreshExplorer()
+    }
+}
+
 function rightClick(e: any) {
     if (e.button === 2) {
         const path = e.target.getAttribute("data-dir-path")
@@ -262,6 +276,7 @@ function getKey(e: any) {
                     <div v-if="focusedObject != null" @mousedown="copy" class="option">Copier</div>
                     <div v-if="focusedObject != null" @mousedown="cut" class="option">Couper</div>
                     <div v-if="settingsStore.getClipboard() != null" @mousedown="paste" class="option">Coller</div>
+                    <div v-if="focusedObject != null" @mousedown="deleteObject" class="option">Supprimer</div>
                     <div class="option">Nouveau dossier</div>
                 </div>
                 <!-- <div class="sidebar">
