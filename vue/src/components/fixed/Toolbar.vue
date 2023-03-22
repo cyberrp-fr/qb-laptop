@@ -23,7 +23,7 @@ function windowClick(e: any) {
         return
     }
 
-    emitter.emit("desktop/openwindow", clickedProgram)
+    emitter.emit("desktop/openwindow", { program: clickedProgram })
 }
 
 function setWindowFocus(windowId: string) {

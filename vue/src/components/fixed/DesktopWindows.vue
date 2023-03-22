@@ -12,11 +12,11 @@ import AesMessagingWindow from '../windows/AesMessagingWindow.vue'
 import { useSettingsStore } from '@/stores/settings'
 import { useStateStore } from '@/stores/state'
 
-const settingsStore = useSettingsStore()
-const stateStore = useStateStore()
+// const settingsStore = useSettingsStore()
+// const stateStore = useStateStore()
 // const windows: any = ref({})
 const windows: any = reactive({})
-const focusedWindowId = ref()
+// const focusedWindowId = ref()
 
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
@@ -41,22 +41,20 @@ function getComponentOfType(type: string) {
   return null
 }
 
-function openWindow(program: string, data: any = null) {
+function openWindow(data: any) {
+  const program = data.program
   let window = {
     type: program,
     component: () => getComponentOfType(program),
     id: 'window-' + uid(),
     render: true,
-    data
+    data: data.params
   }
 
   // only allow opening 1 window of AES Messaging
   if (program === 'aes-msg') {
     let values = Object.values(windows)
     let matches = values.filter((item: any) => item.type === program)
-
-    console.log('values: ', values)
-    console.log('matches: ', matches)
 
     if (matches.length > 0) {
       return
@@ -69,6 +67,9 @@ function openWindow(program: string, data: any = null) {
 
   let app = getCurrentInstance()
   app?.proxy?.$forceUpdate()
+
+  // focus newly opened window
+  setTimeout(() => emitter.emit('window/focus', window.id), 200)
 }
 
 function closeWindow(id: string) {

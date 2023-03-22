@@ -11,6 +11,9 @@ const fs = new LinuxFileSystem()
 const props = defineProps(['id', 'focus', 'data'])
 const windowFocus = ref(props.focus)
 
+console.log('explorer props focus: ', props.focus)
+console.log('explorer focus: ', windowFocus.value)
+
 const settingsStore = useSettingsStore()
 
 // window position coords

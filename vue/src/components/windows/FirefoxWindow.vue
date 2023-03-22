@@ -22,10 +22,13 @@ const downloadHistory = ref([
     {name: 'data.csv', size: 188374, path: '/home/0xIbra/Downloads/data.csv'}
 ])
 
+// this function opens the explorer (Downloads folder)
 function openDownloadsFolder() {
     if (stateStore.state?.user != null) {
         const path = fs.getDownloadsPath(stateStore.state?.user)
-        emitter.emit('desktop/openwindow', 'explorer', { path })
+        emitter.emit('desktop/openwindow', { program: 'explorer', params: { path } })
+
+        windowFocus.value = false
     }
 }
 
