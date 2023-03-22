@@ -24,6 +24,16 @@ export const useSettingsStore = defineStore('settings', () => {
         ]
     })
 
+    const clipboardObject = ref()
+
+    function setClipboard(item: any) {
+        clipboardObject.value = item
+    }
+
+    function getClipboard() {
+        return clipboardObject.value
+    }
+
     function setSettings(newSettings: any) {
         settings.value = newSettings;
     }
@@ -58,16 +68,32 @@ export const useSettingsStore = defineStore('settings', () => {
             headers: {'Content-Type': 'application/json'}
         }
         const response = await fetch('https://qb-laptop/SaveSettings', opts)
-        console.log('save response: ', response)
+    }
+
+    function reset() {
+        settings.value.wallpaperUrl = settings.value.wallpaperSelection[0]
+
+        for (let i = 0; i < settings.value.programs.length; i++) {
+            const program = settings.value.programs[i]
+            if (program.id !== 'terminal') {
+                program.installed = false
+
+                settings.value.programs[i] = program
+            }
+        }
     }
 
     return {
         settings,
+        clipboardObject,
+        setClipboard,
+        getClipboard,
         setSettings,
         getInstalledPrograms,
         isInstallable,
         alreadyInstalled,
         installProgram,
-        save
+        save,
+        reset
     }
 });

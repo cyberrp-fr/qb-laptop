@@ -31,5 +31,8 @@ app.use(createPinia())
 
 app.config.globalProperties.$emitter = emitter
 app.config.globalProperties.$fs = fs
+app.config.globalProperties.$lfs = lfs
 
 app.mount('#app')
+
+export default app

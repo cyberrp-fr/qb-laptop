@@ -38,6 +38,22 @@ local function LoadLaptopSettings()
     end
 end
 
+local function GetUSBs()
+    local found = {}
+    PlayerData = QBCore.Functions.GetPlayerData()
+    for slot, item in pairs(PlayerData.items) do
+        if item.name == "usb_stick_1" or item.name == "usb_stick_2" then
+            table.insert(found, item)
+        end
+
+        if #found >= 4 then
+            break
+        end
+    end
+
+    return found
+end
+
 ------------
 -- EVENTS --
 ------------
@@ -70,6 +86,15 @@ RegisterNetEvent("qb-laptop:client:TurnOnLaptop", function ()
             Wait(1)
         end
     end)
+
+    Wait(1000)
+    local usbs = GetUSBs()
+    if #usbs > 0 then
+        SendNUIMessage({
+            action = "usb/set",
+            usbs = usbs
+        })
+    end
 end)
 
 
@@ -89,6 +114,12 @@ end)
 RegisterNUICallback("SaveSettings", function (data, cb)
     LaptopData.Settings = data
     SetResourceKvp(LaptopDataKVPKey, json.encode(data))
+
+    cb("ok")
+end)
+
+RegisterNUICallback("UnmountUSBs", function (data, cb)
+    TriggerServerEvent("qb-laptop:server:usb:Unmount", data)
 
     cb("ok")
 end)

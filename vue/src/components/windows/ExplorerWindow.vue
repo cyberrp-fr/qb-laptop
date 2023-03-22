@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { ref, getCurrentInstance, onMounted } from 'vue'
 import LinuxOS from '@/utils/linux/LinuxOS'
+import LinuxFileSystem from '@/utils/linux/fs'
+import { useSettingsStore } from '@/stores/settings'
 
 const Linux = new LinuxOS()
+const fs = new LinuxFileSystem()
 
 // window id and window focus
 const props = defineProps(['id', 'focus'])
 const windowFocus = ref(props.focus)
+
+const settingsStore = useSettingsStore()
 
 // window position coords
 const containerElem = ref()
@@ -16,6 +21,16 @@ const containerPos = ref({
     movementX: 0,
     movementY: 0
 })
+
+// options menu (right click)
+const optionsMenuElem = ref()
+const optionsMenuPos = ref({
+    x: 0,
+    y: 0
+})
+const optionsMenuActive = ref(false)
+
+const focusedObject = ref()
 
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
@@ -41,6 +56,7 @@ function initBus() {
 
 onMounted(() => {
     Linux.setFs(app?.appContext.config.globalProperties.$fs)
+    fs.setFs(app?.appContext.config.globalProperties.$fs)
 
     currentDirectory.value = Linux.whereami()
     currentDirectoryContent.value = Linux.explorer()
@@ -63,18 +79,20 @@ function goto(path: string) {
 }
 
 function prev() {
-    let prevIndex = explorerHistory.value.length - 2
+    let prevIndex = explorerHistoryIndex.value - 1
     if (prevIndex >= 0 && explorerHistory.value[prevIndex] != null) {
         let path = explorerHistory.value[prevIndex]
         goto(path)
+        explorerHistoryIndex.value = prevIndex
     }
 }
 
 function next() {
-    let nextIndex = explorerHistory.value.length -1
+    let nextIndex = explorerHistoryIndex.value + 1
     if (nextIndex > 0 && explorerHistory.value[nextIndex] != null) {
         let path = explorerHistory.value[nextIndex]
         goto(path)
+        explorerHistoryIndex.value = nextIndex
     }
 }
 
@@ -91,6 +109,107 @@ function onExplorerItemClick(e: any) {
         goto(path)
     }
 }
+
+function refreshExplorer() {
+    goto(currentDirectory.value)
+}
+
+
+// ----------------------
+// -- copy, cut, paste --
+// ----------------------
+
+function copy() {
+    if (focusedObject.value != null) {
+        settingsStore.setClipboard({
+            action: 'cp',
+            type: focusedObject.value.type,
+            path: focusedObject.value.path
+        })
+
+        console.log('copy: ', settingsStore.getClipboard())
+    }
+
+    optionsMenuActive.value = false
+}
+
+function cut() {
+    if (focusedObject.value != null) {
+        settingsStore.setClipboard({
+            action: 'mv',
+            type: focusedObject.value.type,
+            path: focusedObject.value.path
+        })
+    }
+
+    optionsMenuActive.value = false
+}
+
+function paste() {
+    if (settingsStore.getClipboard() != null) {
+        const { action, type, path } = settingsStore.getClipboard()
+        if (action === 'mv' && path == currentDirectory.value) {
+            settingsStore.setClipboard(null)
+            return
+        }
+
+        const split = path.split('/')
+        const basename = split[split.length -1]
+        const destination = fs.joinPath(currentDirectory.value, basename)
+
+        if (action == 'mv') {
+            fs.mv(path, destination)
+            refreshExplorer()
+            settingsStore.setClipboard(null)
+
+            return
+        }
+
+        if (action == 'cp') {
+            fs.cpr(path, destination)
+            refreshExplorer()
+
+            return
+        }
+    }
+}
+
+function deleteObject() {
+    if (focusedObject.value != null) {
+        if (fs.isDir(focusedObject.value.path)) {
+            fs.rmr(focusedObject.value.path)
+        } else {
+            fs.rm(focusedObject.value.path)
+        }
+
+        focusedObject.value = null
+
+        refreshExplorer()
+    }
+}
+
+function rightClick(e: any) {
+    if (e.button === 2) {
+        const path = e.target.getAttribute("data-dir-path")
+        const type = e.target.getAttribute("data-type")
+        if (type != null) {
+            focusedObject.value = {
+                type,
+                path
+            }
+        } else {
+            focusedObject.value = null
+        }
+
+        optionsMenuActive.value = true
+        optionsMenuElem.value.style.top = e.layerY + 'px'
+        optionsMenuElem.value.style.left = e.layerX + 'px'
+    } else {
+        optionsMenuActive.value = false
+    }
+}
+
+
 
 // -----------------
 // -- move window --
@@ -146,19 +265,27 @@ function getKey(e: any) {
         <div class="content">
             <div class="explorer-toolbar">
                 <div @click="prev" class="prev">{{ '<' }}</div>
-                <div class="next">></div>
+                <div @click="next" class="next">></div>
                 <div class="path">
                     <input v-on:keyup.enter="goto(currentDirectory)" v-model="currentDirectory" type="text" placeholder="/home/user/">
                 </div>
             </div>
-            <div class="explorer-content">
+            <div @mousedown="rightClick" class="explorer-content">
+                <div ref="optionsMenuElem" class="options-float-menu" :class="{'active': optionsMenuActive}">
+                    <div class="option" @mousedown="refreshExplorer">Actualiser</div>
+                    <div v-if="focusedObject != null" @mousedown="copy" class="option">Copier</div>
+                    <div v-if="focusedObject != null" @mousedown="cut" class="option">Couper</div>
+                    <div v-if="settingsStore.getClipboard() != null" @mousedown="paste" class="option">Coller</div>
+                    <div v-if="focusedObject != null" @mousedown="deleteObject" class="option">Supprimer</div>
+                    <div class="option">Nouveau dossier</div>
+                </div>
                 <!-- <div class="sidebar">
                     <div class="list-dir-item">Documents</div>
                     <div class="list-dir-item">Desktop</div>
                     <div class="list-dir-item">Downloads</div>
                 </div> -->
                 <div class="directory-content">
-                    <div v-for="item in currentDirectoryContent" class="item" @click="onExplorerItemClick" :data-type="item.type" :data-dir-path="item.fullPath">
+                    <div v-for="item in currentDirectoryContent" class="item" @click="onExplorerItemClick" @mousedown="rightClick" :data-type="item.type" :data-dir-path="item.fullPath">
                         <img v-if="item.type == 'dir'" :data-type="item.type" :data-dir-path="item.fullPath" src="https://i.imgur.com/T8dFIIZ.png">
                         <img v-if="item.type == 'file'" :data-type="item.type" :data-dir-path="item.fullPath" src="https://i.imgur.com/bDpDN9T.png">
                         <div :data-type="item.type" :data-dir-path="item.fullPath" class="label">{{ item.filename }}</div>
@@ -296,6 +423,7 @@ function getKey(e: any) {
                     width: 15rem;
                     border-radius: 3px;
                     color: #d9d9d9;
+                    padding: 0 5px;
                 }
             }
         }
@@ -304,6 +432,30 @@ function getKey(e: any) {
             position: relative;
             display: flex;
             height: 100%;
+
+            .options-float-menu {
+                position: absolute;
+                display: none;
+                width: 150px;
+                // top: 50px;
+                // left: 200px;
+                color: #d9d9d9;
+                background-color: #1b1e22;
+                border-radius: 4px;
+
+                &.active {
+                    display: block !important;
+                }
+
+                .option {
+                    padding: 5px 10px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: #4b5ab9 !important;
+                    }
+                }
+            }
 
             .sidebar {
                 // background-color: #1b1e22;

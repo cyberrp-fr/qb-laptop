@@ -2,13 +2,19 @@ import { useStateStore } from "@/stores/state"
 import { useSettingsStore } from "@/stores/settings"
 import { useDarknetStore } from "@/stores/darknet"
 import { useAesMessageStore } from "@/stores/aes-message"
+import { useUsbStore } from "@/stores/usb"
 
 // this function handles event messages regarding all the base actions (ex: change desktop wallpaper)
 function handleBaseActions(event: any) {
     const stateStore = useStateStore()
     const settingsStore = useSettingsStore()
+    const usbStore = useUsbStore()
 
     switch(event.data.action) {
+        case "usb/set":
+            const usbs = event.data.usbs
+            usbStore.mount(usbs)
+            break
         case "settings/set":
             settingsStore.setSettings(event.data.settings)
             break
@@ -64,6 +70,7 @@ export function handleEvent(event: any) {
     }
 
     switch(event.data.action) {
+        case "usb/set":
         case "settings/set":
         case "turnon":
         case "turnoff":

@@ -11,11 +11,13 @@ import ProgramIcon from './ProgramIcon.vue'
 import { useSettingsStore } from '@/stores/settings'
 import { useStateStore } from '@/stores/state'
 import { handleEvent } from '@/utils/BackendEventHandler'
+import { useUsbStore } from '@/stores/usb'
 
 const app = getCurrentInstance()
 const fs = app?.appContext.config.globalProperties.$fs
 const settingsStore = useSettingsStore()
 const stateStore = useStateStore()
+const usbStore = useUsbStore()
 
 onMounted(() => {
   window.addEventListener("message", handleEvent)
@@ -39,6 +41,7 @@ async function turnoffLaptop() {
     //   })
 
     await settingsStore.save()
+    await usbStore.unmount()
     await fetch('https://qb-laptop/TurnOffLaptop', { method: 'POST' })
     stateStore.state.open = false
   }

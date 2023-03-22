@@ -35,6 +35,8 @@ export default class LinuxFileSystem {
             '/var',
             '/var/log',
             '/tmp',
+            '/media',
+            '/media/usb'
         ]
 
         for (let i = 0; i < dirs.length; i++) {
@@ -153,7 +155,6 @@ export default class LinuxFileSystem {
             path = this.joinPath(this._cwd, path.substring(1))
         }
 
-        console.log('write data: ', data)
         this._fs.writeFileSync(path, data)
     }
 
@@ -179,5 +180,92 @@ export default class LinuxFileSystem {
         let res = this._fs.readFileSync(path).toString()
 
         return res
+    }
+
+    mv(source: string, destination: string) {
+        if (!source.startsWith('/')) {
+            source = this.joinPath(this._cwd, source)
+        }
+        if (!destination.startsWith('/')) {
+            destination = this.joinPath(this._cwd, destination)
+        }
+
+        return this._fs.renameSync(source, destination)
+    }
+
+    cp(source: string, destination: string) {
+        const data = this._fs.readFileSync(source)
+        this._fs.writeFileSync(destination, data)
+    }
+
+    cpr(source: string, destination: string) {
+        if (!source.startsWith('/')) {
+            source = this.joinPath(this._cwd, source)
+        }
+        if (!destination.startsWith('/')) {
+            destination = this.joinPath(this._cwd, destination)
+        }
+
+        const isDir = this.exists(source) && this.isDir(source)
+        if (isDir) {
+            this._fs.mkdirSync(destination)
+            this._fs.readdirSync(source).forEach((itemName) => this.cpr(this.joinPath(source, itemName), this.joinPath(destination, itemName)))
+        } else {
+            this.cp(source, destination)
+        }
+    }
+
+    rmr(directory: string) {
+        if (this._fs.existsSync(directory)) {
+            this._fs.readdirSync(directory).forEach(file => {
+                const curPath = this.joinPath(directory, file)
+                if (this._fs.lstatSync(curPath).isDirectory()) {
+                    this.rmr(curPath)
+                } else {
+                    this._fs.unlinkSync(curPath)
+                }
+            })
+
+            this._fs.rmdirSync(directory)
+        }
+    }
+
+    rlist(directory: string) {
+        // if (!directory.startsWith('/')) {
+        //     directory = this.joinPath(this._cwd, directory)
+        // }
+
+        const result: any = {
+            path: directory,
+            type: 'dir',
+            contents: [],
+            size: 0
+        }
+
+        const files = this._fs.readdirSync(directory)
+        for (let i = 0; i < files.length; i++) {
+            let filepath = files[i]
+            const item: any = {
+                filename: filepath,
+                path: this.joinPath(directory, filepath),
+                type: 'file'
+            }
+            filepath = item.path
+
+            if (this.isDir(filepath)) {
+                let nestedResult = this.rlist(filepath)
+                item.type = 'dir'
+                item.contents = nestedResult.contents
+                result.size += nestedResult.size
+            } else {
+                item.data = this._fs.readFileSync(filepath).toString('utf8')
+                item.size = this._fs.statSync(filepath).size
+                result.size += item.size
+            }
+
+            result.contents.push(item)
+        }
+
+        return result
     }
 }
