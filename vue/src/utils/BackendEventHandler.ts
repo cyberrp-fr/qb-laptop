@@ -20,7 +20,7 @@ function handleBaseActions(event: any) {
             break
         case "turnon":
             stateStore.state.open = true
-            stateStore.state.user = event.data.user
+            stateStore.setUser(event.data.user)
             break
         case "turnoff":
             stateStore.state.open = false

@@ -4,6 +4,7 @@ import type FS from 'browserfs/dist/node/core/FS'
 export default class LinuxFileSystem {
     private _fs: FS
 
+    private _user: string = ''
     private _cwd = '/'
 
     constructor() {
@@ -45,6 +46,24 @@ export default class LinuxFileSystem {
                 let res = this._fs.mkdirSync(dir)
             }
         }
+    }
+
+    initUser(user: string) {
+        this._user = user
+
+        let homePath = this.joinPath('/home', user)
+        let dirs = ['Downloads', 'Documents']
+
+        for (let i = 0; i < dirs.length; i++) {
+            const dir = dirs[i]
+            const path = this.joinPath(homePath, dir)
+
+            if (!this.isDir(path)) {
+                this.mkdir(path, null)
+            }
+        }
+
+        this._cwd = homePath
     }
 
     public joinPath(...parts: any) {
