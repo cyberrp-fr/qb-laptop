@@ -8,7 +8,7 @@ const Linux = new LinuxOS()
 const fs = new LinuxFileSystem()
 
 // window id and window focus
-const props = defineProps(['id', 'focus'])
+const props = defineProps(['id', 'focus', 'data'])
 const windowFocus = ref(props.focus)
 
 const settingsStore = useSettingsStore()
@@ -61,6 +61,12 @@ onMounted(() => {
     currentDirectory.value = Linux.whereami()
     currentDirectoryContent.value = Linux.explorer()
     initBus()
+
+    // initial path
+    console.log("props data: ", props.data)
+    if (props.data != null && props.data.path != null) {
+        goto(props.data.path)
+    }
 })
 
 // explorer

@@ -41,12 +41,13 @@ function getComponentOfType(type: string) {
   return null
 }
 
-function openWindow(program: string) {
+function openWindow(program: string, data: any = null) {
   let window = {
     type: program,
     component: () => getComponentOfType(program),
     id: 'window-' + uid(),
-    render: true
+    render: true,
+    data
   }
 
   // only allow opening 1 window of AES Messaging
@@ -96,7 +97,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <component :is="window.component()" v-bind:key="id" :id="window.id" :focus="true" v-for="(window, id) in windows" />
+  <component :is="window.component()" v-bind:key="id" :id="window.id" :focus="true" :data="window.data" v-for="(window, id) in windows" />
 </template>
 
 <style lang="scss">

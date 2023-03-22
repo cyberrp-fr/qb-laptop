@@ -268,4 +268,8 @@ export default class LinuxFileSystem {
 
         return result
     }
+
+    public getDownloadsPath(user: string) {
+        return `/home/${user}/Downloads`
+    }
 }
