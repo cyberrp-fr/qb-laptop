@@ -127,7 +127,7 @@ function selfDestruct() {
                     <input v-model="url" v-on:keydown.enter="navigate" type="text" placeholder="Enter URL...">
                 </div>
                 <div class="download-hub">
-                    <button class="download-display-btn" @click="() => { downloadHubOpen = !downloadHubOpen }">-</button>
+                    <button class="download-display-btn" @click="() => { downloadHubOpen = !downloadHubOpen }">{{ downloadHistory.length }}</button>
                     <div class="downloaded-content-history" :class="{'active': downloadHubOpen}">
                         <div v-for="file in downloadHistory" class="downloaded-item">
                             <div class="icon">
@@ -304,7 +304,7 @@ function selfDestruct() {
                 .download-display-btn {
                     height: 100%;
                     background-color: #27173d;
-                    font-size: 18px;
+                    font-size: 11px;
                     color: #d9d9d9;
                     text-align: center;
                     cursor: pointer;
