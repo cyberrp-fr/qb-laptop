@@ -23,7 +23,7 @@ function findWebsite(websiteUrl: string) {
 }
 
 function webNavigation() {
-    if (navigationUrl == null) {
+    if (navigationUrl.value == null) {
         return null
     }
 
@@ -36,10 +36,11 @@ function webNavigation() {
 
     currentWebsite.value = {
         name: 'Could not find website',
-        url: navigationUrl,
+        url: navigationUrl.value,
         props: {
-            url: navigationUrl
-        }
+            url: navigationUrl.value
+        },
+        component: NotFound
     }
     emitter.emit('firefox/url/set', currentWebsite.value.url)
 
@@ -58,5 +59,5 @@ onMounted(() => {
 </script>
 
 <template>
-    <component v-if="currentWebsite != null" :is="webNavigation()" :data="currentWebsite.props" />
+    <component v-if="currentWebsite != null" :is="currentWebsite.component" :data="currentWebsite.props" />
 </template>
