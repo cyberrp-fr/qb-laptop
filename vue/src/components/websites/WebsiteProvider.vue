@@ -22,9 +22,25 @@ function findWebsite(websiteUrl: string) {
     return null
 }
 
-function webNavigation() {
+async function webNavigation() {
     if (navigationUrl.value == null) {
         return null
+    }
+
+    currentWebsite.value = null
+
+    await new Promise(resolve => setTimeout(resolve, 200))
+
+    // check if valid url or google search
+    let urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/gi
+    if (!urlRegex.test(navigationUrl.value)) {
+        const googleWebsite: any = WebMapping[0]
+        googleWebsite.props = {
+            search: navigationUrl.value
+        }
+
+        currentWebsite.value = googleWebsite
+        return googleWebsite.component
     }
 
     let website = findWebsite(navigationUrl.value)

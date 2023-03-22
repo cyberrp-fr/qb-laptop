@@ -34,7 +34,6 @@ function openDownloadsFolder() {
 
 function navigate() {
     emitter.emit('firefox/navigate', url.value)
-    console.log('emit url: ', url.value)
 }
 
 // window position coords
