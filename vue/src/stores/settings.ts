@@ -12,7 +12,8 @@ export const useSettingsStore = defineStore('settings', () => {
             'https://i.imgur.com/DlVPevy.jpg',
             'https://i.imgur.com/zwbJWzN.jpg',
             'https://i.imgur.com/Mw6VoCx.jpg',
-            'https://i.imgur.com/yqRhpS4.png'
+            'https://i.imgur.com/yqRhpS4.png',
+            'https://i.imgur.com/rhrlDja.jpg'
         ],
 
         programs: [
@@ -23,6 +24,7 @@ export const useSettingsStore = defineStore('settings', () => {
             { id: 'aes-msg', name: 'AES Messaging', program: 'aes-msg', installed: false, showOnDesktop: true}
         ]
     })
+    const backup = ref(settings.value)
 
     const clipboardObject = ref()
 
@@ -71,16 +73,7 @@ export const useSettingsStore = defineStore('settings', () => {
     }
 
     function reset() {
-        settings.value.wallpaperUrl = settings.value.wallpaperSelection[0]
-
-        for (let i = 0; i < settings.value.programs.length; i++) {
-            const program = settings.value.programs[i]
-            if (program.id !== 'terminal') {
-                program.installed = false
-
-                settings.value.programs[i] = program
-            }
-        }
+        settings.value = backup.value
     }
 
     return {
