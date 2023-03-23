@@ -316,9 +316,7 @@ onMounted(() => {
                     </div>
                     <div class="post-content-zone">
                         <div class="post-content-date-zone"></div>
-                        <div class="post-content-description-zone">
-                            {{ displayPost['description'] }}
-                        </div>
+                        <div class="post-content-description-zone" v-html="displayPost['description']"></div>
                     </div>
                 </div>
             </div>
