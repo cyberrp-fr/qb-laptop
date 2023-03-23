@@ -3,12 +3,16 @@ import { ref, onMounted, getCurrentInstance } from 'vue'
 import WebsiteProvider from '../websites/WebsiteProvider.vue'
 import LinuxFileSystem from '@/utils/linux/fs'
 import { useStateStore } from '@/stores/state'
+import { useFirefoxStore } from '@/stores/firefox'
 
 const props = defineProps(['id', 'focus'])
 const windowFocus = ref(props.focus)
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
+
+// stores
 const stateStore = useStateStore()
+const firefoxStore = useFirefoxStore()
 
 const fs = new LinuxFileSystem()
 
@@ -18,9 +22,6 @@ const navigationHistory = ref([])
 
 // download hub data
 const downloadHubOpen = ref(false)
-const downloadHistory = ref([
-    {name: 'data.csv', size: 188374, path: '/home/0xIbra/Downloads/data.csv'}
-])
 
 // this function opens the explorer (Downloads folder)
 function openDownloadsFolder() {
@@ -126,9 +127,9 @@ function selfDestruct() {
                     <input v-model="url" v-on:keydown.enter="navigate" type="text" placeholder="Enter URL...">
                 </div>
                 <div class="download-hub">
-                    <button class="download-display-btn" @click="() => { downloadHubOpen = !downloadHubOpen }">{{ downloadHistory.length }}</button>
+                    <button class="download-display-btn" @click="() => { downloadHubOpen = !downloadHubOpen }">{{ firefoxStore.downloadHistory.length }}</button>
                     <div class="downloaded-content-history" :class="{'active': downloadHubOpen}">
-                        <div v-for="file in downloadHistory" class="downloaded-item">
+                        <div v-for="file in firefoxStore.downloadHistory" class="downloaded-item">
                             <div class="icon">
                                 <img src="https://i.imgur.com/bDpDN9T.png">
                             </div>
