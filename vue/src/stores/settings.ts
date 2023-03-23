@@ -12,8 +12,8 @@ export const useSettingsStore = defineStore('settings', () => {
             'https://i.imgur.com/DlVPevy.jpg',
             'https://i.imgur.com/zwbJWzN.jpg',
             'https://i.imgur.com/Mw6VoCx.jpg',
-            'https://i.imgur.com/yqRhpS4.png',
-            'https://i.imgur.com/rhrlDja.jpg'
+            'https://i.imgur.com/rhrlDja.jpg',
+            'https://i.imgur.com/SD9I6Ru.png'
         ],
 
         programs: [
