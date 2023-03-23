@@ -324,6 +324,7 @@ function selfDestruct() {
                     background-color: #27173d;
                     padding: 3px 5px;
                     border-radius: 3px;
+                    z-index: 2;
 
                     &.active {
                         display: block !important;
