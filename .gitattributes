@@ -1,4 +1,4 @@
 html/assets/js/*.js linguist-detectable=false
 html/assets/js/*.css linguist-detectable=false
-html/static/js/** linguist-vendored
-vue/public/js/** linguist-vendored
+html/static/** linguist-vendored
+vue/public/** linguist-vendored
