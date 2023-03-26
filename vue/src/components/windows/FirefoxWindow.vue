@@ -1,19 +1,40 @@
 <script setup lang="ts">
 import { ref, onMounted, getCurrentInstance } from 'vue'
 import WebsiteProvider from '../websites/WebsiteProvider.vue'
+import LinuxFileSystem from '@/utils/linux/fs'
+import { useStateStore } from '@/stores/state'
+import { useFirefoxStore } from '@/stores/firefox'
 
 const props = defineProps(['id', 'focus'])
 const windowFocus = ref(props.focus)
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
 
+// stores
+const stateStore = useStateStore()
+const firefoxStore = useFirefoxStore()
+
+const fs = new LinuxFileSystem()
+
 // browser data
 const url = ref('')
 const navigationHistory = ref([])
 
+// download hub data
+const downloadHubOpen = ref(false)
+
+// this function opens the explorer (Downloads folder)
+function openDownloadsFolder() {
+    if (stateStore.state?.user != null) {
+        const path = fs.getDownloadsPath(stateStore.state?.user)
+        emitter.emit('desktop/openwindow', { program: 'explorer', params: { path } })
+
+        windowFocus.value = false
+    }
+}
+
 function navigate() {
     emitter.emit('firefox/navigate', url.value)
-    console.log('emit url: ', url.value)
 }
 
 // window position coords
@@ -104,6 +125,23 @@ function selfDestruct() {
                 </div>
                 <div class="urlbar">
                     <input v-model="url" v-on:keydown.enter="navigate" type="text" placeholder="Enter URL...">
+                </div>
+                <div class="download-hub">
+                    <button class="download-display-btn" @click="() => { downloadHubOpen = !downloadHubOpen }">{{ firefoxStore.downloadHistory.length }}</button>
+                    <div class="downloaded-content-history" :class="{'active': downloadHubOpen}">
+                        <div v-for="file in firefoxStore.downloadHistory" class="downloaded-item">
+                            <div class="icon">
+                                <img src="https://i.imgur.com/bDpDN9T.png">
+                            </div>
+                            <div class="title-area">
+                                <div class="title">{{ file.name }}</div>
+                                <div v-if="file.path != null" class="path">{{ file.path }}</div>
+                            </div>
+                            <div class="action-area">
+                                <button @click="openDownloadsFolder" class="show-in-folder-btn">-</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="web-content">
@@ -202,6 +240,7 @@ function selfDestruct() {
             display: flex;
             width: 95%;
             margin: auto;
+            justify-content: start;
 
             .actions {
                 display: flex;
@@ -235,10 +274,11 @@ function selfDestruct() {
             }
 
             .urlbar {
-                width: 100%;
+                min-width: 800px;
+                // width: 100%;
 
                 input {
-                    width: 70%;
+                    width: 95%;
                     background-color: #27173d;
                     border: none;
                     height: 28px;
@@ -255,6 +295,96 @@ function selfDestruct() {
 
                     &:focus {
                         border: none;
+                    }
+                }
+            }
+
+            .download-hub {
+
+                .download-display-btn {
+                    height: 100%;
+                    background-color: #27173d;
+                    font-size: 11px;
+                    color: #d9d9d9;
+                    text-align: center;
+                    cursor: pointer;
+                    padding: 3px 15px;
+                    line-height: 1.3;
+                    border: none !important;
+                    border-radius: 5px;
+
+                    &:hover {
+                        background-color: #372552;
+                    }
+                }
+
+                .downloaded-content-history {
+                    display: none;
+                    position: absolute;
+                    margin-top: 10px;
+                    background-color: #27173d;
+                    padding: 3px 5px;
+                    border-radius: 3px;
+                    z-index: 2;
+
+                    &.active {
+                        display: block !important;
+                    }
+
+                    .downloaded-item {
+                        display: flex;
+                        justify-content: space-evenly;
+                        cursor: pointer;
+                        align-items: center;
+                        padding: 5px 15px;
+
+
+                        &:hover {
+                            background-color: #3b235c !important;
+                        }
+
+                        .icon {
+                            margin-right: 20px;
+
+                            img {
+                                width: 30px;
+                            }
+                        }
+
+                        .title-area {
+                            margin-right: 30px;
+                            color: #d9d9d9;
+
+                            .title {
+                                
+                            }
+
+                            .path {
+                                font-size: 9px;
+                                margin-top: 2px;
+                                color: #d9d9d9;
+                                opacity: .5;
+                            }
+                        }
+
+                        .action-area {
+
+                            .show-in-folder-btn {
+                                background-color: #27173d;
+                                font-size: 18px;
+                                color: #d9d9d9;
+                                text-align: center;
+                                cursor: pointer;
+                                padding: 2px 12px;
+                                line-height: 1.3;
+                                border: 1px solid #1b1e22 !important;
+                                border-radius: 3px;
+
+                                &:hover {
+                                    background-color: #372552;
+                                }
+                            }
+                        }
                     }
                 }
             }

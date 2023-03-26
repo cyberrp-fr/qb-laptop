@@ -16,7 +16,7 @@ const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter;
 
 function openProgram() {
-    emitter.emit('desktop/openwindow', props.program)
+    emitter.emit('desktop/openwindow', { program: props.program })
 }
 
 </script>

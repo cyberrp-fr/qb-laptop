@@ -3,12 +3,16 @@ import { ref, getCurrentInstance, onMounted } from 'vue'
 import LinuxOS from '@/utils/linux/LinuxOS'
 import LinuxFileSystem from '@/utils/linux/fs'
 import { useSettingsStore } from '@/stores/settings'
+import { useStateStore } from '@/stores/state';
+
 
 const Linux = new LinuxOS()
 const fs = new LinuxFileSystem()
 
+const stateStore = useStateStore()
+
 // window id and window focus
-const props = defineProps(['id', 'focus'])
+const props = defineProps(['id', 'focus', 'data'])
 const windowFocus = ref(props.focus)
 
 const settingsStore = useSettingsStore()
@@ -58,9 +62,18 @@ onMounted(() => {
     Linux.setFs(app?.appContext.config.globalProperties.$fs)
     fs.setFs(app?.appContext.config.globalProperties.$fs)
 
+    if (stateStore.state.user != null) {
+        Linux.gohome(stateStore.state.user)
+    }
+
     currentDirectory.value = Linux.whereami()
     currentDirectoryContent.value = Linux.explorer()
     initBus()
+
+    // initial path
+    if (props.data != null && props.data.path != null) {
+        goto(props.data.path)
+    }
 })
 
 // explorer
@@ -126,8 +139,6 @@ function copy() {
             type: focusedObject.value.type,
             path: focusedObject.value.path
         })
-
-        console.log('copy: ', settingsStore.getClipboard())
     }
 
     optionsMenuActive.value = false
@@ -243,9 +254,9 @@ function selfDestruct() {
     emitter.emit('desktop/closeWindow', props.id)
 }
 
-function getKey(e: any) {
-    console.log(e)
-}
+// function getKey(e: any) {
+//     console.log(e)
+// }
 </script>
 
 <template>

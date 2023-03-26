@@ -29,6 +29,10 @@ class Linux {
         this._fs.setFs(fs)
     }
 
+    gohome(user: string) {
+        this.cd(`/home/${user}`)
+    }
+
     setOutputCallback(cb: any) {
         this._outputcallback = cb
         this._apt.setOutputCallback(cb)

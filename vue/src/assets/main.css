@@ -144,3 +144,10 @@
     background: #474d58;
 }
 
+/* CODE BLOCK */
+pre.code {
+    background-color: #141628;
+    line-height: 1;
+    padding: 15px 15px;
+    border-radius: 5px;
+}

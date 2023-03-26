@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, getCurrentInstance } from 'vue'
+import { ref, getCurrentInstance, onMounted } from 'vue'
 import WebMapping from './webmap'
+
+const props = defineProps(['data'])
 
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
@@ -55,6 +57,13 @@ function navigate(page: string) {
 function navigateWebsite(url: string) {
     emitter.emit('firefox/navigate', url)
 }
+
+onMounted(() => {
+    if (props.data != null && props.data.search != null) {
+        searchQuery.value = props.data.search
+        executeSearch()
+    }
+})
 
 </script>
 

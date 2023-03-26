@@ -22,9 +22,25 @@ function findWebsite(websiteUrl: string) {
     return null
 }
 
-function webNavigation() {
-    if (navigationUrl == null) {
+async function webNavigation() {
+    if (navigationUrl.value == null) {
         return null
+    }
+
+    currentWebsite.value = null
+
+    await new Promise(resolve => setTimeout(resolve, 200))
+
+    // check if valid url or google search
+    let urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/gi
+    if (!urlRegex.test(navigationUrl.value)) {
+        const googleWebsite: any = WebMapping[0]
+        googleWebsite.props = {
+            search: navigationUrl.value
+        }
+
+        currentWebsite.value = googleWebsite
+        return googleWebsite.component
     }
 
     let website = findWebsite(navigationUrl.value)
@@ -36,10 +52,11 @@ function webNavigation() {
 
     currentWebsite.value = {
         name: 'Could not find website',
-        url: navigationUrl,
+        url: navigationUrl.value,
         props: {
-            url: navigationUrl
-        }
+            url: navigationUrl.value
+        },
+        component: NotFound
     }
     emitter.emit('firefox/url/set', currentWebsite.value.url)
 
@@ -58,5 +75,5 @@ onMounted(() => {
 </script>
 
 <template>
-    <component v-if="currentWebsite != null" :is="webNavigation()" :data="currentWebsite.props" />
+    <component v-if="currentWebsite != null" :is="currentWebsite.component" :data="currentWebsite.props" />
 </template>
