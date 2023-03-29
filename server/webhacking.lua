@@ -32,7 +32,9 @@ end
 
 -- INIT
 
-LoadLocalWebMap()
-InitHackingProps()
+if Config.EnableHacking then
+    LoadLocalWebMap()
+    InitHackingProps()
+end
 
 -- MAIN LOOP
