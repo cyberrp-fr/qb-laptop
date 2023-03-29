@@ -4,7 +4,7 @@ const { url } = props.data
 </script>
 
 <template>
-    <iframe v-if="url != null" :src="url" sandbox="true" frameborder="0"></iframe>
+    <iframe v-if="url != null" :src="url" sandbox="allow-scripts" frameborder="0"></iframe>
 </template>
 
 <style scoped>
