@@ -16,7 +16,8 @@ server_scripts {
     '@oxmysql/lib/MySQL.lua',
     'server/main.lua',
     'server/darknet.lua',
-    'server/aes-messaging.lua'
+    'server/aes-messaging.lua',
+    'server/webhacking.lua'
 }
 
 client_scripts {
@@ -31,6 +32,7 @@ files {
     'html/assets/index.js',
     'html/assets/index.css',
     'html/static/js/skulpt/skulpt.min.js',
-    'html/static/js/skulpt/skulpt-stdlib.js'
+    'html/static/js/skulpt/skulpt-stdlib.js',
+    'data/webmap.json'
 }
 
