@@ -6,6 +6,10 @@ LaptopData = {
 }
 local LaptopDataKVPKey = "player_settings"
 
+local animDict = "amb@world_human_seat_wall_tablet@female@base"
+local tabletProp = "prop_cs_tablet"
+local tabletObject
+
 ---------------
 -- FUNCTIONS --
 ---------------
@@ -54,6 +58,11 @@ local function GetUSBs()
     return found
 end
 
+local function loadAnimDict(name)
+    RequestAnimDict(name)
+    while not HasAnimDictLoaded(name) do Wait(50) end
+end
+
 ------------
 -- EVENTS --
 ------------
@@ -63,6 +72,14 @@ RegisterNetEvent("qb-laptop:client:TurnOnLaptop", function ()
         QBCore.Functions.Notify(Lang:t("error.dont_have_laptop"), "error")
         return
     end
+
+    -- play animation
+    loadAnimDict(animDict)
+
+    local playerPed = PlayerPedId()
+    tabletObject = CreateObject(GetHashKey(tabletProp), 0, 0, 0, true, true, true)
+    AttachEntityToEntity(tabletObject, playerPed, GetPedBoneIndex(playerPed, 57005), 0.17, 0.10, -0.13, 20.0, 180.0, 180.0, true, true, false, true, 1, true)
+    TaskPlayAnim(playerPed, animDict, "base", 8.0, -8.0, -1, 50, 0, false, false, false)
 
     if LaptopData.Settings ~= nil then
         SendNUIMessage({
@@ -107,6 +124,10 @@ RegisterNUICallback("TurnOffLaptop", function (_, cb)
     SetTimeout(500, function ()
         LaptopData.isOn = false
     end)
+
+    -- stop tablet animation
+    StopAnimTask(PlayerPedId(), animDict, "base" ,8.0, -8.0, -1, 50, 0, false, false, false)
+    DeleteEntity(tabletObject)
 
     cb("ok")
 end)
