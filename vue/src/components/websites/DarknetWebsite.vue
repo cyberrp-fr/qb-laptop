@@ -149,6 +149,12 @@ function gotopage(page: string) {
     if (page == 'create' && !darknetStore.darknet.auth) {
         navigation.value = 'login'
     }
+
+    if (page === 'profile') {
+        if (darknetStore.darknet.user != null && darknetStore.darknet.user['profile_picture_url'] != null) {
+            profilePictureUrl.value = darknetStore.darknet.user['profile_picture_url']
+        }
+    }
 }
 
 function showPost(id: any) {
