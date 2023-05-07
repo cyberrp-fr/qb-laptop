@@ -81,6 +81,7 @@ async function createPostForm() {
     if (result === true) {
         // await darknetStore.GetPosts()
         gotopage('homepage')
+        await fetchPosts()
         formTitle.value = ''
         formDescription.value = ''
         formCategory.value = ''
