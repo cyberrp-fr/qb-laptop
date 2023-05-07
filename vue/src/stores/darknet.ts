@@ -97,10 +97,24 @@ export const useDarknetStore = defineStore('darknet', () => {
         darknet.value.auth = false
     }
 
+    function getUserByCitizenid(citizenid: string) {
+        if (darknet.value.user != null && darknet.value.user.citizenid === citizenid) {
+            return darknet.value.user
+        }
+
+        return null
+    }
+
     function getPostById(id: any) {
         for (let i = 0; i < darknet.value.posts.length; i++) {
-            const post = darknet.value.posts[i];
+            const post: any = darknet.value.posts[i]
             if (id == post['id']) {
+                let authorUser = getUserByCitizenid(post['citizenid'])
+                if (authorUser != null) {
+                    post['profile_picture_url'] = authorUser['profile_picture_url']
+                    post['user'] = authorUser
+                }
+
                 return post
             }
         }
