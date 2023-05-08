@@ -32,7 +32,7 @@ async function webNavigation() {
     await new Promise(resolve => setTimeout(resolve, 200))
 
     // check if valid url or google search
-    const urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}\/?$/i
+    const urlRegex = /^(https?:\/\/|tor:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}\/?$/i
     if (urlRegex.test(navigationUrl.value) === false) {
 
         const googleWebsite: any = WebMapping[0]
@@ -65,6 +65,10 @@ async function webNavigation() {
 }
 
 function navigate(url: string) {
+    if (url == "") {
+        return
+    }
+
     navigationUrl.value = url
     webNavigation()
 }
