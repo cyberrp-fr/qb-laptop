@@ -23,7 +23,8 @@ server_scripts {
 client_scripts {
     'client/main.lua',
     'client/darknet.lua',
-    'client/aes-messaging.lua'
+    'client/aes-messaging.lua',
+    'client/pythoncode/*.lua'
 }
 
 ui_page 'html/index.html'
