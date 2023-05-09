@@ -81,6 +81,7 @@ async function createPostForm() {
     if (result === true) {
         // await darknetStore.GetPosts()
         gotopage('homepage')
+        await fetchPosts()
         formTitle.value = ''
         formDescription.value = ''
         formCategory.value = ''
@@ -148,6 +149,12 @@ function gotopage(page: string) {
 
     if (page == 'create' && !darknetStore.darknet.auth) {
         navigation.value = 'login'
+    }
+
+    if (page === 'profile') {
+        if (darknetStore.darknet.user != null && darknetStore.darknet.user['profile_picture_url'] != null) {
+            profilePictureUrl.value = darknetStore.darknet.user['profile_picture_url']
+        }
     }
 }
 

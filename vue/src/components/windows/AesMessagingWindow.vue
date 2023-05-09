@@ -21,6 +21,8 @@ const newMessageContent = ref('') // only used for new discussion creations
 const messageContent = ref('')
 const formError = ref(false)
 
+const tooltipShowing = ref(false)
+
 async function sendMessage() {
     messageContent.value = messageContent.value.trim()
     if (messageContent.value === '') {
@@ -178,8 +180,12 @@ function selfDestruct() {
                         </div>
                     </div>
                     <div class="address-group">
-                        <div @click="copyAddress" class="address-label">My Address:</div>
-                        <div @click="copyAddress" class="address-value">{{ aesStore.address }}</div>
+                        <div class="popover-wrapper">
+                            <slot></slot>
+                            <div v-if="tooltipShowing" class="popover">Cliquez pour copier</div>
+                        </div>
+                        <div @mouseover="() => tooltipShowing = true" @mouseleave="() => tooltipShowing = false" @click="copyAddress" class="address-label">My Address:</div>
+                        <div @mouseover="() => tooltipShowing = true" @mouseleave="() => tooltipShowing = false" @click="copyAddress" class="address-value">{{ aesStore.address }}</div>
                     </div>
                 </div>
 
@@ -445,6 +451,25 @@ function selfDestruct() {
             }
         }
     }
+}
+
+// Tooltip
+.popover-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.popover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1;
+  padding: 5px;
+  border: none;
+  background-color: #111;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
 }
 
 </style>

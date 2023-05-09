@@ -8,3 +8,11 @@ Utils.GenerateHash = function(input)
     end
     return hash
 end
+
+Utils.TableLength = function (t)
+    local c = 0
+    for _ in pairs(t) do
+        c = c + 1
+    end
+    return c
+end

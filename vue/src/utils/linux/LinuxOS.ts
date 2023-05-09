@@ -1,6 +1,7 @@
 import LinuxFileSystem from './fs'
 import APT from './apt'
 import Python from './python'
+import NodeJS from './nodejs'
 import { useSettingsStore } from '@/stores/settings'
 
 class Linux {
@@ -12,6 +13,7 @@ class Linux {
     private _fs: LinuxFileSystem
     private _apt: APT
     private _python: Python
+    private _nodejs: NodeJS
 
     private _history: Array<string>
     private _outputcallback: any
@@ -20,6 +22,7 @@ class Linux {
         this._fs = new LinuxFileSystem()
         this._apt = new APT()
         this._python = new Python(this._fs)
+        this._nodejs = new NodeJS(this._fs)
 
         this._history = []
         this._outputcallback = null
@@ -37,6 +40,7 @@ class Linux {
         this._outputcallback = cb
         this._apt.setOutputCallback(cb)
         this._python.setOutputCallback(cb)
+        this._nodejs.setOutputCallback(cb)
     }
 
     execute(command: string) {
@@ -141,6 +145,9 @@ class Linux {
         } else if (cmd === 'python' || cmd === 'python3') {
             this._python.handleCommand(command, cmd)
             return
+        } else if (cmd === "node" || cmd === "nodejs") {
+            this._nodejs.handleCommand(command, cmd)
+            return
         } else if (cmd === 'reset-os') {
             const settingsStore = useSettingsStore()
             settingsStore.reset()
@@ -154,6 +161,9 @@ class Linux {
         return
     }
 
+    public isBusy() {
+        return this._nodejs.isBusy()
+    }
 
     // =================
     // == FS Commands ==

@@ -179,7 +179,7 @@ export default class LinuxFileSystem {
 
     exists(path: string) {
         if (!path.startsWith('/')) {
-            this.joinPath(this._cwd, path)
+            path = this.joinPath(this._cwd, path)
         }
         if (path.startsWith('./')) {
             path = this.joinPath(this._cwd, path.substring(1))
