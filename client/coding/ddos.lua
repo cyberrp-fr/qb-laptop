@@ -59,7 +59,6 @@ RegisterNUICallback("ddosCreateDeviceFromShellDevice", function (data, cb)
     end
 
     QBCore.Functions.TriggerCallback("qb-laptop:server:coding:ddos:CreateDeviceFromShellDevice", function (result)
-        print("ddos response: ", json.encode(result))
         cb({ status = result.status })
     end)
 end)

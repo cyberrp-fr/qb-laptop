@@ -213,6 +213,19 @@ export default class LinuxFileSystem {
     }
 
     cp(source: string, destination: string) {
+        if (!source.startsWith('/')) {
+            source = this.joinPath(this._cwd, source)
+        }
+
+        if (destination === "." || destination === "./") {
+            let sourceBasename: any = source.split("/")
+            sourceBasename = sourceBasename[sourceBasename.length - 1]
+
+            destination = this.joinPath(this._cwd, sourceBasename)
+        } else if (!destination.startsWith('/')) {
+            destination = this.joinPath(this._cwd, destination)
+        }
+
         const data = this._fs.readFileSync(source)
         this._fs.writeFileSync(destination, data)
     }

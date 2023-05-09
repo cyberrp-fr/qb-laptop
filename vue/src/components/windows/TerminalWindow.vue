@@ -64,7 +64,7 @@ onMounted(() => {
             focusPrompt()
         }
 
-    }, 500)
+    }, 100)
 })
 
 onUnmounted(() => {

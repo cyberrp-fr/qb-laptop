@@ -139,6 +139,23 @@ class Linux {
             let result = this.read(path)
             this._outputcallback(result)
             return
+        } else if (cmd === 'cp') {
+            let split = command.trim().split(' ')
+            let sourcePath = split[1]
+            let destPath = split[2]
+
+            if (typeof sourcePath !== 'string' || typeof destPath !== 'string') {
+                this._outputcallback('command incorrect, source path and destination path arguments are required.\nExample: cp file1.txt copied-file.txt')
+                return
+            }
+
+            if (!this._fs.exists(sourcePath)) {
+                this._outputcallback(`File or directory not found: ${sourcePath}`)
+                return
+            }
+
+            this._fs.cp(sourcePath, destPath)
+            return
         } else if (split.includes('apt')) {
             this._apt.handleCommand(command, cmd)
             return
