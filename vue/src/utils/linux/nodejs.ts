@@ -126,10 +126,6 @@ export default class NodeJS {
             .then(() => null)
             .catch(e => { console.error(e.toString()); })
             .finally(() => {self.postMessage({ type: "end" }); self.close()})
-        
-        setTimeout(() => {
-            self.postMessage({ type: "end" })
-        }, 5000)
         `
 
         // console.log("exec: ", code)
