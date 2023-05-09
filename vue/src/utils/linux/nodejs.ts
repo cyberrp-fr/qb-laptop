@@ -141,7 +141,6 @@ export default class NodeJS {
             if (e.data.type === "start") {
                 this._busy = true
             } else if (e.data.type === "end") {
-                console.log("ENDED !")
                 this._busy = false
             }
 

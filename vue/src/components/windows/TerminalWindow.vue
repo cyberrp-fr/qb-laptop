@@ -58,7 +58,13 @@ onMounted(() => {
     Linux.setOutputCallback(outputCallback)
     userDir.value = Linux.whereami()
 
-    mainInterval = setInterval(() => updateIsTerminalBusy(), 500)
+    mainInterval = setInterval(() => {
+        updateIsTerminalBusy()
+        if (currentProcess.value === "bash") {
+            focusPrompt()
+        }
+
+    }, 500)
 })
 
 onUnmounted(() => {
@@ -356,6 +362,7 @@ textarea {
         bottom: 0;
         overflow-x: hidden;
         overflow-y: scroll;
+        margin-bottom: 10px;
 
         /* width */
         &::-webkit-scrollbar {
