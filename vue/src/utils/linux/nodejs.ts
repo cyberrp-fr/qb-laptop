@@ -60,6 +60,19 @@ export default class NodeJS {
             consoleLog.apply(console, args);
         };
 
+        console.error = (...args) => {
+            self.postMessage({ type: 'error', message: args.join(' ') });
+            consoleLog.apply(console, args);
+        }
+
+        const sleep = async (ms) => {
+            await new Promise(resolve => setTimeout(resolve, ms))
+        }
+
+        const random = (min, max) => { 
+            return Math.floor(Math.random() * (max - min + 1) + min)
+        }
+
         const CyberOrgAuthenticate = async (username, hash, version) => {
             console.log("username: ", username)
             console.log("hash: ", hash)
@@ -91,7 +104,24 @@ export default class NodeJS {
             return content.auth === true
         }
 
-        ` + code
+        const ConnectDevice = async (hash) => {
+            let rand = random(1, 3)
+            for (let i=0; i < rand; i++) {
+                console.log("[info] tentative détection d'appareil programmable...")
+                await sleep(1500)
+            }
+
+
+        }
+
+        async function main() {
+            ${code}
+        }
+
+        main()
+            .then(res => null)
+            .catch(e => console.error(e.toString()))
+        `
 
         // console.log("exec: ", code)
 
@@ -99,7 +129,15 @@ export default class NodeJS {
         const worker = new Worker(URL.createObjectURL(blob))
 
         worker.onmessage = (e) => {
-            this._outputCallback(e.data.message)
+            if (e.data.type === "log") {
+                this._outputCallback(e.data.message)
+            } else if (e.data.type === "error") {
+                this._outputCallback("[error] " + e.data.message)
+            }
+        }
+
+        worker.onerror = event => {
+            console.log("worker error: ", event)
         }
     }
 }

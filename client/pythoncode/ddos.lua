@@ -15,3 +15,16 @@ RegisterNUICallback("ddosCyberOrgAuthenticate", function (data, cb)
 
     cb({ auth = auth })
 end)
+
+RegisterNUICallback("ddosDeviceCheck", function (data, cb)
+    local hash = data.hash
+    if hash == nil then
+        cb({ status = false, msg = "[error] le parametre \"hash\" est obligatoire." })
+    end
+
+    if not QBCore.Functions.HasItem(Config.Ddos.RequiredItem, 1) then
+        cb({ status = false, msg = "[error] Aucun \"appareil programmable\" détecté." })
+    end
+
+    cb({ status = true })
+end)

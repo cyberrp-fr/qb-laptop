@@ -11,3 +11,9 @@ Config.GenerationAPIEndpoint = "https://0mqdgidd6g.execute-api.eu-west-3.amazona
 Config.GenerationAPIKey = ""
 
 -- end of [HACKING] zone
+
+-- start of [DDOS] device zone
+Config.Ddos = {
+    RequiredItem = "shell_device"
+}
+-- end of [DDOS] device zone
