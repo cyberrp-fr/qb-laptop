@@ -1,5 +1,6 @@
 local CyberOrgConnectionEstablished = false
 local DeviceConnectionEstablished = false
+local DevicePort = nil
 
 -- CALLBACKS
 
@@ -32,6 +33,11 @@ RegisterNUICallback("ddosDeviceCheck", function (data, cb)
     end
 
     DeviceConnectionEstablished = true
+    DevicePort = math.random(1, 9)
 
-    cb({ status = true })
+    cb({ status = true, devicePort = DevicePort })
+end)
+
+RegisterNuiCallback("ddosVerifyPort", function (data, cb)
+    cb({ status = (data.port == DevicePort) })
 end)

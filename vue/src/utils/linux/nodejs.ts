@@ -107,14 +107,51 @@ export default class NodeJS {
             return content.auth === true
         }
 
-        const ConnectDevice = async (hash) => {
+        const ConnectDevice = async (hash, version) => {
             let rand = random(1, 3)
             for (let i=0; i < rand; i++) {
                 console.log("[info] tentative détection d'appareil programmable...")
                 await sleep(1500)
             }
 
+            const opts = {
+                method: "POST",
+                body: JSON.stringify({ hash, version }),
+                headers: {"Content-Type": "application/json"}
+            }
+            const response = await fetch("https://qb-laptop/ddosDeviceCheck", opts)
+            const content = await response.json()
 
+            return { detection: content.status, message: content.msg, port: content.devicePort }
+        }
+
+        const InstallFirmwareOntoDevice = async (hash, version, port) => {
+            console.log('[info] vérification version "'+ version +'"...')
+            await sleep(700)
+            console.log('[info] version "'+ version +'" OK')
+
+            console.log('[info] validation hash -> appareil...')
+            await sleep(random(1000, 4000))
+            console.log('[info] validation hash réussie.')
+
+            console.log('[info] vérification de connectivité sur port "'+ port +'"...')
+            await sleep(random(2000, 10000))
+
+            let opts = {
+                method: "POST",
+                body: JSON.stringify({ port }),
+                headers: {"Content-Type": "application/json"}
+            }
+            let response = await fetch("https://qb-laptop/ddosVerifyPort", opts)
+            let content = await response.json()
+            if (content.status === false) {
+                console.log('[error] aucune connectivité sur port "'+ port +'".')
+                return false
+            }
+
+            console.log('[info] vérification de connectivité sur port "'+ port +'" réussie.')
+
+            return true
         }
 
         async function main() {
