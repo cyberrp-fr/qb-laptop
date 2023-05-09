@@ -27,6 +27,7 @@ const userDir = ref('/')
 const output = ref("")
 const prompt = ref("")
 const promptField = ref()
+const isTerminalBusy = ref(false)
 
 // nano contents
 const nanoField = ref()
@@ -39,6 +40,11 @@ const stateStore: any = useStateStore()
 const app = getCurrentInstance()
 const emitter = app?.appContext.config.globalProperties.$emitter
 
+function updateIsTerminalBusy() {
+    isTerminalBusy.value = Linux.isBusy()
+}
+
+let mainInterval: any = null
 
 // when component is mounted meaning rendered
 onMounted(() => {
@@ -51,6 +57,14 @@ onMounted(() => {
     Linux.setFs(app?.appContext.config.globalProperties.$fs)
     Linux.setOutputCallback(outputCallback)
     userDir.value = Linux.whereami()
+
+    mainInterval = setInterval(() => updateIsTerminalBusy(), 500)
+})
+
+onUnmounted(() => {
+    if (mainInterval) {
+        clearInterval(mainInterval)
+    }
 })
 
 function focusWindow(id: string) {
@@ -124,6 +138,7 @@ async function executeCommand(e: any) {
         return
     }
 
+    isTerminalBusy.value = true
     await Linux.execute(prompt.value)
 
     prompt.value = ''
@@ -249,7 +264,7 @@ function getKey(e: any) {
         <div v-if="currentProcess == 'bash'" class="content">
             <div class="output" v-html="output"></div>
 
-            <div class="prompt-zone">
+            <div v-if="!isTerminalBusy" class="prompt-zone">
                 <div class="prompt-user">{{ user }}:{{ userDir }}</div>
                 <textarea ref="promptField" v-model="prompt" v-on:keydown.enter="executeCommand" v-on:keydown.up="lastCommand" class="prompt" rows="3"></textarea>
             </div>

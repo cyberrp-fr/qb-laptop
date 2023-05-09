@@ -161,6 +161,9 @@ class Linux {
         return
     }
 
+    public isBusy() {
+        return this._nodejs.isBusy()
+    }
 
     // =================
     // == FS Commands ==

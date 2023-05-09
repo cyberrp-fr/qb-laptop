@@ -8,9 +8,12 @@ export default class NodeJS {
 
     private _fs: LinuxFileSystem
 
+    private _busy: boolean
+
     constructor(fs: LinuxFileSystem) {
         this._fs = fs
         this._settingsStore = useSettingsStore()
+        this._busy = false
 
         this._init()
     }
@@ -118,9 +121,15 @@ export default class NodeJS {
             ${code}
         }
 
+        self.postMessage({ type: "start" })
         main()
-            .then(res => null)
-            .catch(e => console.error(e.toString()))
+            .then(() => null)
+            .catch(e => { console.error(e.toString()); })
+            .finally(() => {self.postMessage({ type: "end" }); self.close()})
+        
+        setTimeout(() => {
+            self.postMessage({ type: "end" })
+        }, 5000)
         `
 
         // console.log("exec: ", code)
@@ -129,15 +138,22 @@ export default class NodeJS {
         const worker = new Worker(URL.createObjectURL(blob))
 
         worker.onmessage = (e) => {
+            if (e.data.type === "start") {
+                this._busy = true
+            } else if (e.data.type === "end") {
+                console.log("ENDED !")
+                this._busy = false
+            }
+
             if (e.data.type === "log") {
                 this._outputCallback(e.data.message)
             } else if (e.data.type === "error") {
                 this._outputCallback("[error] " + e.data.message)
             }
         }
+    }
 
-        worker.onerror = event => {
-            console.log("worker error: ", event)
-        }
+    public isBusy() {
+        return this._busy
     }
 }
