@@ -60,7 +60,7 @@ onMounted(() => {
 
     mainInterval = setInterval(() => {
         updateIsTerminalBusy()
-        if (currentProcess.value === "bash") {
+        if (currentProcess.value === "bash" && windowFocus.value) {
             focusPrompt()
         }
 
