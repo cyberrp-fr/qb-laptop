@@ -17,14 +17,15 @@ server_scripts {
     'server/main.lua',
     'server/darknet.lua',
     'server/aes-messaging.lua',
-    'server/webhacking.lua'
+    'server/webhacking.lua',
+    'server/coding/*.lua'
 }
 
 client_scripts {
     'client/main.lua',
     'client/darknet.lua',
     'client/aes-messaging.lua',
-    'client/pythoncode/*.lua'
+    'client/coding/*.lua'
 }
 
 ui_page 'html/index.html'

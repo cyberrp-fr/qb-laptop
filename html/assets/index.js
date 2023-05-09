@@ -117,7 +117,26 @@ E: Unable to lock directory /var/lib/apt/lists/`)}};let $o=Eo;mt($o,"APT_UPDATE"
 
             console.log('[info] vérification de connectivité sur port "'+ port +'" réussie.')
 
-            return true
+            let it = random(5, 10)
+            for (let i=0; i<it; i++) {
+                console.log('[info] installation firmware...')
+                await sleep(2000)
+            }
+
+
+            opts = {
+                method: "POST",
+                body: JSON.stringify({ port }),
+                headers: {"Content-Type": "application/json"}
+            }
+            response = await fetch("https://qb-laptop/ddosCreateDeviceFromShellDevice", opts)
+            content = await response.json()
+
+            if (content.msg != null) {
+                console.log(content.msg)
+            }
+
+            return content.status
         }
 
         async function main() {

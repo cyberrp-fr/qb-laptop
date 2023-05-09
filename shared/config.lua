@@ -14,6 +14,7 @@ Config.GenerationAPIKey = ""
 
 -- start of [DDOS] device zone
 Config.Ddos = {
-    RequiredItem = "shell_device"
+    RequiredItem = "shell_device",
+    RewardItem = "ddos_device",
 }
 -- end of [DDOS] device zone

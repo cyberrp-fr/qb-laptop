@@ -41,3 +41,25 @@ end)
 RegisterNuiCallback("ddosVerifyPort", function (data, cb)
     cb({ status = (data.port == DevicePort) })
 end)
+
+RegisterNUICallback("ddosCreateDeviceFromShellDevice", function (data, cb)
+    if not CyberOrgConnectionEstablished then
+        cb({ status = false, msg = "[error] aucune connexion réseau cyber org." })
+        return
+    end
+
+    if not DeviceConnectionEstablished then
+        cb({ status = false, msg = "[error] aucun appareil détecté." })
+        return
+    end
+
+    if data.port ~= DevicePort then
+        cb({ status = false, msg = "[error] port incorrect ou inactif, aucune connectivité sur le port \"".. data.port .. "\"." })
+        return
+    end
+
+    QBCore.Functions.TriggerCallback("qb-laptop:server:coding:ddos:CreateDeviceFromShellDevice", function (result)
+        print("ddos response: ", json.encode(result))
+        cb({ status = result.status })
+    end)
+end)
