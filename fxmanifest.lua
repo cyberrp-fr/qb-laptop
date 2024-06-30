@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
 
-author '0xIbra - https://github.com/0xIbra'
+author 'CyberRP France - https://github.com/cyberrp-fr'
 description 'qb-laptop - laptops with linux OS'
 
 shared_scripts {
