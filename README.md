@@ -28,7 +28,7 @@ This script is **fully open source**, do with it what you wish.
 
 - [ ] **DDoS device** - not implemented  
       The idea was to allow hackers by real simulated coding (javascript) fabricate ddos devices that they could sell to people.
-      This device when detonated would fry all alarms to the police in a defined (configurable) radios. 
+      This device when detonated would fry all alarms to the police in a defined (configurable) radius. 
 
 - [ ] **Fake internet** - not implemented fully  
       I had generated hundreds of fake realistic looking websites using AI and put them on my server.  
