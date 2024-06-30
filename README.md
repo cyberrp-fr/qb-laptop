@@ -3,6 +3,10 @@ QB Laptop
 
 > WARNING: This laptop script even though functional is not finished, many intended features have not been implemented.
 
+This laptop script was part of a larger FiveM server i made (CyberRP France), it may not work right away, you may need to debug a few things so BE WARNED !  
+I do not offer any support or maintenance for this script, i am just dumping to for those who would be interested.  
+This script is **fully open source**, do with it what you wish.
+
 ### State of things
 
 - [x] **Kali linux OS** minimal
