@@ -41,3 +41,22 @@ QB Laptop
 #### 1. Create tables in your database
 
 Execute the [`qb-laptop.sql`](qb-laptop.sql) file
+
+
+#### 2. Add these 2 items to qb-core `items.lua`
+
+This file is usually located at `qb-core/shared/items.lua`  
+
+Add these 2 lines:
+
+```lua
+['shell_device']				 = {['name'] = 'shell_device',					['label'] = 'Appareil programmable',		['weight'] = 200, 		['type'] = 'item',		['image'] = 'shell_device.png',			['unique'] = false,		['useable'] = false,	['shouldClose'] = false, 	['combinable'] = nil, 	['description'] = 'Appareil vide que vous pouvez programmer vous meme pour vos besoins.'},
+['ddos_device']					 = {['name'] = 'ddos_device',					['label'] = 'Appareil DDoS Police', 		['weight'] = 200,		['type'] = 'item', 		['image'] = 'shell_device.png',				['unique'] = true,		['useable'] = true, 	['shouldClose'] = false,	['combinable'] = nil, 	['description'] = 'Appareil DDoS permettant de retarder les les alertes police.'}
+```
+
+#### 3. Place this script folder in your `resources` folder
+
+#### 4. Make sure that `qb-laptop` script is started
+
+Add `ensure qb-laptop` line to resources.cfg if needed.
+
