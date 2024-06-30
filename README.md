@@ -7,26 +7,26 @@ QB Laptop
 
 - [x] **Kali linux OS** minimal
 
-- [x] **Terminal**
+- [x] **Terminal**  
       Realistic looking linux terminal where you can execute common linux commands.
       You can write files, you can write scripts (javascript), real code and execute that code.
       This is for hackers, the idea was you'd have specific scripts that would do or hack or fabricate specific things and
       it would require at least some know-how, so if you don't know the code, then you can't be a hacker. That's extreme realism for you ! Haha but the coding is very simplified, it's not even close to real-life hacking scripts. :)
 
-- [x] **AES Messaging**
+- [x] **AES Messaging**  
       Anonymously encrypted messaging program where hackers can communicate safely from cops.
 
-- [x] **Firefox browser**
+- [x] **Firefox browser**  
       Browse the internet (fake simulated)
 
-- [x] **Darknet site**
+- [x] **Darknet site**  
       Digital black market where hackers can put up classifieds to advertise their services or their products for others to buy.
 
-- [ ] **DDoS device** - not implemented
+- [ ] **DDoS device** - not implemented  
       The idea was to allow hackers by real simulated coding (javascript) fabricate ddos devices that they could sell to people.
       This device when detonated would fry all alarms to the police in a defined (configurable) radios. 
 
-- [ ] **Fake internet** - not implemented fully
+- [ ] **Fake internet** - not implemented fully  
       I had generated hundreds of fake realistic looking websites using AI and put them on my server.  
       The idea was that these fake websites could be accessed via **Firefox** browser and would be hackable at specific times due to vulnerabilities.  
       So hackers and even normal users could access these fake websites but hackers who have some know-how would run checks to find any vulnerabilities to exploit,  
