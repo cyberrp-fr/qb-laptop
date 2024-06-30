@@ -36,6 +36,11 @@ QB Laptop
       -  
       **Conclusion:** As you can see this was an ambitious project, but to be honest technically speaking this is easy to implement and nothing impossible.
 
+## Dependencies
+
+- QB-Core
+- oxmysql
+
 ## Installation
 
 #### 1. Create tables in your database
@@ -60,3 +65,22 @@ Add these 2 lines:
 
 Add `ensure qb-laptop` line to resources.cfg if needed.
 
+
+## Development
+
+The front-end is developed with Vue.js, so when you make changes in [`vue/`](vue/) folder, don't forget to build.  
+The build command will build and copy all files to `html/` folder.  
+
+#### Build and watch
+
+This is with live reloading when you make a change.
+
+```
+npm run build-watch
+```
+
+#### Build
+
+```
+npm run build
+```
